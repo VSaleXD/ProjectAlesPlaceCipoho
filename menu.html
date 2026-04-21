@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Menu Ramen Ale's Place Cipoho - Berbagai Pilihan Ramen dan Makanan Lezat">
+    <title>Menu - Ale's Place Cipoho</title>
+    <link rel="stylesheet" href="styles/app.css">
+</head>
+<body>
+    <!-- ========== NAVBAR ========== -->
+    <header class="navbar">
+        <div class="navbar__container">
+            <a href="index.html" class="navbar__logo navbar__logo--with-text">
+                <img src="assets/icons/ales-mascot2-04-229x300.png" alt="ALES Place Logo" class="navbar__logo-image">
+                <div class="navbar__logo-text">
+                    <div class="navbar__logo-title">Ale's</div>
+                    <div class="navbar__logo-subtitle">Place Cipoho</div>
+                </div>
+            </a>
+            <nav>
+                <ul class="navbar__menu">
+                    <li><a href="index.html" class="navbar__link">Beranda</a></li>
+                    <li><a href="menu.html" class="navbar__link active">Menu</a></li>
+                    <li><a href="reservasi.html" class="navbar__link">Reservasi</a></li>
+                    <li><a href="kontak.html" class="navbar__link">Kontak</a></li>
+                    <li><a href="reservasi.html" class="btn btn--primary">Reservasi Meja</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ========== MAIN CONTENT ========== -->
+    <main>
+        <section class="section">
+            <div class="container">
+                <header class="section__header">
+                    <h1 class="section__title">Menu Kami</h1>
+                    <p class="section__description">
+                        Jelajahi berbagai pilihan ramen dan hidangan lezat yang kami tawarkan
+                    </p>
+                </header>
+
+                <div class="menu-section">
+                    <!-- Left Sidebar Filter -->
+                    <aside class="menu-filter">
+                        <h3 class="menu-filter__title">Kategori</h3>
+                        <ul class="menu-filter__list">
+                            <li class="menu-filter__item active" data-category="all">Semua Menu</li>
+                            <li class="menu-filter__item" data-category="ramen">Ramen</li>
+                            <li class="menu-filter__item" data-category="appetizer">Appetizer</li>
+                            <li class="menu-filter__item" data-category="dessert">Dessert</li>
+                            <li class="menu-filter__item" data-category="drink">Minuman</li>
+                        </ul>
+                    </aside>
+
+                    <!-- Menu Content Area -->
+                    <div class="menu-content">
+                        <!-- Top Tabs -->
+                        <div class="menu-tabs">
+                            <button class="menu-tab active" data-tab="all">Semua</button>
+                            <button class="menu-tab" data-tab="popular">Populer</button>
+                            <button class="menu-tab" data-tab="new">Terbaru</button>
+                            <button class="menu-tab" data-tab="promo">Promo</button>
+                        </div>
+
+                        <!-- Search Box -->
+                        <div class="search-box">
+                            <input 
+                                type="search" 
+                                class="search-box__input" 
+                                placeholder="Cari menu favorit Anda..."
+                                aria-label="Cari menu"
+                                id="menuSearch"
+                            >
+                        </div>
+
+                        <!-- Menu Grid -->
+                        <div class="menu-grid" id="menuGrid">
+                            <!-- Ramen Items -->
+                            <article class="menu-card" data-category="ramen" data-tag="popular">
+                                <img src="assets/images/ramen-1.jpg" alt="Shoyu Ramen" class="menu-card__image">
+                                <div class="menu-card__content">
+                                    <h3 class="menu-card__title">Shoyu Ramen</h3>
+                                    <p class="menu-card__price">Rp 45.000</p>
+                                    <p class="menu-card__description">
+                                        Ramen klasik dengan kuah shoyu yang gurih, dilengkapi telur, daging babi, dan sayuran segar
+                                    </p>
+                                    <button class="btn btn--primary menu-card__button">Pesan Sekarang</button>
+                                </div>
+                            </article>
+
+                            <article class="menu-card" data-category="ramen" data-tag="popular">
+                                <img src="assets/images/ramen-2.jpg" alt="Miso Ramen" class="menu-card__image">
+                                <div class="menu-card__content">
+                                    <h3 class="menu-card__title">Miso Ramen</h3>
+                                    <p class="menu-card__price">Rp 48.000</p>
+                                    <p class="menu-card__description">
+                                        Kuah miso yang kaya rasa dengan topping chashu, corn, dan butter yang lezat
+                                    </p>
+                                    <button class="btn btn--primary menu-card__button">Pesan Sekarang</button>
+                                </div>
+                            </article>
+
+                            <article class="menu-card" data-category="ramen" data-tag="popular">
+                                <img src="assets/images/ramen-3.jpg" alt="Tonkotsu Ramen" class="menu-card__image">
+                                <div class="menu-card__content">
+                                    <h3 class="menu-card__title">Tonkotsu Ramen</h3>
+                                    <p class="menu-card__price">Rp 52.000</p>
+                                    <p class="menu-card__description">
+                                        Kuah tulang babi yang creamy dan kental, dilengkapi chashu premium dan black garlic oil
+                                    </p>
+                                    <button class="btn btn--primary menu-card__button">Pesan Sekarang</button>
+                                </div>
+                            </article>
+
+                            <article class="menu-card" data-category="ramen" data-tag="new promo">
+                                <img src="assets/images/ramen-4.jpg" alt="Spicy Tantanmen" class="menu-card__image">
+                                <div class="menu-card__content">
+                                    <h3 class="menu-card__title">Spicy Tantanmen</h3>
+                                    <p class="menu-card__price">Rp 50.000</p>
+                                    <p class="menu-card__description">
+                                        Ramen pedas dengan pasta wijen dan daging cincang, sempurna untuk pecinta pedas
+                                    </p>
+                                    <button class="btn btn--primary menu-card__button">Pesan Sekarang</button>
+                                </div>
+                            </article>
+
+                            <article class="menu-card" data-category="ramen" data-tag="new">
+                                <img src="assets/images/ramen-5.jpg" alt="Vegetarian Ramen" class="menu-card__image">
+                                <div class="menu-card__content">
+                                    <h3 class="menu-card__title">Vegetarian Ramen</h3>
+                                    <p class="menu-card__price">Rp 42.000</p>
+                                    <p class="menu-card__description">
+                                        Ramen vegan dengan kuah sayuran yang segar dan topping jamur serta sayuran organik
+                                    </p>
+                                    <button class="btn btn--primary menu-card__button">Pesan Sekarang</button>
+                                </div>
+                            </article>
+
+                            <article class="menu-card" data-category="ramen" data-tag="popular">
+                                <img src="assets/images/ramen-6.jpg" alt="Chicken Ramen" class="menu-card__image">
+                                <div class="menu-card__content">
+                                    <h3 class="menu-card__title">Chicken Ramen</h3>
+                                    <p class="menu-card__price">Rp 44.000</p>
+                                    <p class="menu-card__description">
+                                        Ramen dengan kuah ayam yang gurih dan lembut, topping ayam goreng crispy
+                                    </p>
+                                    <button class="btn btn--primary menu-card__button">Pesan Sekarang</button>
+                                </div>
+                            </article>
+
+                            <!-- Appetizers -->
+                            <article class="menu-card" data-category="appetizer" data-tag="popular">
+                                <img src="assets/images/gyoza.jpg" alt="Gyoza" class="menu-card__image">
+                                <div class="menu-card__content">
+                                    <h3 class="menu-card__title">Gyoza (6 pcs)</h3>
+                                    <p class="menu-card__price">Rp 25.000</p>
+                                    <p class="menu-card__description">
+                                        Dumpling Jepang dengan isian daging dan sayuran, disajikan dengan saus spesial
+                                    </p>
+                                    <button class="btn btn--primary menu-card__button">Pesan Sekarang</button>
+                                </div>
+                            </article>
+
+                            <article class="menu-card" data-category="appetizer" data-tag="popular">
+                                <img src="assets/images/edamame.jpg" alt="Edamame" class="menu-card__image">
+                                <div class="menu-card__content">
+                                    <h3 class="menu-card__title">Edamame</h3>
+                                    <p class="menu-card__price">Rp 18.000</p>
+                                    <p class="menu-card__description">
+                                        Kacang kedelai Jepang rebus dengan taburan garam laut, camilan sehat dan lezat
+                                    </p>
+                                    <button class="btn btn--primary menu-card__button">Pesan Sekarang</button>
+                                </div>
+                            </article>
+
+                            <article class="menu-card" data-category="appetizer" data-tag="new">
+                                <img src="assets/images/takoyaki.jpg" alt="Takoyaki" class="menu-card__image">
+                                <div class="menu-card__content">
+                                    <h3 class="menu-card__title">Takoyaki (6 pcs)</h3>
+                                    <p class="menu-card__price">Rp 28.000</p>
+                                    <p class="menu-card__description">
+                                        Bola adonan dengan isian gurita, topping saus takoyaki, mayonaise, dan katsuobushi
+                                    </p>
+                                    <button class="btn btn--primary menu-card__button">Pesan Sekarang</button>
+                                </div>
+                            </article>
+
+                            <!-- Desserts -->
+                            <article class="menu-card" data-category="dessert" data-tag="popular">
+                                <img src="assets/images/mochi.jpg" alt="Mochi Ice Cream" class="menu-card__image">
+                                <div class="menu-card__content">
+                                    <h3 class="menu-card__title">Mochi Ice Cream</h3>
+                                    <p class="menu-card__price">Rp 22.000</p>
+                                    <p class="menu-card__description">
+                                        Es krim dibungkus mochi lembut, tersedia rasa matcha, vanilla, dan strawberry
+                                    </p>
+                                    <button class="btn btn--primary menu-card__button">Pesan Sekarang</button>
+                                </div>
+                            </article>
+
+                            <article class="menu-card" data-category="dessert" data-tag="new promo">
+                                <img src="assets/images/matcha-cake.jpg" alt="Matcha Cake" class="menu-card__image">
+                                <div class="menu-card__content">
+                                    <h3 class="menu-card__title">Matcha Cake</h3>
+                                    <p class="menu-card__price">Rp 32.000</p>
+                                    <p class="menu-card__description">
+                                        Kue lembut dengan rasa matcha premium, dilengkapi whipped cream dan red bean
+                                    </p>
+                                    <button class="btn btn--primary menu-card__button">Pesan Sekarang</button>
+                                </div>
+                            </article>
+
+                            <!-- Drinks -->
+                            <article class="menu-card" data-category="drink" data-tag="popular">
+                                <img src="assets/images/green-tea.jpg" alt="Ocha" class="menu-card__image">
+                                <div class="menu-card__content">
+                                    <h3 class="menu-card__title">Ocha (Green Tea)</h3>
+                                    <p class="menu-card__price">Rp 12.000</p>
+                                    <p class="menu-card__description">
+                                        Teh hijau Jepang hangat, sempurna sebagai pelengkap ramen Anda
+                                    </p>
+                                    <button class="btn btn--primary menu-card__button">Pesan Sekarang</button>
+                                </div>
+                            </article>
+
+                            <article class="menu-card" data-category="drink" data-tag="popular">
+                                <img src="assets/images/matcha-latte.jpg" alt="Matcha Latte" class="menu-card__image">
+                                <div class="menu-card__content">
+                                    <h3 class="menu-card__title">Matcha Latte</h3>
+                                    <p class="menu-card__price">Rp 28.000</p>
+                                    <p class="menu-card__description">
+                                        Minuman matcha premium dengan susu, tersedia panas atau dingin
+                                    </p>
+                                    <button class="btn btn--primary menu-card__button">Pesan Sekarang</button>
+                                </div>
+                            </article>
+
+                            <article class="menu-card" data-category="drink" data-tag="new">
+                                <img src="assets/images/ramune.jpg" alt="Ramune" class="menu-card__image">
+                                <div class="menu-card__content">
+                                    <h3 class="menu-card__title">Ramune</h3>
+                                    <p class="menu-card__price">Rp 15.000</p>
+                                    <p class="menu-card__description">
+                                        Minuman soda khas Jepang dengan berbagai varian rasa yang menyegarkan
+                                    </p>
+                                    <button class="btn btn--primary menu-card__button">Pesan Sekarang</button>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__grid">
+                <!-- Contact Info -->
+                <div class="footer__section">
+                    <h3 class="footer__title">Kontak Kami</h3>
+                    <p class="footer__text">📍 Jl. Cipoho No. 123, Bandung</p>
+                    <p class="footer__text">📞 (022) 1234-5678</p>
+                    <p class="footer__text">📱 WhatsApp: 0812-3456-7890</p>
+                    <p class="footer__text">✉️ info@alesplace.com</p>
+                </div>
+
+                <!-- Opening Hours -->
+                <div class="footer__section">
+                    <h3 class="footer__title">Jam Buka</h3>
+                    <p class="footer__text">Senin - Jumat: 10.00 - 22.00</p>
+                    <p class="footer__text">Sabtu - Minggu: 09.00 - 23.00</p>
+                    <p class="footer__text">Libur Nasional: 09.00 - 21.00</p>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="footer__section">
+                    <h3 class="footer__title">Tautan Cepat</h3>
+                    <p class="footer__text"><a href="index.html" class="footer__link">Beranda</a></p>
+                    <p class="footer__text"><a href="reservasi.html" class="footer__link">Reservasi</a></p>
+                    <p class="footer__text"><a href="kontak.html" class="footer__link">Kontak</a></p>
+                </div>
+            </div>
+
+            <div class="footer__bottom">
+                <p>&copy; 2026 Ale's Place Cipoho. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ========== SCRIPTS ========== -->
+    <script src="scripts/app.js"></script>
+</body>
+</html>
