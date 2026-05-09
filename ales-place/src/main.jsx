@@ -1,8 +1,3 @@
-/**
- * main.jsx — Entry point aplikasi React
- * Render App ke DOM element #root
- */
-
 import React    from 'react';
 import ReactDOM from 'react-dom/client';
 import App      from './App';

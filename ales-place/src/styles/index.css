@@ -8,15 +8,15 @@
 
 /* ── CSS Variables (Design Tokens) ── */
 :root {
-  --red:        #C0392B;
-  --dark-red:   #8B2018;
-  --cream:      #F5EDD8;
-  --warm-white: #FDF8EF;
-  --dark:       #2C1810;
-  --gold:       #D4A843;
-  --yellow:     #F5D97A;
+  --dark-red:   #DA251C;
+  --red:        #8F1D1B;
+  --cream:      #FAF6F9;
+  --warm-white: #FAF6F9;
+  --dark:       #100A09;
+  --gold:       #DA7F1C;
+  --yellow:     #FFE400;
   --gray-text:  #666666;
-  --border:     rgba(212, 168, 67, 0.3);
+  --border:     rgba(218, 127, 28, 0.3);
 
   --font-display: 'Playfair Display', Georgia, serif;
   --font-body:    'DM Sans', system-ui, sans-serif;

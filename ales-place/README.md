@@ -110,15 +110,6 @@ Helper exports:
 - `CATEGORIES` — array nama kategori
 
 ---
-
-## 🔧 Customisasi
-
-### Ganti Nomor WhatsApp
-Edit `ReservasiPage.jsx` baris:
-```js
-const WA_NUMBER = '6281234567890'; // Ganti dengan nomor asli
-```
-
 ### Tambah Menu Baru
 Edit `src/data/menu.js`, tambah object baru ke array `menuData`.
 

@@ -1,10 +1,3 @@
-/**
- * MenuCard.jsx — Komponen kartu menu individual
- * Digunakan di halaman Menu untuk menampilkan setiap item.
- * Props:
- *   - item: object menu (id, nama, harga, kategori, deskripsi, emoji, bestseller)
- */
-
 import React from 'react';
 import { formatRupiah } from '../data/menu';
 
@@ -13,7 +6,6 @@ export default function MenuCard({ item }) {
 
   return (
     <div style={styles.card}>
-      {/* Gambar / Emoji placeholder */}
       <div style={styles.imageWrap}>
         {bestseller && (
           <div style={styles.badge}>⭐ Best</div>
@@ -21,7 +13,6 @@ export default function MenuCard({ item }) {
         <span style={styles.emoji}>{emoji}</span>
       </div>
 
-      {/* Info menu */}
       <div style={styles.info}>
         <h3 style={styles.nama}>{nama}</h3>
         <p style={styles.harga}>{formatRupiah(harga)}</p>
@@ -33,15 +24,15 @@ export default function MenuCard({ item }) {
 
 const styles = {
   card: {
-    background: '#FDF8EF',
+    background: '#FAF6F9',
     borderRadius: 14,
     overflow: 'hidden',
-    border: '1px solid rgba(212,168,67,0.25)',
+    border: '1px solid rgba(218,127,28,0.25)',
     transition: 'transform 0.2s, box-shadow 0.2s',
     cursor: 'default',
   },
   imageWrap: {
-    background: '#E8D5B7',
+    background: '#F0E8E2',
     height: 130,
     display: 'flex',
     alignItems: 'center',
@@ -52,7 +43,7 @@ const styles = {
     position: 'absolute',
     top: 8,
     left: 8,
-    background: '#C0392B',
+    background: '#DA251C',
     color: 'white',
     fontSize: 9,
     fontWeight: 700,
@@ -71,12 +62,12 @@ const styles = {
     fontFamily: "'DM Sans', sans-serif",
     fontSize: 13,
     fontWeight: 700,
-    color: '#C0392B',
+    color: '#DA251C',
     marginBottom: 3,
   },
   harga: {
     fontSize: 13,
-    color: '#C0392B',
+    color: '#DA251C',
     fontWeight: 700,
   },
   deskripsi: {

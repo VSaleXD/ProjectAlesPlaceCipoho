@@ -1,33 +1,12 @@
-/**
- * MenuPage.jsx — Halaman Katalog Menu
- *
- * Fitur:
- *  - Carousel horizontal Best Seller di bagian atas
- *  - Search bar real-time untuk mencari menu berdasarkan nama/kategori
- *  - Filter kategori (pill buttons) dengan scroll horizontal
- *  - Grid 2 kolom daftar menu dengan MenuCard
- *  - Empty state jika pencarian tidak ditemukan
- *
- * State:
- *  - activeCategory: kategori yang sedang aktif difilter
- *  - searchQuery: teks pencarian dari input user
- */
-
 import React, { useState, useMemo } from 'react';
 import { menuData, CATEGORIES, getBestSellers, formatRupiah } from '../data/menu';
 import MenuCard from '../components/MenuCard';
 
 export default function MenuPage() {
-  // State filter kategori — default 'Semua'
   const [activeCategory, setActiveCategory] = useState('Semua');
 
-  // State pencarian teks real-time
   const [searchQuery, setSearchQuery] = useState('');
 
-  /**
-   * filteredMenu — Computed list menu berdasarkan kategori + search query.
-   * Menggunakan useMemo agar tidak re-render jika state lain berubah.
-   */
   const filteredMenu = useMemo(() => {
     const query = searchQuery.toLowerCase().trim();
     return menuData.filter((item) => {
@@ -42,10 +21,8 @@ export default function MenuPage() {
     });
   }, [activeCategory, searchQuery]);
 
-  // Daftar bestseller untuk carousel atas
   const bestSellers = getBestSellers();
 
-  // Reset semua filter ke default
   const handleReset = () => {
     setSearchQuery('');
     setActiveCategory('Semua');
@@ -53,17 +30,15 @@ export default function MenuPage() {
 
   return (
     <div>
-      {/* ── HEADER ── */}
       <div style={styles.header}>
         <h2 style={styles.headerTitle}>Menu Kami</h2>
         <p style={styles.headerSub}>
-          Temukan hidangan favorit Anda — semua harga tertera transparan
+          Temukan hidangan favorit Anda
         </p>
       </div>
 
       <div style={{ paddingBottom: 40 }}>
 
-        {/* ── SEARCH BAR ── */}
         <div style={styles.searchWrap}>
           <input
             style={styles.searchInput}
@@ -76,8 +51,7 @@ export default function MenuPage() {
           <span style={styles.searchIcon}>🔍</span>
         </div>
 
-        {/* ── BESTSELLER CAROUSEL ── */}
-        <div style={styles.sectionLabel}>Best Seller</div>
+        {/* <div style={styles.sectionLabel}>Best Seller</div>
         <div style={styles.bsScroll}>
           {bestSellers.map((item) => (
             <div
@@ -98,9 +72,8 @@ export default function MenuPage() {
               </div>
             </div>
           ))}
-        </div>
+        </div> */}
 
-        {/* ── FILTER KATEGORI ── */}
         <div style={styles.catScroll}>
           {CATEGORIES.map((cat) => (
             <button
@@ -116,7 +89,6 @@ export default function MenuPage() {
           ))}
         </div>
 
-        {/* ── MENU GRID atau EMPTY STATE ── */}
         {filteredMenu.length === 0 ? (
           <EmptyState onReset={handleReset} query={searchQuery} />
         ) : (
@@ -134,9 +106,6 @@ export default function MenuPage() {
   );
 }
 
-/**
- * EmptyState — Tampilan saat tidak ada menu yang cocok dengan pencarian
- */
 function EmptyState({ onReset, query }) {
   return (
     <div style={styles.emptyState}>
@@ -154,10 +123,9 @@ function EmptyState({ onReset, query }) {
   );
 }
 
-/* ── Styles ── */
 const styles = {
   header: {
-    background: 'linear-gradient(135deg, #C0392B, #8B2018)',
+    background: 'linear-gradient(135deg, #DA251C, #8F1D1B)',
     padding: '32px 24px',
     textAlign: 'center',
   },
@@ -175,17 +143,21 @@ const styles = {
 
   searchWrap: {
     position: 'relative',
-    margin: '-20px 20px 16px',
+    margin: '-20px auto 16px',
+    maxWidth: 350,
+    display: 'flex',
+    justifyContent: 'center',
   },
   searchInput: {
     width: '100%',
+    maxWidth: 350,
     padding: '14px 44px 14px 16px',
     borderRadius: 12,
     border: 'none',
-    background: '#FDF8EF',
+    background: '#FAF6F9',
     fontFamily: "'DM Sans', sans-serif",
     fontSize: 14,
-    color: '#2C1810',
+    color: '#100A09',
     outline: 'none',
     boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
   },
@@ -196,7 +168,7 @@ const styles = {
     transform: 'translateY(-50%)',
     fontSize: 18,
     cursor: 'pointer',
-    color: '#C0392B',
+    color: '#DA251C',
   },
 
   sectionLabel: {
@@ -217,17 +189,17 @@ const styles = {
     scrollbarWidth: 'none',
   },
   bsCard: {
-    background: '#FDF8EF',
+    background: '#FAF6F9',
     borderRadius: 12,
     overflow: 'hidden',
     minWidth: 110,
     flexShrink: 0,
-    border: '1px solid rgba(212,168,67,0.3)',
+    border: '1px solid rgba(218,127,28,0.3)',
     cursor: 'pointer',
     transition: 'transform 0.15s',
   },
   bsImg: {
-    background: '#E8D5B7',
+    background: '#F0E8E2',
     height: 76,
     display: 'flex',
     alignItems: 'center',
@@ -235,19 +207,20 @@ const styles = {
     fontSize: 28,
   },
   bsInfo:  { padding: 8 },
-  bsName:  { fontSize: 11, fontWeight: 700, color: '#2C1810', fontFamily: "'DM Sans', sans-serif" },
-  bsPrice: { fontSize: 11, color: '#C0392B', fontWeight: 700, marginTop: 2 },
+  bsName:  { fontSize: 11, fontWeight: 700, color: '#100A09', fontFamily: "'DM Sans', sans-serif" },
+  bsPrice: { fontSize: 11, color: '#DA251C', fontWeight: 700, marginTop: 2 },
 
   catScroll: {
     display: 'flex',
     gap: 8,
     padding: '0 20px 16px',
-    overflowX: 'auto',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
     scrollbarWidth: 'none',
   },
   catBtn: {
-    background: '#FDF8EF',
-    border: '2px solid #E8D5B7',
+    background: '#FAF6F9',
+    border: '2px solid #F0E8E2',
     padding: '8px 16px',
     borderRadius: 20,
     fontFamily: "'DM Sans', sans-serif",
@@ -260,14 +233,14 @@ const styles = {
     flexShrink: 0,
   },
   catBtnActive: {
-    background: '#F5D97A',
-    borderColor: '#D4A843',
-    color: '#2C1810',
+    background: '#FFE400',
+    borderColor: '#DA7F1C',
+    color: '#100A09',
   },
 
   menuGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(2, 1fr)',
+    gridTemplateColumns: 'repeat(4, 1fr)',
     gap: 14,
     padding: '0 20px',
     marginBottom: 32,
@@ -279,14 +252,14 @@ const styles = {
     color: '#666',
   },
   resetBtn: {
-    background: '#F5D97A',
-    border: '2px solid #D4A843',
+    background: '#FFE400',
+    border: '2px solid #DA7F1C',
     padding: '8px 20px',
     borderRadius: 20,
     fontFamily: "'DM Sans', sans-serif",
     fontSize: 13,
     fontWeight: 600,
     cursor: 'pointer',
-    color: '#2C1810',
+    color: '#100A09',
   },
 };

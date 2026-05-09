@@ -1,26 +1,7 @@
-/**
- * ReservasiPage.jsx — Halaman Form Reservasi via WhatsApp
- *
- * Fitur:
- *  - Form input: Nama, Nomor HP, Tanggal, Jam, Jumlah Tamu, Catatan
- *  - Validasi client-side sebelum submit
- *  - Preview pesan WhatsApp sebelum redirect
- *  - handleSubmit: redirect ke wa.me dengan pesan otomatis terformat
- *  - Info lokasi & jam operasional
- *
- * State:
- *  - formData: nilai semua field form
- *  - errors: pesan error per field
- *  - previewMsg: string pesan WhatsApp yang akan dikirim
- *  - isSubmitting: loading state saat submit
- */
-
 import React, { useState } from 'react';
 
-// Nomor WhatsApp tujuan reservasi (format internasional tanpa +)
-const WA_NUMBER = '6281234567890';
+const WA_NUMBER = '6281572155275';
 
-// Pilihan jumlah tamu
 const GUEST_OPTIONS = [
   '1–2 orang',
   '3–5 orang',
@@ -28,15 +9,14 @@ const GUEST_OPTIONS = [
   'Grup (lebih dari 10)',
 ];
 
-// Informasi restoran untuk ditampilkan di bawah form
 const RESTO_INFO = [
   { icon: '📍', text: 'Jl. Cipoho No.1, Ciamis, Jawa Barat' },
-  { icon: '🕐', text: 'Operasional: 10:00 – 22:00 WIB (Setiap Hari)' },
+  { icon: '🕐', text: 'Senin – Jumat: 11:00 – 21:00 WIB' },
+  { icon: '🕑', text: 'Sabtu – Minggu dan tanggal merah: 10:00 – 21:00 WIB' },
   { icon: '🅿️', text: 'Parkir tersedia untuk pelanggan' },
-  { icon: '📞', text: '0812-3456-7890 (WhatsApp)' },
+  { icon: '📞', text: '0815-7215-5275 (WhatsApp)' },
 ];
 
-/** Nilai awal form */
 const INITIAL_FORM = {
   nama:    '',
   phone:   '',
@@ -52,11 +32,6 @@ export default function ReservasiPage() {
   const [previewMsg,   setPreviewMsg]   = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  /**
-   * handleChange — Update nilai satu field form dan hapus errornya
-   * @param {string} field - Nama field
-   * @param {string} value - Nilai baru
-   */
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     // Hapus error field yang baru diisi
@@ -67,10 +42,6 @@ export default function ReservasiPage() {
     setPreviewMsg('');
   };
 
-  /**
-   * validateForm — Validasi semua field wajib
-   * @returns {object} errors - Object berisi pesan error per field
-   */
   const validateForm = () => {
     const e = {};
     if (!formData.nama.trim())    e.nama    = 'Nama lengkap wajib diisi';
@@ -80,11 +51,6 @@ export default function ReservasiPage() {
     return e;
   };
 
-  /**
-   * buildMessage — Buat pesan WhatsApp otomatis dari data form
-   * Format: "Halo Ale's Place Cipoho, saya [Nama] ingin reservasi untuk
-   *          [Jumlah] pada [Tanggal] pukul [Jam]."
-   */
   const buildMessage = () => {
     let msg =
       `Halo Ale's Place Cipoho, saya ${formData.nama} ingin reservasi ` +
@@ -99,9 +65,6 @@ export default function ReservasiPage() {
     return msg;
   };
 
-  /**
-   * handleSubmit — Validasi form, tampilkan preview, lalu redirect ke WhatsApp
-   */
   const handleSubmit = () => {
     // 1. Validasi
     const validationErrors = validateForm();
@@ -129,7 +92,6 @@ export default function ReservasiPage() {
 
   return (
     <div>
-      {/* ── HERO ── */}
       <div style={styles.hero}>
         <div style={styles.mascot}>🧑‍🍳</div>
         <h2 style={styles.heroTitle}>Form Reservasi</h2>
@@ -140,7 +102,6 @@ export default function ReservasiPage() {
 
       <div style={styles.formWrap}>
 
-        {/* ── ROW 1: Nama & No HP ── */}
         <div style={styles.row}>
           <div style={styles.formGroup}>
             <label style={styles.label}>Nama Lengkap</label>
@@ -172,7 +133,6 @@ export default function ReservasiPage() {
           </div>
         </div>
 
-        {/* ── ROW 2: Tanggal & Jam ── */}
         <div style={styles.row}>
           <div style={styles.formGroup}>
             <label style={styles.label}>Tanggal</label>
@@ -204,7 +164,6 @@ export default function ReservasiPage() {
           </div>
         </div>
 
-        {/* ── JUMLAH TAMU ── */}
         <div style={{ ...styles.formGroup, marginBottom: 14 }}>
           <label style={styles.label}>Jumlah Tamu</label>
           <select
@@ -219,7 +178,6 @@ export default function ReservasiPage() {
           <span style={styles.hint}>Jika lebih dari 10, pilih "Grup"</span>
         </div>
 
-        {/* ── CATATAN TAMBAHAN ── */}
         <div style={{ ...styles.formGroup, marginBottom: 20 }}>
           <label style={styles.label}>Catatan Tambahan (Opsional)</label>
           <textarea
@@ -230,7 +188,6 @@ export default function ReservasiPage() {
           />
         </div>
 
-        {/* ── PREVIEW PESAN WHATSAPP ── */}
         {previewMsg && (
           <div style={styles.waPreview}>
             <div style={styles.waHeader}>
@@ -241,7 +198,6 @@ export default function ReservasiPage() {
           </div>
         )}
 
-        {/* ── TOMBOL SUBMIT ── */}
         <button
           style={{
             ...styles.submitBtn,
@@ -254,7 +210,6 @@ export default function ReservasiPage() {
           {isSubmitting ? 'Membuka WhatsApp...' : 'Konfirmasi Reservasi via WhatsApp'}
         </button>
 
-        {/* ── INFO LOKASI ── */}
         <div style={styles.infoBox}>
           <h4 style={styles.infoTitle}>ℹ️ Informasi Lokasi</h4>
           {RESTO_INFO.map((info, i) => (
@@ -265,7 +220,6 @@ export default function ReservasiPage() {
           ))}
         </div>
 
-        {/* ── PETA PLACEHOLDER ── */}
         <div style={styles.mapBox}>
           <span style={{ fontSize: 36 }}>🗺️</span>
           <p style={styles.mapTitle}>Lokasi strategis dekat pusat kota.</p>
@@ -279,10 +233,9 @@ export default function ReservasiPage() {
   );
 }
 
-/* ── Styles ── */
 const styles = {
   hero: {
-    background: 'linear-gradient(135deg, #C0392B, #8B2018)',
+    background: 'linear-gradient(135deg, #DA251C, #8F1D1B)',
     padding: '40px 24px',
     textAlign: 'center',
     display: 'flex',
@@ -331,17 +284,17 @@ const styles = {
   input: {
     width: '100%',
     padding: '12px 14px',
-    border: '2px solid #E8D5B7',
+    border: '2px solid #F0E8E2',
     borderRadius: 10,
-    background: '#FDF8EF',
+    background: '#FAF6F9',
     fontFamily: "'DM Sans', sans-serif",
     fontSize: 14,
-    color: '#2C1810',
+    color: '#100A09',
     outline: 'none',
     transition: 'border 0.2s',
   },
   inputError: {
-    borderColor: '#C0392B',
+    borderColor: '#DA251C',
   },
   hint: {
     fontSize: 11,
@@ -349,7 +302,7 @@ const styles = {
   },
   errorMsg: {
     fontSize: 11,
-    color: '#C0392B',
+    color: '#DA251C',
     fontWeight: 600,
   },
 
@@ -373,13 +326,13 @@ const styles = {
     borderRadius: 8,
     padding: '10px 12px',
     fontSize: 13,
-    color: '#2C1810',
+    color: '#100A09',
     lineHeight: 1.6,
   },
 
   submitBtn: {
     width: '100%',
-    background: 'linear-gradient(135deg, #C0392B, #8B2018)',
+    background: 'linear-gradient(135deg, #DA251C, #8F1D1B)',
     color: 'white',
     border: 'none',
     padding: 16,
@@ -397,16 +350,16 @@ const styles = {
   },
 
   infoBox: {
-    background: '#FDF8EF',
+    background: '#FAF6F9',
     borderRadius: 12,
     padding: 16,
-    border: '1px solid rgba(212,168,67,0.3)',
+    border: '1px solid rgba(218,127,28,0.3)',
     marginBottom: 20,
   },
   infoTitle: {
     fontSize: 14,
     fontWeight: 700,
-    color: '#2C1810',
+    color: '#100A09',
     marginBottom: 12,
     fontFamily: "'DM Sans', sans-serif",
   },
@@ -422,7 +375,7 @@ const styles = {
   },
 
   mapBox: {
-    background: '#E8D5B7',
+    background: '#F0E8E2',
     borderRadius: 12,
     height: 180,
     display: 'flex',
@@ -430,7 +383,7 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    border: '1px solid #D4A843',
+    border: '1px solid #DA7F1C',
     textAlign: 'center',
     padding: '0 24px',
     marginBottom: 8,
@@ -438,7 +391,7 @@ const styles = {
   mapTitle: {
     fontWeight: 700,
     fontSize: 14,
-    color: '#2C1810',
+    color: '#100A09',
   },
   mapSub: {
     fontSize: 12,

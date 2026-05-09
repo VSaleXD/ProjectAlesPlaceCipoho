@@ -1,20 +1,6 @@
-/**
- * HomePage.jsx — Halaman Beranda Ale's Place Cipoho
- *
- * Sections:
- *  1. Hero banner dengan CTA
- *  2. Carousel suasana restoran (Atmosphere Gallery)
- *  3. Tentang Ale's Place (3 highlight cards)
- *  4. Kenapa Ale's Place? (3 alasan)
- *  5. Best Seller preview (3 menu)
- *  6. Peta lokasi placeholder
- *  7. Kontak & Jam Operasional
- */
-
 import React, { useState, useEffect } from 'react';
 import { getBestSellers, formatRupiah } from '../data/menu';
 
-/* ── Data Carousel Suasana ── */
 const ATMOSPHERE_SLIDES = [
   {
     emoji: '☕',
@@ -42,7 +28,6 @@ const ATMOSPHERE_SLIDES = [
   },
 ];
 
-/* ── Data Kontak ── */
 const CONTACT_INFO = [
   { icon: '📞', label: 'Telepon',          value: '0812-3456-7890' },
   { icon: '📧', label: 'Email',            value: 'alescafe@gmail.com' },
@@ -50,7 +35,6 @@ const CONTACT_INFO = [
   { icon: '📍', label: 'Lokasi',           value: 'Jl. Cipoho No.1, Ciamis, Jawa Barat' },
 ];
 
-/* ── Data Keunggulan ── */
 const WHY_US = [
   {
     emoji: '🏷️',
@@ -70,28 +54,23 @@ const WHY_US = [
 ];
 
 export default function HomePage({ setPage }) {
-  // State untuk slide carousel aktif
   const [activeSlide, setActiveSlide] = useState(0);
   const totalSlides = ATMOSPHERE_SLIDES.length;
 
-  // Auto-play carousel setiap 3 detik
   useEffect(() => {
     const timer = setInterval(() => {
       setActiveSlide((prev) => (prev + 1) % totalSlides);
     }, 3000);
-    return () => clearInterval(timer); // cleanup
+    return () => clearInterval(timer);
   }, [totalSlides]);
 
-  // Handler navigasi carousel
   const prevSlide = () => setActiveSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
   const nextSlide = () => setActiveSlide((prev) => (prev + 1) % totalSlides);
 
-  // Ambil 3 menu bestseller untuk preview
   const bestSellers = getBestSellers().slice(0, 3);
 
   return (
     <div>
-      {/* ── 1. HERO SECTION ── */}
       <section style={styles.hero}>
         <div style={styles.heroBadge}>✨ Student &amp; Community Friendly</div>
         <h1 style={styles.heroTitle}>
@@ -112,7 +91,6 @@ export default function HomePage({ setPage }) {
 
       <div className="section">
 
-        {/* ── 2. ATMOSPHERE GALLERY (CAROUSEL) ── */}
         <h2 className="section-title" style={{ marginBottom: 6 }}>Suasana Ale's Place</h2>
         <p className="section-sub">Rasakan kenyamanan tempat nongkrong favoritmu</p>
 
@@ -133,11 +111,10 @@ export default function HomePage({ setPage }) {
             </div>
           ))}
 
-          {/* Tombol prev/next */}
+
           <button style={{ ...styles.carouselBtn, left: 10 }} onClick={prevSlide} aria-label="Slide sebelumnya">‹</button>
           <button style={{ ...styles.carouselBtn, right: 10 }} onClick={nextSlide} aria-label="Slide berikutnya">›</button>
 
-          {/* Dot indicators */}
           <div style={styles.dots}>
             {ATMOSPHERE_SLIDES.map((_, i) => (
               <div
@@ -152,7 +129,6 @@ export default function HomePage({ setPage }) {
           </div>
         </div>
 
-        {/* ── 3. TENTANG ALE'S PLACE ── */}
         <h2 className="section-title">Tentang Ale's Place Cipoho</h2>
         <p className="section-sub">Restoran Jepang lokal dengan nuansa hangat dan harga terjangkau</p>
 
@@ -170,7 +146,6 @@ export default function HomePage({ setPage }) {
           ))}
         </div>
 
-        {/* ── 4. KENAPA ALE'S PLACE? ── */}
         <h2 className="section-title" style={{ marginTop: 24 }}>Kenapa Ale's Place?</h2>
         <p className="section-sub">Tiga alasan utama pelanggan setia kami</p>
 
@@ -186,7 +161,6 @@ export default function HomePage({ setPage }) {
           ))}
         </div>
 
-        {/* ── 5. BEST SELLER PREVIEW ── */}
         <h2 className="section-title" style={{ marginTop: 32 }}>Our Best Seller Menu</h2>
         <p className="section-sub">Menu favorit pelanggan setia kami</p>
 
@@ -205,21 +179,19 @@ export default function HomePage({ setPage }) {
 
         <div style={{ textAlign: 'center', marginTop: 16, marginBottom: 32 }}>
           <button
-            style={{ ...styles.btnYellow, background: '#C0392B', color: 'white' }}
+            style={{ ...styles.btnYellow, background: '#DA251C', color: 'white' }}
             onClick={() => setPage('menu')}
           >
             Lihat Semua Menu →
           </button>
         </div>
 
-        {/* ── 6. PETA LOKASI ── */}
         <div style={styles.mapPlaceholder}>
           <span style={{ fontSize: 32 }}>📍</span>
-          <p style={{ fontWeight: 700, fontSize: 14, color: '#2C1810' }}>Lokasi Ale's Place Cipoho</p>
+          <p style={{ fontWeight: 700, fontSize: 14, color: '#100A09' }}>Lokasi Ale's Place Cipoho</p>
           <p style={{ fontSize: 13, color: '#666' }}>Jl. Cipoho No.1, Ciamis, Jawa Barat</p>
         </div>
 
-        {/* ── 7. KONTAK & JAM OPERASIONAL ── */}
         <h2 className="section-title">Kontak &amp; Jam Operasional</h2>
 
         <div style={styles.contactGrid}>
@@ -241,11 +213,9 @@ export default function HomePage({ setPage }) {
   );
 }
 
-/* ── Styles ── */
 const styles = {
-  /* Hero */
   hero: {
-    background: 'linear-gradient(135deg, #C0392B 0%, #8B2018 100%)',
+    background: 'linear-gradient(135deg, #DA251C 0%, #8F1D1B 100%)',
     padding: '60px 24px',
     textAlign: 'center',
     position: 'relative',
@@ -285,8 +255,8 @@ const styles = {
     flexWrap: 'wrap',
   },
   btnYellow: {
-    background: '#F5D97A',
-    color: '#2C1810',
+    background: '#FFE400',
+    color: '#100A09',
     border: 'none',
     padding: '12px 24px',
     borderRadius: 25,
@@ -311,14 +281,13 @@ const styles = {
     cursor: 'pointer',
   },
 
-  /* Carousel */
   carousel: {
     position: 'relative',
     overflow: 'hidden',
     borderRadius: 16,
     marginBottom: 36,
     height: 200,
-    background: '#E8D5B7',
+    background: '#F0E8E2',
   },
   carouselSlide: {
     position: 'absolute',
@@ -332,13 +301,13 @@ const styles = {
     textAlign: 'center',
   },
   slideEmoji: { fontSize: 48, marginBottom: 8, display: 'block' },
-  slideTitle: { fontWeight: 700, fontSize: 15, color: '#2C1810', marginBottom: 4 },
+  slideTitle: { fontWeight: 700, fontSize: 15, color: '#100A09', marginBottom: 4 },
   slideDesc:  { fontSize: 13, color: '#666', lineHeight: 1.5 },
   carouselBtn: {
     position: 'absolute',
     top: '50%',
     transform: 'translateY(-50%)',
-    background: 'rgba(192,57,43,0.8)',
+    background: 'rgba(218,37,28,0.8)',
     color: 'white',
     border: 'none',
     width: 36,
@@ -381,14 +350,14 @@ const styles = {
     marginBottom: 32,
   },
   aboutCard: {
-    background: '#FDF8EF',
+    background: '#FAF6F9',
     borderRadius: 12,
     padding: '18px 14px',
     textAlign: 'center',
-    border: '1px solid rgba(212,168,67,0.3)',
+    border: '1px solid rgba(218,127,28,0.3)',
   },
   aboutEmoji: { fontSize: 30, marginBottom: 8 },
-  aboutTitle: { fontSize: 13, fontWeight: 700, color: '#2C1810', marginBottom: 4, fontFamily: "'DM Sans', sans-serif" },
+  aboutTitle: { fontSize: 13, fontWeight: 700, color: '#100A09', marginBottom: 4, fontFamily: "'DM Sans', sans-serif" },
   aboutDesc:  { fontSize: 12, color: '#666', lineHeight: 1.4 },
 
   /* Why Grid */
@@ -402,14 +371,14 @@ const styles = {
   whyCircle: {
     width: 88,
     height: 88,
-    background: '#F5D97A',
+    background: '#FFE400',
     borderRadius: '50%',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     margin: '0 auto 10px',
   },
-  whyTitle: { fontSize: 12, fontWeight: 700, color: '#2C1810', marginBottom: 4, fontFamily: "'DM Sans', sans-serif" },
+  whyTitle: { fontSize: 12, fontWeight: 700, color: '#100A09', marginBottom: 4, fontFamily: "'DM Sans', sans-serif" },
   whyDesc:  { fontSize: 11, color: '#666', lineHeight: 1.4 },
 
   /* Best Seller Grid */
@@ -419,20 +388,20 @@ const styles = {
     gap: 12,
   },
   bsCard: {
-    background: '#FDF8EF',
+    background: '#FAF6F9',
     borderRadius: 12,
     overflow: 'hidden',
-    border: '1px solid rgba(212,168,67,0.3)',
+    border: '1px solid rgba(218,127,28,0.3)',
   },
-  bsImg:   { background: '#E8D5B7', height: 90, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 36 },
+  bsImg:   { background: '#F0E8E2', height: 90, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 36 },
   bsInfo:  { padding: 10 },
-  bsName:  { fontSize: 11, fontWeight: 700, color: '#2C1810', marginBottom: 3, fontFamily: "'DM Sans', sans-serif" },
-  bsPrice: { fontSize: 11, color: '#C0392B', fontWeight: 700 },
+  bsName:  { fontSize: 11, fontWeight: 700, color: '#100A09', marginBottom: 3, fontFamily: "'DM Sans', sans-serif" },
+  bsPrice: { fontSize: 11, color: '#DA251C', fontWeight: 700 },
   bsDesc:  { fontSize: 10, color: '#888', marginTop: 2, lineHeight: 1.4 },
 
   /* Map */
   mapPlaceholder: {
-    background: '#E8D5B7',
+    background: '#F0E8E2',
     borderRadius: 12,
     height: 160,
     display: 'flex',
@@ -440,7 +409,7 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    border: '1px solid #D4A843',
+    border: '1px solid #DA7F1C',
     marginBottom: 28,
   },
 
@@ -450,15 +419,15 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: 14,
-    background: '#FDF8EF',
+    background: '#FAF6F9',
     padding: '14px 16px',
     borderRadius: 10,
-    border: '1px solid rgba(212,168,67,0.2)',
+    border: '1px solid rgba(218,127,28,0.2)',
   },
   contactIcon: {
     width: 38,
     height: 38,
-    background: '#C0392B',
+    background: '#DA251C',
     borderRadius: '50%',
     display: 'flex',
     alignItems: 'center',
@@ -477,7 +446,7 @@ const styles = {
   },
   contactValue: {
     fontSize: 14,
-    color: '#2C1810',
+    color: '#100A09',
     fontWeight: 500,
   },
 };

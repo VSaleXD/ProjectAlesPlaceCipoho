@@ -1,12 +1,4 @@
-/**
- * Navbar.jsx — Komponen navigasi utama
- * Menampilkan logo, nama brand, dan link navigasi antar halaman.
- * Menggunakan props `page` (halaman aktif) dan `setPage` (fungsi navigasi).
- */
-
 import React from 'react';
-
-// Daftar item navigasi: [key halaman, label tampilan]
 const NAV_ITEMS = [
   ['home',      'Beranda'],
   ['menu',      'Menu'],
@@ -16,7 +8,6 @@ const NAV_ITEMS = [
 export default function Navbar({ page, setPage }) {
   return (
     <nav style={styles.nav}>
-      {/* Logo & Brand */}
       <div
         style={styles.logoWrap}
         onClick={() => setPage('home')}
@@ -29,7 +20,6 @@ export default function Navbar({ page, setPage }) {
         <span style={styles.brandName}>Ale's Place Cipoho</span>
       </div>
 
-      {/* Navigation Links */}
       <div style={styles.navLinks}>
         {NAV_ITEMS.map(([key, label]) => (
           <button
@@ -48,10 +38,9 @@ export default function Navbar({ page, setPage }) {
   );
 }
 
-/* Inline styles — pisahkan ke Navbar.module.css jika proyek besar */
 const styles = {
   nav: {
-    background: '#F5D97A',
+    background: '#FFE400',
     padding: '12px 24px',
     display: 'flex',
     alignItems: 'center',
@@ -59,7 +48,7 @@ const styles = {
     position: 'sticky',
     top: 0,
     zIndex: 100,
-    borderBottom: '2px solid #D4A843',
+    borderBottom: '2px solid #DA7F1C',
   },
   logoWrap: {
     display: 'flex',
@@ -70,7 +59,7 @@ const styles = {
   logoCircle: {
     width: 40,
     height: 40,
-    background: '#C0392B',
+    background: '#DA251C',
     borderRadius: '50%',
     display: 'flex',
     alignItems: 'center',
@@ -85,7 +74,7 @@ const styles = {
     fontFamily: "'Playfair Display', serif",
     fontSize: 16,
     fontWeight: 700,
-    color: '#2C1810',
+    color: '#100A09',
   },
   navLinks: {
     display: 'flex',
@@ -100,11 +89,11 @@ const styles = {
     fontSize: 13,
     fontWeight: 500,
     cursor: 'pointer',
-    color: '#2C1810',
+    color: '#100A09',
     transition: 'all 0.2s',
   },
   navLinkActive: {
-    background: '#C0392B',
+    background: '#DA251C',
     color: 'white',
   },
 };
