@@ -33,7 +33,6 @@ export const menuData = [
     harga: 44000,
     kategori: 'Best Seller',
     deskripsi: 'Dumpling dengan isi daging dan sayuran, disajikan rebus',
-    emoji: '🥟',
     bestseller: true,
   },
   {
@@ -42,7 +41,6 @@ export const menuData = [
     harga: 88000,
     kategori: 'Best Seller',
     deskripsi: 'Ramen kuah pedas kaldu ayam premium dengan telur omega',
-    emoji: '🍜',
     bestseller: true,
   },
   {
@@ -51,7 +49,6 @@ export const menuData = [
     harga: 53000,
     kategori: 'Best Seller',
     deskripsi: 'Dessert puding lembut dengan boba dan es krim greentea',
-    emoji: '🍨',
     bestseller: true,
   },
   {
@@ -60,7 +57,6 @@ export const menuData = [
     harga: 60000,
     kategori: 'Best Seller',
     deskripsi: 'Ramen kuah pedas dengan daging sapi empuk',
-    emoji: '🍜',
     bestseller: true,
   },
   {
@@ -69,7 +65,6 @@ export const menuData = [
     harga: 53000,
     kategori: 'Best Seller',
     deskripsi: 'Ramen dengan chicken katsu renyah dan kuah soyu ori',
-    emoji: '🍜',
     bestseller: true,
   },
   {
@@ -78,7 +73,6 @@ export const menuData = [
     harga: 56000,
     kategori: 'Best Seller',
     deskripsi: 'Ramen creamy kuah susu dengan smoked beef premium',
-    emoji: '🍜',
     bestseller: true,
   },
   {
@@ -87,7 +81,6 @@ export const menuData = [
     harga: 44000,
     kategori: 'Best Seller',
     deskripsi: 'Minuman blended mangga dengan topping boba mangga',
-    emoji: '🥤',
     bestseller: true,
   },
 
@@ -98,7 +91,6 @@ export const menuData = [
     harga: 44000,
     kategori: 'Sushi',
     deskripsi: 'Nasi lembut dengan telur tamago, keju creamy',
-    emoji: '🍣',
   },
   {
     id: 9,
@@ -106,7 +98,6 @@ export const menuData = [
     harga: 44000,
     kategori: 'Sushi',
     deskripsi: 'Nasi hangat dengan crab stick dan mayones creamy',
-    emoji: '🍣',
   },
   {
     id: 10,
@@ -114,7 +105,6 @@ export const menuData = [
     harga: 44000,
     kategori: 'Sushi',
     deskripsi: 'Nasi lembut dengan salmon, crabstik, crispy kremesan',
-    emoji: '🍣',
   },
   {
     id: 11,
@@ -122,7 +112,6 @@ export const menuData = [
     harga: 53000,
     kategori: 'Sushi',
     deskripsi: 'Nasi dengan daging sapi fresh, mayo, keju mozarella',
-    emoji: '🍣',
   },
   {
     id: 12,
@@ -130,7 +119,6 @@ export const menuData = [
     harga: 53000,
     kategori: 'Sushi',
     deskripsi: 'Sirloin sapi dengan saus mentai pedas dan keju mozarella',
-    emoji: '🍣',
   },
 
   // Gunkan Sushi
@@ -140,7 +128,6 @@ export const menuData = [
     harga: 36000,
     kategori: 'Sushi',
     deskripsi: 'Nasi lembut dengan sosis BBQ marinasi dan saus sweet savory',
-    emoji: '🍣',
   },
   {
     id: 14,
@@ -148,7 +135,6 @@ export const menuData = [
     harga: 36000,
     kategori: 'Sushi',
     deskripsi: 'Nasi sushi dengan crabstik dan keju creamy yang lumer',
-    emoji: '🍣',
   },
   {
     id: 15,
@@ -156,7 +142,6 @@ export const menuData = [
     harga: 36000,
     kategori: 'Sushi',
     deskripsi: 'Nasi sushi dengan tuna pilihan dan saus mayo creamy',
-    emoji: '🍣',
   },
   {
     id: 16,
@@ -164,7 +149,6 @@ export const menuData = [
     harga: 36000,
     kategori: 'Sushi',
     deskripsi: 'Nasi sushi dengan salmon dan keju creamy yang lumer',
-    emoji: '🍣',
   },
   {
     id: 17,
@@ -172,7 +156,6 @@ export const menuData = [
     harga: 36000,
     kategori: 'Sushi',
     deskripsi: 'Nasi sushi dengan ayam katsu dan keju creamy',
-    emoji: '🍣',
   },
   {
     id: 18,
@@ -180,7 +163,6 @@ export const menuData = [
     harga: 36000,
     kategori: 'Sushi',
     deskripsi: 'Nasi sushi dengan crabstik dan saus mentai creamy',
-    emoji: '🍣',
   },
 
   // Risoldut
@@ -190,7 +172,6 @@ export const menuData = [
     harga: 48000,
     kategori: 'Snack',
     deskripsi: 'Risol dengan ayam suwir, sayur, dan saus creamy',
-    emoji: '🍩',
   },
   {
     id: 20,
@@ -198,7 +179,6 @@ export const menuData = [
     harga: 50000,
     kategori: 'Snack',
     deskripsi: 'Risol dengan isian jandi cincang dan bumbu rempah khas',
-    emoji: '🍩',
   },
   {
     id: 21,
@@ -206,7 +186,6 @@ export const menuData = [
     harga: 50000,
     kategori: 'Snack',
     deskripsi: 'Risol dengan smoked beef, keju, telur, dan saus keju',
-    emoji: '🍩',
   },
   {
     id: 22,
@@ -214,7 +193,6 @@ export const menuData = [
     harga: 61000,
     kategori: 'Snack',
     deskripsi: 'Risol dengan ayam suwir bumbu pedas yang gurih',
-    emoji: '🍩',
   },
   {
     id: 23,
@@ -222,7 +200,6 @@ export const menuData = [
     harga: 49000,
     kategori: 'Snack',
     deskripsi: 'Risol frozen dengan ayam suwir dan saus creamy',
-    emoji: '🍩',
   },
   {
     id: 24,
@@ -230,7 +207,6 @@ export const menuData = [
     harga: 49000,
     kategori: 'Snack',
     deskripsi: 'Risol frozen dengan isian jandi cincang',
-    emoji: '🍩',
   },
   {
     id: 25,
