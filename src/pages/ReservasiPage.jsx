@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ICON_PHOTOS } from '../data/photos';
 
 const API_URL = 'http://localhost:3001/api/reservasi';
 
@@ -10,11 +11,10 @@ const GUEST_OPTIONS = [
 ];
 
 const RESTO_INFO = [
-  { icon: '📍', text: 'Jl. Cipoho No.1, Ciamis, Jawa Barat' },
-  { icon: '🕐', text: 'Senin – Jumat: 11:00 – 21:00 WIB' },
-  { icon: '🕑', text: 'Sabtu – Minggu dan tanggal merah: 10:00 – 21:00 WIB' },
-  { icon: '🅿️', text: 'Parkir tersedia untuk pelanggan' },
-  { icon: '📞', text: '0815-7215-5275 (WhatsApp)' },
+  { text: 'Perumahan Cipoho Indah, Jl. Gamelan No.2, Cikondang, Kec. Citamiang, Kota Sukabumi, Jawa Barat 43142' },
+  { text: 'Senin – Jumat: 11:00 – 21:00 WIB' },
+  { text: 'Sabtu – Minggu dan tanggal merah: 10:00 – 21:00 WIB' },
+  {  text: '0815-7215-5275 (WhatsApp)' },
 ];
 
 const INITIAL_FORM = {
@@ -111,7 +111,6 @@ export default function ReservasiPage() {
   return (
     <div>
       <div style={styles.hero}>
-        <div style={styles.mascot}>🧑‍🍳</div>
         <h2 style={styles.heroTitle}>Form Reservasi</h2>
         <p style={styles.heroDesc}>
           Isi data berikut. Kami akan mengarahkan Anda ke WhatsApp setelah konfirmasi.
@@ -226,7 +225,6 @@ export default function ReservasiPage() {
         {previewMsg && (
           <div style={styles.waPreview}>
             <div style={styles.waHeader}>
-              <span>💬</span>
               <span>Preview pesan WhatsApp</span>
             </div>
             <div style={styles.waBubble}>{previewMsg}</div>
@@ -247,22 +245,20 @@ export default function ReservasiPage() {
           onClick={handleSubmit}
           disabled={isSubmitting}
         >
-          <span>📱</span>
           {isSubmitting ? 'Membuka WhatsApp...' : 'Konfirmasi Reservasi via WhatsApp'}
         </button>
 
         <div style={styles.infoBox}>
-          <h4 style={styles.infoTitle}>ℹ️ Informasi Lokasi</h4>
+          <h4 style={styles.infoTitle}> Informasi Lokasi</h4>
           {RESTO_INFO.map((info, i) => (
             <div key={i} style={styles.infoRow}>
-              <span style={{ fontSize: 16 }}>{info.icon}</span>
               <span style={styles.infoText}>{info.text}</span>
             </div>
           ))}
         </div>
 
         <div style={styles.mapBox}>
-          <span style={{ fontSize: 36 }}>🗺️</span>
+          <img src={ICON_PHOTOS.location} alt="Peta lokasi" style={styles.mapIcon} />
           <p style={styles.mapTitle}>Lokasi strategis dekat pusat kota.</p>
           <p style={styles.mapSub}>Datang 10–15 menit sebelum waktu reservasi. Parkir tersedia.</p>
         </div>
@@ -284,7 +280,6 @@ const styles = {
     alignItems: 'center',
     gap: 10,
   },
-  mascot:    { fontSize: 56 },
   heroTitle: {
     fontFamily: "'Playfair Display', serif",
     fontSize: 26,
@@ -362,6 +357,7 @@ const styles = {
     fontWeight: 600,
     marginBottom: 10,
   },
+  headerIcon: { width: 16, height: 16, objectFit: 'cover', borderRadius: 999 },
   waBubble: {
     background: '#DCF8C6',
     borderRadius: 8,
@@ -389,6 +385,7 @@ const styles = {
     transition: 'all 0.2s',
     marginBottom: 24,
   },
+  buttonIcon: { width: 18, height: 18, objectFit: 'cover', borderRadius: 999 },
 
   infoBox: {
     background: '#FAF6F9',
@@ -404,12 +401,14 @@ const styles = {
     marginBottom: 12,
     fontFamily: "'DM Sans', sans-serif",
   },
+  titleIcon: { width: 16, height: 16, objectFit: 'cover', borderRadius: 999, verticalAlign: 'text-bottom', marginRight: 6 },
   infoRow: {
     display: 'flex',
     alignItems: 'center',
     gap: 10,
     marginBottom: 8,
   },
+  rowIcon: { width: 16, height: 16, objectFit: 'cover', borderRadius: 999, flexShrink: 0 },
   infoText: {
     fontSize: 13,
     color: '#444',
@@ -438,4 +437,5 @@ const styles = {
     fontSize: 12,
     color: '#666',
   },
+  mapIcon: { width: 38, height: 38, objectFit: 'cover', borderRadius: 12 },
 };

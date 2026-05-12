@@ -1,56 +1,68 @@
 import React, { useEffect, useState } from 'react';
 import { menuData, formatRupiah } from '../data/menu';
-import { fetchMenu } from '../lib/menuApi';
+import { SITE_PHOTOS, getMenuImage } from '../data/photos';
 
 const ATMOSPHERE_SLIDES = [
   {
-    emoji: '☕',
     title: 'Spot Belajar Favorit',
     desc: 'WiFi kencang, colokan tersedia di setiap meja untuk produktivitasmu',
     bg: '#E8D5B7',
+    image: SITE_PHOTOS.atmosphere[0],
   },
   {
-    emoji: '🌿',
     title: 'Suasana Cozy & Hangat',
     desc: 'Interior dengan pencahayaan warm yang bikin betah berlama-lama',
     bg: '#DDD0B8',
+    image: SITE_PHOTOS.atmosphere[1],
   },
   {
-    emoji: '🎵',
     title: 'Musik Santai Sepanjang Hari',
     desc: 'Playlist lofi & jazz pilihan untuk menemani waktu santaimu',
     bg: '#E5D6C0',
+    image: SITE_PHOTOS.atmosphere[2],
   },
   {
-    emoji: '🤝',
     title: 'Promo Mahasiswa',
     desc: 'Student Specials — promo mingguan khusus mahasiswa aktif',
     bg: '#EAD9C2',
+    image: SITE_PHOTOS.atmosphere[3],
   },
 ];
 
 const CONTACT_INFO = [
-  { icon: '📞', label: 'Telepon',          value: '0812-3456-7890' },
-  { icon: '📧', label: 'Email',            value: 'alescafe@gmail.com' },
-  { icon: '🕐', label: 'Jam Operasional',  value: '10:00 – 22:00 WIB (Setiap Hari)' },
-  { icon: '📍', label: 'Lokasi',           value: 'Jl. Cipoho No.1, Ciamis, Jawa Barat' },
+  {
+    image: SITE_PHOTOS.map,
+    text: 'Perumahan Cipoho Indah, Jl. Gamelan No.2, Cikondang, Kec. Citamiang, Kota Sukabumi, Jawa Barat 43142',
+  },
+  {
+    image: SITE_PHOTOS.about[0],
+    text: 'Senin – Jumat: 11:00 – 21:00 WIB',
+  },
+  {
+    image: SITE_PHOTOS.about[1],
+    text: 'Sabtu – Minggu dan tanggal merah: 10:00 – 21:00 WIB',
+  },
+  {
+    image: SITE_PHOTOS.about[2],
+    text: '0815-7215-5275 (WhatsApp)',
+  },
 ];
 
 const WHY_US = [
   {
-    emoji: '🏷️',
     title: 'Harga Terjangkau',
     desc: 'Mulai dari Rp18.000 untuk hidangan berkualitas premium',
+    image: SITE_PHOTOS.why[0],
   },
   {
-    emoji: '🛋️',
     title: 'Nyaman',
     desc: 'Tempat duduk luas dengan suasana santai dan cozy',
+    image: SITE_PHOTOS.why[1],
   },
   {
-    emoji: '😋',
     title: 'Enak',
     desc: 'Menu Jepang otentik dengan cita rasa yang disukai lokal',
+    image: SITE_PHOTOS.why[2],
   },
 ];
 
@@ -63,24 +75,12 @@ export default function HomePage({ setPage }) {
     const timer = setInterval(() => {
       setActiveSlide((prev) => (prev + 1) % totalSlides);
     }, 3000);
+
     return () => clearInterval(timer);
   }, [totalSlides]);
 
   useEffect(() => {
-    let isMounted = true;
-
-    const loadMenu = async () => {
-      const data = await fetchMenu();
-      if (isMounted) {
-        setMenuItems(data);
-      }
-    };
-
-    loadMenu();
-
-    return () => {
-      isMounted = false;
-    };
+    setMenuItems(menuData);
   }, []);
 
   const prevSlide = () => setActiveSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
@@ -92,93 +92,90 @@ export default function HomePage({ setPage }) {
     <div>
       <section style={styles.hero}>
         <div className="hero-overlay" />
+        <div style={styles.heroPhotoWrap}>
+          <img src={SITE_PHOTOS.hero} alt="Ale's Place Cipoho" style={styles.heroPhoto} />
+        </div>
         <div style={{ position: 'relative', zIndex: 1 }}>
-          <div style={styles.heroBadge}>Restoran Jepang halal sukabumi </div>
+          <div style={styles.heroBadge}>Restoran Jepang halal Sukabumi</div>
           <h1 style={styles.heroTitle}>
-            Selamat Datang di<br />Ale's Place Cipoho
+            Selamat Datang di<br />Ale&apos;s Place Cipoho
           </h1>
           <p style={styles.heroDesc}>
             Tempat nongkrong, belajar, dan makan enak dengan harga yang bersahabat
           </p>
           <div style={styles.heroBtns}>
-            <button style={styles.btnYellow} onClick={() => setPage('menu')}>
-              🍜 Lihat Menu
-            </button>
-            <button style={styles.btnOutline} onClick={() => setPage('reservasi')}>
-              📅 Reservasi
-            </button>
+            <button style={styles.btnYellow} onClick={() => setPage('menu')}>Lihat Menu</button>
+            <button style={styles.btnOutline} onClick={() => setPage('reservasi')}>Reservasi</button>
           </div>
         </div>
       </section>
 
       <div className="section">
-
-        <h2 className="section-title" style={{ marginBottom: 6 }}>Suasana Ale's Place</h2>
+        <h2 className="section-title" style={{ marginBottom: 6 }}>Suasana Ale&apos;s Place</h2>
         <p className="section-sub">Rasakan kenyamanan tempat nongkrong favoritmu</p>
 
         <div style={styles.carousel}>
-          {ATMOSPHERE_SLIDES.map((slide, i) => (
+          {ATMOSPHERE_SLIDES.map((slide, index) => (
             <div
-              key={i}
+              key={slide.title}
               style={{
                 ...styles.carouselSlide,
                 background: slide.bg,
-                opacity: i === activeSlide ? 1 : 0,
-                pointerEvents: i === activeSlide ? 'auto' : 'none',
+                opacity: index === activeSlide ? 1 : 0,
+                pointerEvents: index === activeSlide ? 'auto' : 'none',
               }}
             >
-              <span style={styles.slideEmoji}>{slide.emoji}</span>
+              <img src={slide.image} alt={slide.title} style={styles.slideImage} />
               <p style={styles.slideTitle}>{slide.title}</p>
               <p style={styles.slideDesc}>{slide.desc}</p>
             </div>
           ))}
 
-
           <button style={{ ...styles.carouselBtn, left: 10 }} onClick={prevSlide} aria-label="Slide sebelumnya">‹</button>
           <button style={{ ...styles.carouselBtn, right: 10 }} onClick={nextSlide} aria-label="Slide berikutnya">›</button>
 
           <div style={styles.dots}>
-            {ATMOSPHERE_SLIDES.map((_, i) => (
-              <div
-                key={i}
-                onClick={() => setActiveSlide(i)}
+            {ATMOSPHERE_SLIDES.map((_, index) => (
+              <button
+                key={index}
+                type="button"
+                onClick={() => setActiveSlide(index)}
                 style={{
                   ...styles.dot,
-                  ...(i === activeSlide ? styles.dotActive : {}),
+                  ...(index === activeSlide ? styles.dotActive : {}),
                 }}
+                aria-label={`Lihat slide ${index + 1}`}
               />
             ))}
           </div>
         </div>
 
-        <h2 className="section-title">Tentang Ale's Place Cipoho</h2>
+        <h2 className="section-title">Tentang Ale&apos;s Place Cipoho</h2>
         <p className="section-sub">Restoran Jepang lokal dengan nuansa hangat dan harga terjangkau</p>
 
         <div style={styles.aboutGrid}>
           {[
-            { emoji: '🏠', title: 'Suasana Hangat',   desc: 'Desain interior yang cozy untuk bersantai' },
-            { emoji: '🎓', title: 'Student-Friendly', desc: 'Harga spesial & promo khusus mahasiswa aktif' },
-            { emoji: '📶', title: 'WiFi Gratis',       desc: 'Internet cepat untuk belajar & kerja dari mana saja' },
-          ].map((item, i) => (
-            <div key={i} style={styles.aboutCard}>
-              <div style={styles.aboutEmoji}>{item.emoji}</div>
+            { image: SITE_PHOTOS.about[0], title: 'Suasana Hangat', desc: 'Desain interior yang cozy untuk bersantai' },
+            { image: SITE_PHOTOS.about[1], title: 'Student-Friendly', desc: 'Harga spesial & promo khusus mahasiswa aktif' },
+            { image: SITE_PHOTOS.about[2], title: 'WiFi Gratis', desc: 'Internet cepat untuk belajar & kerja dari mana saja' },
+          ].map((item) => (
+            <div key={item.title} style={styles.aboutCard}>
+              <img src={item.image} alt={item.title} style={styles.aboutImage} />
               <h4 style={styles.aboutTitle}>{item.title}</h4>
               <p style={styles.aboutDesc}>{item.desc}</p>
             </div>
           ))}
         </div>
 
-        <h2 className="section-title" style={{ marginTop: 24 }}>Kenapa Ale's Place?</h2>
+        <h2 className="section-title" style={{ marginTop: 24 }}>Kenapa Ale&apos;s Place?</h2>
         <p className="section-sub">Tiga alasan utama pelanggan setia kami</p>
 
         <div style={styles.whyGrid}>
-          {WHY_US.map((w, i) => (
-            <div key={i} style={styles.whyItem}>
-              <div style={styles.whyCircle}>
-                <span style={{ fontSize: 26 }}>{w.emoji}</span>
-              </div>
-              <h4 style={styles.whyTitle}>{w.title}</h4>
-              <p style={styles.whyDesc}>{w.desc}</p>
+          {WHY_US.map((item) => (
+            <div key={item.title} style={styles.whyItem}>
+              <img src={item.image} alt={item.title} style={styles.whyImage} />
+              <h4 style={styles.whyTitle}>{item.title}</h4>
+              <p style={styles.whyDesc}>{item.desc}</p>
             </div>
           ))}
         </div>
@@ -187,94 +184,98 @@ export default function HomePage({ setPage }) {
         <p className="section-sub">Menu favorit pelanggan setia kami</p>
 
         <div style={styles.bsGrid}>
-          {bestSellers.map((m) => (
-            <div key={m.id} style={styles.bsCard}>
-              <div style={styles.bsImg}>{m.emoji}</div>
+          {bestSellers.map((item) => (
+            <div key={item.id} style={styles.bsCard}>
+              <img src={item.image || getMenuImage(item)} alt={item.nama} style={styles.bsImage} />
               <div style={styles.bsInfo}>
-                <h4 style={styles.bsName}>{m.nama}</h4>
-                <p style={styles.bsPrice}>{formatRupiah(m.harga)}</p>
-                <p style={styles.bsDesc}>{m.deskripsi}</p>
+                <h4 style={styles.bsName}>{item.nama}</h4>
+                <p style={styles.bsPrice}>{formatRupiah(item.harga)}</p>
+                <p style={styles.bsDesc}>{item.deskripsi}</p>
               </div>
             </div>
           ))}
         </div>
 
-        <div style={{ textAlign: 'center', marginTop: 16, marginBottom: 32 }}>
-          <button
-            style={{ ...styles.btnYellow, background: '#DA251C', color: 'white' }}
-            onClick={() => setPage('menu')}
-          >
-            Lihat Semua Menu →
+        <div style={styles.centerAction}>
+          <button style={{ ...styles.btnYellow, background: '#DA251C', color: 'white' }} onClick={() => setPage('menu')}>
+            Lihat Semua Menu
           </button>
         </div>
 
         <div style={styles.mapPlaceholder}>
-          <span style={{ fontSize: 32 }}>📍</span>
-          <p style={{ fontWeight: 700, fontSize: 14, color: '#100A09' }}>Lokasi Ale's Place Cipoho</p>
-          <p style={{ fontSize: 13, color: '#666' }}>Jl. Cipoho No.1, Ciamis, Jawa Barat</p>
+          <img src={SITE_PHOTOS.map} alt="Lokasi Ale's Place Cipoho" style={styles.mapImage} />
+          <p style={styles.mapTitle}>Lokasi Ale&apos;s Place Cipoho</p>
+          <p style={styles.mapSub}>Jl. Cipoho No.1, Ciamis, Jawa Barat</p>
         </div>
 
         <h2 className="section-title">Kontak &amp; Jam Operasional</h2>
 
         <div style={styles.contactGrid}>
-          {CONTACT_INFO.map((c, i) => (
-            <div key={i} style={styles.contactItem}>
-              <div style={styles.contactIcon}>{c.icon}</div>
-              <div>
-                <h4 style={styles.contactLabel}>{c.label}</h4>
-                <p style={styles.contactValue}>{c.value}</p>
-              </div>
+          {CONTACT_INFO.map((item) => (
+            <div key={item.text} style={styles.contactItem}>
+              <img src={item.image} alt="Info" style={styles.contactImage} />
+              <p style={styles.contactValue}>{item.text}</p>
             </div>
           ))}
         </div>
-
       </div>
 
-      <footer>2026. Ale's Place Cipoho. All rights reserved</footer>
+      <footer>2026. Ale&apos;s Place Cipoho. All rights reserved</footer>
     </div>
   );
 }
 
 const styles = {
   hero: {
-    backgroundImage: "url('https://via.placeholder.com/1600x900/DA251C/ffffff?text=Ale%27s+Place')",
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat',
-    padding: '80px 24px',
+    background: 'linear-gradient(135deg, #DA251C, #8F1D1B)',
+    padding: '56px 24px 40px',
     textAlign: 'center',
     position: 'relative',
     overflow: 'hidden',
-    minHeight: 520,
+    minHeight: 540,
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
+    gap: 18,
+  },
+  heroPhotoWrap: {
+    width: '100%',
+    maxWidth: 920,
+    borderRadius: 28,
+    overflow: 'hidden',
+    boxShadow: '0 24px 60px rgba(0,0,0,0.24)',
+  },
+  heroPhoto: {
+    width: '100%',
+    height: 280,
+    objectFit: 'cover',
+    display: 'block',
   },
   heroBadge: {
     display: 'inline-block',
-    background: 'rgba(255,255,255,0.2)',
+    background: 'rgba(255,255,255,0.18)',
     color: 'white',
     fontSize: 11,
-    fontWeight: 600,
-    letterSpacing: 2,
+    fontWeight: 700,
+    letterSpacing: 1.8,
     textTransform: 'uppercase',
     padding: '6px 16px',
-    borderRadius: 20,
-    marginBottom: 16,
+    borderRadius: 999,
+    marginBottom: 14,
   },
   heroTitle: {
     fontFamily: "'Playfair Display', serif",
-    fontSize: 'clamp(26px, 5vw, 44px)',
+    fontSize: 'clamp(30px, 5vw, 48px)',
     fontWeight: 800,
     color: 'white',
     lineHeight: 1.2,
     marginBottom: 12,
   },
   heroDesc: {
-    color: 'rgba(255,255,255,0.82)',
+    color: 'rgba(255,255,255,0.85)',
     fontSize: 15,
-    maxWidth: 400,
+    maxWidth: 440,
     margin: '0 auto 24px',
     lineHeight: 1.6,
   },
@@ -289,34 +290,29 @@ const styles = {
     color: '#100A09',
     border: 'none',
     padding: '12px 24px',
-    borderRadius: 25,
+    borderRadius: 999,
     fontFamily: "'DM Sans', sans-serif",
-    fontWeight: 600,
+    fontWeight: 700,
     fontSize: 14,
     cursor: 'pointer',
-    transition: 'all 0.2s',
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: 6,
   },
   btnOutline: {
     background: 'transparent',
     color: 'white',
     border: '2px solid rgba(255,255,255,0.6)',
     padding: '12px 24px',
-    borderRadius: 25,
+    borderRadius: 999,
     fontFamily: "'DM Sans', sans-serif",
-    fontWeight: 600,
+    fontWeight: 700,
     fontSize: 14,
     cursor: 'pointer',
   },
-
   carousel: {
     position: 'relative',
     overflow: 'hidden',
-    borderRadius: 16,
+    borderRadius: 18,
     marginBottom: 36,
-    height: 200,
+    minHeight: 240,
     background: '#F0E8E2',
   },
   carouselSlide: {
@@ -330,14 +326,21 @@ const styles = {
     padding: '16px 56px',
     textAlign: 'center',
   },
-  slideEmoji: { fontSize: 48, marginBottom: 8, display: 'block' },
-  slideTitle: { fontWeight: 700, fontSize: 15, color: '#100A09', marginBottom: 4 },
-  slideDesc:  { fontSize: 13, color: '#666', lineHeight: 1.5 },
+  slideImage: {
+    width: '100%',
+    height: 150,
+    objectFit: 'cover',
+    borderRadius: 18,
+    marginBottom: 10,
+    display: 'block',
+  },
+  slideTitle: { fontWeight: 700, fontSize: 16, color: '#100A09', marginBottom: 4 },
+  slideDesc: { fontSize: 13, color: '#666', lineHeight: 1.5 },
   carouselBtn: {
     position: 'absolute',
     top: '50%',
     transform: 'translateY(-50%)',
-    background: 'rgba(218,37,28,0.8)',
+    background: 'rgba(218,37,28,0.85)',
     color: 'white',
     border: 'none',
     width: 36,
@@ -363,16 +366,14 @@ const styles = {
     height: 8,
     borderRadius: '50%',
     background: 'rgba(255,255,255,0.5)',
+    border: 'none',
     cursor: 'pointer',
-    transition: 'all 0.25s',
   },
   dotActive: {
     background: 'white',
     width: 20,
     borderRadius: 4,
   },
-
-  /* About Grid */
   aboutGrid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(3, 1fr)',
@@ -381,16 +382,30 @@ const styles = {
   },
   aboutCard: {
     background: '#FAF6F9',
-    borderRadius: 12,
-    padding: '18px 14px',
+    borderRadius: 14,
+    padding: 14,
     textAlign: 'center',
     border: '1px solid rgba(218,127,28,0.3)',
   },
-  aboutEmoji: { fontSize: 30, marginBottom: 8 },
-  aboutTitle: { fontSize: 13, fontWeight: 700, color: '#100A09', marginBottom: 4, fontFamily: "'DM Sans', sans-serif" },
-  aboutDesc:  { fontSize: 12, color: '#666', lineHeight: 1.4 },
-
-  /* Why Grid */
+  aboutImage: {
+    width: '100%',
+    height: 140,
+    objectFit: 'cover',
+    borderRadius: 12,
+    marginBottom: 10,
+  },
+  aboutTitle: {
+    fontSize: 13,
+    fontWeight: 700,
+    color: '#100A09',
+    marginBottom: 4,
+    fontFamily: "'DM Sans', sans-serif",
+  },
+  aboutDesc: {
+    fontSize: 12,
+    color: '#666',
+    lineHeight: 1.4,
+  },
   whyGrid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(3, 1fr)',
@@ -398,20 +413,25 @@ const styles = {
     marginBottom: 16,
   },
   whyItem: { textAlign: 'center' },
-  whyCircle: {
-    width: 88,
-    height: 88,
-    background: '#FFE400',
-    borderRadius: '50%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    margin: '0 auto 10px',
+  whyImage: {
+    width: '100%',
+    height: 140,
+    objectFit: 'cover',
+    borderRadius: 16,
+    marginBottom: 10,
   },
-  whyTitle: { fontSize: 12, fontWeight: 700, color: '#100A09', marginBottom: 4, fontFamily: "'DM Sans', sans-serif" },
-  whyDesc:  { fontSize: 11, color: '#666', lineHeight: 1.4 },
-
-  /* Best Seller Grid */
+  whyTitle: {
+    fontSize: 12,
+    fontWeight: 700,
+    color: '#100A09',
+    marginBottom: 4,
+    fontFamily: "'DM Sans', sans-serif",
+  },
+  whyDesc: {
+    fontSize: 11,
+    color: '#666',
+    lineHeight: 1.4,
+  },
   bsGrid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(3, 1fr)',
@@ -423,60 +443,70 @@ const styles = {
     overflow: 'hidden',
     border: '1px solid rgba(218,127,28,0.3)',
   },
-  bsImg:   { background: '#F0E8E2', height: 90, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 36 },
-  bsInfo:  { padding: 10 },
-  bsName:  { fontSize: 11, fontWeight: 700, color: '#100A09', marginBottom: 3, fontFamily: "'DM Sans', sans-serif" },
+  bsImage: {
+    width: '100%',
+    height: 90,
+    objectFit: 'cover',
+    display: 'block',
+  },
+  bsInfo: { padding: 10 },
+  bsName: {
+    fontSize: 11,
+    fontWeight: 700,
+    color: '#100A09',
+    marginBottom: 3,
+    fontFamily: "'DM Sans', sans-serif",
+  },
   bsPrice: { fontSize: 11, color: '#DA251C', fontWeight: 700 },
-  bsDesc:  { fontSize: 10, color: '#888', marginTop: 2, lineHeight: 1.4 },
-
-  /* Map */
+  bsDesc: { fontSize: 10, color: '#888', marginTop: 2, lineHeight: 1.4 },
+  centerAction: {
+    textAlign: 'center',
+    marginTop: 16,
+    marginBottom: 32,
+  },
   mapPlaceholder: {
     background: '#F0E8E2',
     borderRadius: 12,
-    height: 160,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
+    padding: 12,
+    textAlign: 'center',
     border: '1px solid #DA7F1C',
     marginBottom: 28,
   },
-
-  /* Contact */
-  contactGrid: { display: 'grid', gap: 12, marginTop: 16 },
-  contactItem: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 14,
-    background: '#FAF6F9',
-    padding: '14px 16px',
+  mapImage: {
+    width: '100%',
+    height: 170,
+    objectFit: 'cover',
     borderRadius: 10,
-    border: '1px solid rgba(218,127,28,0.2)',
+    marginBottom: 10,
   },
-  contactIcon: {
-    width: 38,
-    height: 38,
-    background: '#DA251C',
-    borderRadius: '50%',
+  mapTitle: { fontWeight: 700, fontSize: 14, color: '#100A09' },
+  mapSub: { fontSize: 12, color: '#666' },
+  contactGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+    gap: 14,
+    marginBottom: 24,
+  },
+  contactItem: {
+    background: '#fff',
+    borderRadius: 14,
+    padding: 12,
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: 16,
+    gap: 12,
+    boxShadow: '0 10px 26px rgba(0,0,0,0.04)',
+  },
+  contactImage: {
+    width: 42,
+    height: 42,
+    borderRadius: 14,
+    objectFit: 'cover',
     flexShrink: 0,
   },
-  contactLabel: {
-    fontSize: 11,
-    fontWeight: 600,
-    color: '#999',
-    textTransform: 'uppercase',
-    letterSpacing: '0.5px',
-    fontFamily: "'DM Sans', sans-serif",
-    marginBottom: 2,
-  },
   contactValue: {
-    fontSize: 14,
-    color: '#100A09',
-    fontWeight: 500,
+    margin: 0,
+    fontSize: 13,
+    color: '#666',
+    lineHeight: 1.5,
   },
 };

@@ -1,37 +1,18 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import MenuCard from '../components/MenuCard';
-import { fetchMenu } from '../lib/menuApi';
+import { menuData } from '../data/menu';
 
 export default function MenuPage() {
   const [activeCategory, setActiveCategory] = useState('Semua');
   const [searchQuery, setSearchQuery] = useState('');
-  const [menuItems, setMenuItems] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [menuItems, setMenuItems] = useState(menuData);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    let isMounted = true;
-
-    const loadMenu = async () => {
-      try {
-        setLoading(true);
-        const data = await fetchMenu();
-        if (!isMounted) return;
-        setMenuItems(data);
-        setError('');
-      } catch (err) {
-        if (!isMounted) return;
-        setError('Gagal memuat menu. Pastikan backend berjalan di http://localhost:3001');
-      } finally {
-        if (isMounted) setLoading(false);
-      }
-    };
-
-    loadMenu();
-
-    return () => {
-      isMounted = false;
-    };
+    setMenuItems(menuData);
+    setError('');
+    setLoading(false);
   }, []);
 
   const filteredMenu = useMemo(() => {

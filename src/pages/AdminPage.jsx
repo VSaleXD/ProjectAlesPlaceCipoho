@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { formatRupiah } from '../data/menu';
-import { addMenu, deleteMenu, fetchMenu } from '../lib/menuApi';
+import { formatRupiah, menuData } from '../data/menu';
+import { ICON_PHOTOS } from '../data/photos';
 
 const API_URL = 'http://localhost:3001/api/reservasi';
 
@@ -14,11 +14,9 @@ const initialMenuForm = {
 
 export default function AdminPage() {
   const [reservations, setReservations] = useState([]);
-  const [menuItems, setMenuItems] = useState([]);
+  const [menuItems, setMenuItems] = useState(menuData);
   const [loadingReservations, setLoadingReservations] = useState(true);
-  const [loadingMenu, setLoadingMenu] = useState(true);
   const [reservationError, setReservationError] = useState('');
-  const [menuError, setMenuError] = useState('');
   const [submitError, setSubmitError] = useState('');
   const [submitSuccess, setSubmitSuccess] = useState('');
   const [menuForm, setMenuForm] = useState(initialMenuForm);
@@ -45,17 +43,7 @@ export default function AdminPage() {
   };
 
   const fetchMenuItems = async () => {
-    try {
-      setLoadingMenu(true);
-      const data = await fetchMenu({ allowFallback: false });
-      setMenuItems(data);
-      setMenuError('');
-    } catch (err) {
-      setMenuError('Gagal memuat menu. Backend offline atau belum setup Supabase.');
-      console.error(err);
-    } finally {
-      setLoadingMenu(false);
-    }
+    setMenuItems(menuData);
   };
 
   const menuCategories = useMemo(() => {
@@ -85,19 +73,18 @@ export default function AdminPage() {
     }
 
     try {
-      const response = await addMenu({
+      const nextMenu = {
+        id: Date.now(),
         ...menuForm,
         harga: Number(menuForm.harga),
-      });
+        bestseller: Boolean(menuForm.bestseller),
+        emoji: '🍽️',
+      };
 
-      if (response?.menu) {
-        setMenuItems((prev) => [...prev, response.menu]);
-      } else {
-        await fetchMenuItems();
-      }
+      setMenuItems((prev) => [...prev, nextMenu]);
 
       setMenuForm(initialMenuForm);
-      setSubmitSuccess('Menu berhasil ditambahkan ke database.');
+      setSubmitSuccess('Menu berhasil ditambahkan ke daftar lokal.');
     } catch (error) {
       setSubmitError(error.message || 'Gagal menambahkan menu.');
     }
@@ -107,7 +94,6 @@ export default function AdminPage() {
     if (!window.confirm('Hapus menu ini?')) return;
 
     try {
-      await deleteMenu(id);
       setMenuItems((prev) => prev.filter((item) => item.id !== id));
     } catch (error) {
       alert(error.message || 'Gagal menghapus menu');
@@ -130,11 +116,11 @@ export default function AdminPage() {
       <h2 className="section-title">Admin Dashboard</h2>
       <p className="section-sub">Ringkasan data menu dan reservasi dari backend</p>
       <p style={{ fontSize: 12, color: '#DA251C', textAlign: 'center', marginBottom: 20 }}>
-        🔒 Halaman ini disembunyikan. Akses hanya lewat URL: <strong>#/admin</strong>
+        <img src={ICON_PHOTOS.lock} alt="" style={styles.tinyIcon} /> Halaman ini disembunyikan. Akses hanya lewat URL: <strong>#/admin</strong>
       </p>
 
       <section style={{ marginTop: 18 }}>
-        <h3 style={{ marginBottom: 10 }}>Daftar Menu ({menuData.length})</h3>
+        <h3 style={{ marginBottom: 10 }}>Daftar Menu ({menuItems.length})</h3>
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
@@ -145,7 +131,7 @@ export default function AdminPage() {
               </tr>
             </thead>
             <tbody>
-              {menuData.map((m) => (
+              {menuItems.map((m) => (
                 <tr key={m.id} style={{ borderBottom: '1px solid #fafafa' }}>
                   <td style={{ padding: '10px 6px' }}>{m.nama}</td>
                   <td style={{ padding: '10px 6px' }}>{m.kategori}</td>
@@ -165,7 +151,7 @@ export default function AdminPage() {
             className="btn-primary"
             style={{ fontSize: 12, padding: '6px 12px' }}
           >
-            🔄 Refresh
+            <img src={ICON_PHOTOS.refresh} alt="" style={styles.buttonIcon} /> Refresh
           </button>
         </div>
 
@@ -188,14 +174,14 @@ export default function AdminPage() {
                 <div>
                   <div style={{ fontWeight: 700, fontSize: 14 }}>{r.nama}</div>
                   <div style={{ color: '#666', fontSize: 13, marginTop: 4 }}>
-                    📧 {r.email} • 📱 {r.telepon}
+                    <img src={ICON_PHOTOS.email} alt="" style={styles.inlineIcon} /> {r.email} • <img src={ICON_PHOTOS.phone} alt="" style={styles.inlineIcon} /> {r.telepon}
                   </div>
                   <div style={{ color: '#666', fontSize: 13, marginTop: 4 }}>
-                    📅 {r.tanggal} · 🕐 {r.jam} · 👥 {r.jumlah}
+                    <img src={ICON_PHOTOS.calendar} alt="" style={styles.inlineIcon} /> {r.tanggal} · <img src={ICON_PHOTOS.calendar} alt="" style={styles.inlineIcon} /> {r.jam} · <img src={ICON_PHOTOS.phone} alt="" style={styles.inlineIcon} /> {r.jumlah}
                   </div>
                   {r.catatan && (
                     <div style={{ color: '#666', fontSize: 12, marginTop: 6, fontStyle: 'italic' }}>
-                      💬 {r.catatan}
+                      <img src={ICON_PHOTOS.chat} alt="" style={styles.inlineIcon} /> {r.catatan}
                     </div>
                   )}
                   <div style={{ color: '#999', fontSize: 11, marginTop: 4 }}>
@@ -215,7 +201,7 @@ export default function AdminPage() {
                     fontWeight: 600,
                   }}
                 >
-                  ✕ Hapus
+                  <img src={ICON_PHOTOS.delete} alt="" style={styles.buttonIcon} /> Hapus
                 </button>
               </div>
             ))}
@@ -308,6 +294,30 @@ const styles = {
     padding: 12,
     textAlign: 'center',
     color: '#666',
+  },
+  tinyIcon: {
+    width: 16,
+    height: 16,
+    objectFit: 'cover',
+    borderRadius: 999,
+    verticalAlign: 'text-bottom',
+    marginRight: 6,
+  },
+  inlineIcon: {
+    width: 14,
+    height: 14,
+    objectFit: 'cover',
+    borderRadius: 999,
+    verticalAlign: 'text-bottom',
+    marginRight: 4,
+  },
+  buttonIcon: {
+    width: 14,
+    height: 14,
+    objectFit: 'cover',
+    borderRadius: 999,
+    verticalAlign: 'middle',
+    marginRight: 6,
   },
   table: {
     width: '100%',

@@ -1,16 +1,18 @@
 import React from 'react';
 import { formatRupiah } from '../data/menu';
+import { getMenuImage } from '../data/photos';
 
 export default function MenuCard({ item }) {
-  const { nama, harga, deskripsi, emoji, bestseller } = item;
+  const { nama, harga, deskripsi, bestseller } = item;
+  const image = item.image || getMenuImage(item);
 
   return (
     <div style={styles.card}>
       <div style={styles.imageWrap}>
         {bestseller && (
-          <div style={styles.badge}>⭐ Best</div>
+          <div style={styles.badge}>Best</div>
         )}
-        <span style={styles.emoji}>{emoji}</span>
+        <img src={image} alt={nama} style={styles.image} loading="lazy" />
       </div>
 
       <div style={styles.info}>
@@ -38,6 +40,7 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
+    overflow: 'hidden',
   },
   badge: {
     position: 'absolute',
@@ -52,8 +55,10 @@ const styles = {
     textTransform: 'uppercase',
     letterSpacing: '0.5px',
   },
-  emoji: {
-    fontSize: 44,
+  image: {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
   },
   info: {
     padding: 12,
