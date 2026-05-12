@@ -53,7 +53,6 @@ export default function AdminPage() {
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ textAlign: 'left', borderBottom: '2px solid #eee' }}>
-                <th style={{ padding: '8px 6px' }}>Emoji</th>
                 <th style={{ padding: '8px 6px' }}>Nama</th>
                 <th style={{ padding: '8px 6px' }}>Kategori</th>
                 <th style={{ padding: '8px 6px' }}>Harga</th>
