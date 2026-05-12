@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { loadMenus, saveMenus } from './menuStore.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -18,6 +19,89 @@ const RESERVATIONS_FILE = path.join(__dirname, 'reservations.json');
 
 // Nomor WhatsApp admin (format internasional)
 const ADMIN_WA = '6281514693030'; // Indonesia: 62 + nomor tanpa 0 di depan
+
+const normalizeMenuItem = (item) => ({
+  id: Number(item.id),
+  nama: String(item.nama || '').trim(),
+  harga: Number(item.harga),
+  kategori: String(item.kategori || '').trim(),
+  deskripsi: String(item.deskripsi || '').trim(),
+  emoji: String(item.emoji || '🍜').trim(),
+  bestseller: Boolean(item.bestseller),
+});
+
+const isValidMenuItem = (item) =>
+  item.nama &&
+  Number.isFinite(item.harga) &&
+  item.kategori &&
+  item.deskripsi &&
+  item.emoji;
+
+/**
+ * GET /api/menu
+ * Ambil semua menu dari database file JSON
+ */
+app.get('/api/menu', async (req, res) => {
+  try {
+    const data = await loadMenus();
+    return res.json(data);
+  } catch (error) {
+    console.error('Error get menu:', error);
+    return res.status(500).json({ error: 'Gagal mengambil menu' });
+  }
+});
+
+/**
+ * POST /api/menu
+ * Tambah menu baru ke database file JSON
+ */
+app.post('/api/menu', async (req, res) => {
+  try {
+    const menuItem = normalizeMenuItem(req.body);
+
+    if (!isValidMenuItem(menuItem)) {
+      return res.status(400).json({ error: 'Data menu tidak lengkap' });
+    }
+
+    const menus = await loadMenus();
+    const nextId = menus.length > 0 ? Math.max(...menus.map((item) => Number(item.id) || 0)) + 1 : 1;
+    const newMenu = {
+      ...menuItem,
+      id: nextId,
+    };
+
+    menus.push(newMenu);
+    await saveMenus(menus);
+
+    return res.status(201).json({ success: true, message: 'Menu berhasil ditambahkan', menu: newMenu });
+  } catch (error) {
+    console.error('Error add menu:', error);
+    return res.status(500).json({ error: 'Gagal menambahkan menu' });
+  }
+});
+
+/**
+ * DELETE /api/menu/:id
+ * Hapus menu dari database file JSON
+ */
+app.delete('/api/menu/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const menuId = Number(id);
+    const menus = await loadMenus();
+    const nextMenus = menus.filter((item) => Number(item.id) !== menuId);
+
+    if (nextMenus.length === menus.length) {
+      return res.status(404).json({ error: 'Menu tidak ditemukan' });
+    }
+
+    await saveMenus(nextMenus);
+    return res.json({ success: true });
+  } catch (error) {
+    console.error('Error delete menu:', error);
+    return res.status(500).json({ error: 'Gagal menghapus menu' });
+  }
+});
 
 /**
  * POST /api/reservasi

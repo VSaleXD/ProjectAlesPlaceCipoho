@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { getBestSellers, formatRupiah } from '../data/menu';
+import React, { useEffect, useState } from 'react';
+import { menuData, formatRupiah } from '../data/menu';
+import { fetchMenu } from '../lib/menuApi';
 
 const ATMOSPHERE_SLIDES = [
   {
@@ -55,6 +56,7 @@ const WHY_US = [
 
 export default function HomePage({ setPage }) {
   const [activeSlide, setActiveSlide] = useState(0);
+  const [menuItems, setMenuItems] = useState(menuData);
   const totalSlides = ATMOSPHERE_SLIDES.length;
 
   useEffect(() => {
@@ -64,10 +66,27 @@ export default function HomePage({ setPage }) {
     return () => clearInterval(timer);
   }, [totalSlides]);
 
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadMenu = async () => {
+      const data = await fetchMenu();
+      if (isMounted) {
+        setMenuItems(data);
+      }
+    };
+
+    loadMenu();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const prevSlide = () => setActiveSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
   const nextSlide = () => setActiveSlide((prev) => (prev + 1) % totalSlides);
 
-  const bestSellers = getBestSellers().slice(0, 3);
+  const bestSellers = menuItems.filter((item) => item.bestseller).slice(0, 3);
 
   return (
     <div>

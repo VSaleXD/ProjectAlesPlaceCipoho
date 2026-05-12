@@ -1,15 +1,42 @@
-import React, { useState, useMemo } from 'react';
-import { menuData, CATEGORIES, getBestSellers, formatRupiah } from '../data/menu';
+import React, { useEffect, useMemo, useState } from 'react';
 import MenuCard from '../components/MenuCard';
+import { fetchMenu } from '../lib/menuApi';
 
 export default function MenuPage() {
   const [activeCategory, setActiveCategory] = useState('Semua');
-
   const [searchQuery, setSearchQuery] = useState('');
+  const [menuItems, setMenuItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadMenu = async () => {
+      try {
+        setLoading(true);
+        const data = await fetchMenu();
+        if (!isMounted) return;
+        setMenuItems(data);
+        setError('');
+      } catch (err) {
+        if (!isMounted) return;
+        setError('Gagal memuat menu. Pastikan backend berjalan di http://localhost:3001');
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+
+    loadMenu();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const filteredMenu = useMemo(() => {
     const query = searchQuery.toLowerCase().trim();
-    return menuData.filter((item) => {
+    return menuItems.filter((item) => {
       const matchCategory =
         activeCategory === 'Semua' || item.kategori === activeCategory;
       const matchSearch =
@@ -19,9 +46,17 @@ export default function MenuPage() {
         item.deskripsi.toLowerCase().includes(query);
       return matchCategory && matchSearch;
     });
-  }, [activeCategory, searchQuery]);
+  }, [activeCategory, menuItems, searchQuery]);
 
-  const bestSellers = getBestSellers();
+  const categories = useMemo(() => {
+    const categorySet = new Set(['Semua']);
+    menuItems.forEach((item) => {
+      if (item.kategori) {
+        categorySet.add(item.kategori);
+      }
+    });
+    return Array.from(categorySet);
+  }, [menuItems]);
 
   const handleReset = () => {
     setSearchQuery('');
@@ -38,6 +73,11 @@ export default function MenuPage() {
       </div>
 
       <div style={{ paddingBottom: 40 }}>
+        {error && (
+          <div style={styles.errorBox}>
+            {error}
+          </div>
+        )}
 
         <div style={styles.searchWrap}>
           <input
@@ -51,31 +91,8 @@ export default function MenuPage() {
           <span style={styles.searchIcon}>🔍</span>
         </div>
 
-        {/* <div style={styles.sectionLabel}>Best Seller</div>
-        <div style={styles.bsScroll}>
-          {bestSellers.map((item) => (
-            <div
-              key={item.id}
-              style={styles.bsCard}
-              onClick={() => {
-                setActiveCategory(item.kategori);
-                setSearchQuery('');
-              }}
-              title={`Filter: ${item.kategori}`}
-            >
-              <div style={styles.bsImg}>{item.emoji}</div>
-              <div style={styles.bsInfo}>
-                <h4 style={styles.bsName}>
-                  {item.nama.split(' ').slice(0, 3).join(' ')}
-                </h4>
-                <p style={styles.bsPrice}>{formatRupiah(item.harga)}</p>
-              </div>
-            </div>
-          ))}
-        </div> */}
-
         <div style={styles.catScroll}>
-          {CATEGORIES.map((cat) => (
+          {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
@@ -89,7 +106,9 @@ export default function MenuPage() {
           ))}
         </div>
 
-        {filteredMenu.length === 0 ? (
+        {loading ? (
+          <div style={styles.loadingState}>Memuat menu...</div>
+        ) : filteredMenu.length === 0 ? (
           <EmptyState onReset={handleReset} query={searchQuery} />
         ) : (
           <div style={styles.menuGrid}>
@@ -171,45 +190,6 @@ const styles = {
     color: '#DA251C',
   },
 
-  sectionLabel: {
-    padding: '12px 20px 4px',
-    fontSize: 12,
-    fontWeight: 700,
-    color: '#999',
-    textTransform: 'uppercase',
-    letterSpacing: '0.5px',
-  },
-
-  bsScroll: {
-    display: 'flex',
-    gap: 12,
-    padding: '0 20px 4px',
-    overflowX: 'auto',
-    marginBottom: 16,
-    scrollbarWidth: 'none',
-  },
-  bsCard: {
-    background: '#FAF6F9',
-    borderRadius: 12,
-    overflow: 'hidden',
-    minWidth: 110,
-    flexShrink: 0,
-    border: '1px solid rgba(218,127,28,0.3)',
-    cursor: 'pointer',
-    transition: 'transform 0.15s',
-  },
-  bsImg: {
-    background: '#F0E8E2',
-    height: 76,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: 28,
-  },
-  bsInfo:  { padding: 8 },
-  bsName:  { fontSize: 11, fontWeight: 700, color: '#100A09', fontFamily: "'DM Sans', sans-serif" },
-  bsPrice: { fontSize: 11, color: '#DA251C', fontWeight: 700, marginTop: 2 },
-
   catScroll: {
     display: 'flex',
     gap: 8,
@@ -236,6 +216,23 @@ const styles = {
     background: '#FFE400',
     borderColor: '#DA7F1C',
     color: '#100A09',
+  },
+
+  errorBox: {
+    margin: '0 20px 16px',
+    padding: '12px 14px',
+    borderRadius: 10,
+    background: '#FFF4F4',
+    border: '1px solid #F4C7C7',
+    color: '#B42318',
+    fontSize: 13,
+  },
+
+  loadingState: {
+    textAlign: 'center',
+    padding: '36px 20px',
+    color: '#666',
+    fontSize: 14,
   },
 
   menuGrid: {
