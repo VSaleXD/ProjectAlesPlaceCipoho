@@ -8,8 +8,8 @@
 
 /* ── CSS Variables (Design Tokens) ── */
 :root {
-  --dark-red:   #DA251C;
-  --red:        #8F1D1B;
+  --red:        #DA251C;
+  --dark-red:   #8F1D1B;
   --cream:      #FAF6F9;
   --warm-white: #FAF6F9;
   --dark:       #100A09;
@@ -30,6 +30,79 @@
   --shadow-btn:  0 8px 24px rgba(192, 57, 43, 0.35);
 
   --transition: 0.2s ease;
+}
+
+/* =====================================
+   Navbar / Header styles (custom)
+   ===================================== */
+.site-nav {
+  background: var(--red);
+  color: var(--warm-white);
+  padding: 28px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  overflow: visible;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+}
+
+.nav-brand img {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.brand-name {
+  font-family: var(--font-display);
+  color: #F7EAD4;
+  font-size: clamp(20px, 4vw, 40px);
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 28px;
+  align-items: center;
+}
+
+.nav-link {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.9);
+  font-family: var(--font-body);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 6px 8px;
+  cursor: pointer;
+  position: relative;
+}
+
+.nav-link.active {
+  color: var(--yellow);
+}
+
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -12px;
+  height: 4px;
+  width: 40px;
+  background: var(--gold);
+  border-radius: 2px;
 }
 
 /* ── Reset & Base ── */
@@ -171,6 +244,15 @@ footer {
   padding: 20px;
   font-size: 12px;
   letter-spacing: 0.3px;
+}
+
+/* Hero overlay to ensure text remains readable over background image */
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 0;
+  pointer-events: none;
 }
 
 /* ── Animations ── */

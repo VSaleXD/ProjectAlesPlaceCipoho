@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const WA_NUMBER = '6281572155275';
+const API_URL = 'http://localhost:3001/api/reservasi';
 
 const GUEST_OPTIONS = [
   '1–2 orang',
@@ -19,7 +19,8 @@ const RESTO_INFO = [
 
 const INITIAL_FORM = {
   nama:    '',
-  phone:   '',
+  email:   '',
+  telepon: '',
   tanggal: '',
   jam:     '',
   jumlah:  '1–2 orang',
@@ -45,27 +46,14 @@ export default function ReservasiPage() {
   const validateForm = () => {
     const e = {};
     if (!formData.nama.trim())    e.nama    = 'Nama lengkap wajib diisi';
-    if (!formData.phone.trim())   e.phone   = 'Nomor HP wajib diisi untuk konfirmasi';
+    if (!formData.email.trim())   e.email   = 'Email wajib diisi';
+    if (!formData.telepon.trim()) e.telepon = 'Nomor HP wajib diisi untuk konfirmasi';
     if (!formData.tanggal)        e.tanggal = 'Pilih tanggal reservasi';
     if (!formData.jam.trim())     e.jam     = 'Isi jam kedatangan (mis. 19:30)';
     return e;
   };
 
-  const buildMessage = () => {
-    let msg =
-      `Halo Ale's Place Cipoho, saya ${formData.nama} ingin reservasi ` +
-      `untuk ${formData.jumlah} pada ${formData.tanggal} pukul ${formData.jam}.`;
-
-    if (formData.phone) {
-      msg += ` Nomor HP saya: ${formData.phone}.`;
-    }
-    if (formData.catatan.trim()) {
-      msg += ` Catatan: ${formData.catatan.trim()}`;
-    }
-    return msg;
-  };
-
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // 1. Validasi
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
@@ -73,18 +61,48 @@ export default function ReservasiPage() {
       return;
     }
 
-    // 2. Buat pesan
-    const message = buildMessage();
-    setPreviewMsg(message);
     setIsSubmitting(true);
 
-    // 3. Redirect ke WhatsApp setelah 800ms (beri waktu user lihat preview)
-    setTimeout(() => {
-      const encodedMsg = encodeURIComponent(message);
-      const url = `https://wa.me/${WA_NUMBER}?text=${encodedMsg}`;
-      window.open(url, '_blank');
+    try {
+      // 2. POST ke backend
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nama: formData.nama,
+          email: formData.email,
+          telepon: formData.telepon,
+          tanggal: formData.tanggal,
+          jam: formData.jam,
+          jumlah: formData.jumlah,
+          catatan: formData.catatan,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Gagal mengirim reservasi');
+      }
+
+      const data = await response.json();
+
+      if (data.success) {
+        // 3. Buka WhatsApp dengan link dari response
+        setPreviewMsg(data.message || 'Reservasi berhasil! Membuka WhatsApp...');
+        setTimeout(() => {
+          if (data.waURL) {
+            window.open(data.waURL, '_blank');
+          }
+          // Reset form
+          setFormData(INITIAL_FORM);
+          setPreviewMsg('');
+        }, 800);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setErrors({ submit: 'Gagal mengirim reservasi. Pastikan backend berjalan di http://localhost:3001' });
+    } finally {
       setIsSubmitting(false);
-    }, 800);
+    }
   };
 
   // Tanggal minimum = hari ini
@@ -118,22 +136,37 @@ export default function ReservasiPage() {
           </div>
 
           <div style={styles.formGroup}>
-            <label style={styles.label}>Nomor HP / WhatsApp</label>
+            <label style={styles.label}>Email</label>
             <input
-              style={{ ...styles.input, ...(errors.phone ? styles.inputError : {}) }}
-              placeholder="Contoh: 08xxxxxxxxxx"
-              value={formData.phone}
-              onChange={(e) => handleChange('phone', e.target.value)}
-              type="tel"
+              style={{ ...styles.input, ...(errors.email ? styles.inputError : {}) }}
+              placeholder="Contoh: andi@email.com"
+              type="email"
+              value={formData.email}
+              onChange={(e) => handleChange('email', e.target.value)}
             />
-            {errors.phone
-              ? <span style={styles.errorMsg}>⚠️ {errors.phone}</span>
-              : <span style={styles.hint}>Wajib diisi untuk konfirmasi</span>
+            {errors.email
+              ? <span style={styles.errorMsg}>⚠️ {errors.email}</span>
+              : <span style={styles.hint}>Wajib diisi</span>
             }
           </div>
         </div>
 
         <div style={styles.row}>
+          <div style={styles.formGroup}>
+            <label style={styles.label}>Nomor HP / WhatsApp</label>
+            <input
+              style={{ ...styles.input, ...(errors.telepon ? styles.inputError : {}) }}
+              placeholder="Contoh: 08xxxxxxxxxx"
+              value={formData.telepon}
+              onChange={(e) => handleChange('telepon', e.target.value)}
+              type="tel"
+            />
+            {errors.telepon
+              ? <span style={styles.errorMsg}>⚠️ {errors.telepon}</span>
+              : <span style={styles.hint}>Wajib diisi untuk konfirmasi</span>
+            }
+          </div>
+
           <div style={styles.formGroup}>
             <label style={styles.label}>Tanggal</label>
             <input
@@ -148,7 +181,9 @@ export default function ReservasiPage() {
               : <span style={styles.hint}>Minimal hari ini (H+0)</span>
             }
           </div>
+        </div>
 
+        <div style={styles.row}>
           <div style={styles.formGroup}>
             <label style={styles.label}>Jam Kedatangan</label>
             <input
@@ -162,20 +197,20 @@ export default function ReservasiPage() {
               : <span style={styles.hint}>Saran: datang 10 menit sebelum jam</span>
             }
           </div>
-        </div>
 
-        <div style={{ ...styles.formGroup, marginBottom: 14 }}>
-          <label style={styles.label}>Jumlah Tamu</label>
-          <select
-            style={styles.input}
-            value={formData.jumlah}
-            onChange={(e) => handleChange('jumlah', e.target.value)}
-          >
-            {GUEST_OPTIONS.map((opt) => (
-              <option key={opt} value={opt}>{opt}</option>
-            ))}
-          </select>
-          <span style={styles.hint}>Jika lebih dari 10, pilih "Grup"</span>
+          <div style={styles.formGroup}>
+            <label style={styles.label}>Jumlah Tamu</label>
+            <select
+              style={styles.input}
+              value={formData.jumlah}
+              onChange={(e) => handleChange('jumlah', e.target.value)}
+            >
+              {GUEST_OPTIONS.map((opt) => (
+                <option key={opt} value={opt}>{opt}</option>
+              ))}
+            </select>
+            <span style={styles.hint}>Jika lebih dari 10, pilih "Grup"</span>
+          </div>
         </div>
 
         <div style={{ ...styles.formGroup, marginBottom: 20 }}>
@@ -195,6 +230,12 @@ export default function ReservasiPage() {
               <span>Preview pesan WhatsApp</span>
             </div>
             <div style={styles.waBubble}>{previewMsg}</div>
+          </div>
+        )}
+
+        {errors.submit && (
+          <div style={{ ...styles.waPreview, background: '#DA251C', marginBottom: 16 }}>
+            <div style={styles.errorMsg}>❌ {errors.submit}</div>
           </div>
         )}
 

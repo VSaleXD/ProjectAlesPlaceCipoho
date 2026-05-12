@@ -72,20 +72,23 @@ export default function HomePage({ setPage }) {
   return (
     <div>
       <section style={styles.hero}>
-        <div style={styles.heroBadge}>✨ Student &amp; Community Friendly</div>
-        <h1 style={styles.heroTitle}>
-          Selamat Datang di<br />Ale's Place Cipoho
-        </h1>
-        <p style={styles.heroDesc}>
-          Tempat nongkrong, belajar, dan makan enak dengan harga yang bersahabat
-        </p>
-        <div style={styles.heroBtns}>
-          <button style={styles.btnYellow} onClick={() => setPage('menu')}>
-            🍜 Lihat Menu
-          </button>
-          <button style={styles.btnOutline} onClick={() => setPage('reservasi')}>
-            📅 Reservasi
-          </button>
+        <div className="hero-overlay" />
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          <div style={styles.heroBadge}>✨ Student &amp; Community Friendly</div>
+          <h1 style={styles.heroTitle}>
+            Selamat Datang di<br />Ale's Place Cipoho
+          </h1>
+          <p style={styles.heroDesc}>
+            Tempat nongkrong, belajar, dan makan enak dengan harga yang bersahabat
+          </p>
+          <div style={styles.heroBtns}>
+            <button style={styles.btnYellow} onClick={() => setPage('menu')}>
+              🍜 Lihat Menu
+            </button>
+            <button style={styles.btnOutline} onClick={() => setPage('reservasi')}>
+              📅 Reservasi
+            </button>
+          </div>
         </div>
       </section>
 
@@ -215,11 +218,19 @@ export default function HomePage({ setPage }) {
 
 const styles = {
   hero: {
-    background: 'linear-gradient(135deg, #DA251C 0%, #8F1D1B 100%)',
-    padding: '60px 24px',
+    backgroundImage: "url('https://via.placeholder.com/1600x900/DA251C/ffffff?text=Ale%27s+Place')",
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    padding: '80px 24px',
     textAlign: 'center',
     position: 'relative',
     overflow: 'hidden',
+    minHeight: 520,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   heroBadge: {
     display: 'inline-block',
