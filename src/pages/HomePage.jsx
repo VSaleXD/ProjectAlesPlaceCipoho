@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { menuData, formatRupiah } from '../data/menu';
-import { SITE_PHOTOS, getMenuImage } from '../data/photos';
+import { formatRupiah } from '../data/menu';
+import { supabase } from '../supabaseClient';
+import { SITE_PHOTOS } from '../data/photos';
 
 const ATMOSPHERE_SLIDES = [
   {
@@ -29,24 +30,7 @@ const ATMOSPHERE_SLIDES = [
   },
 ];
 
-const CONTACT_INFO = [
-  {
-    image: SITE_PHOTOS.map,
-    text: 'Perumahan Cipoho Indah, Jl. Gamelan No.2, Cikondang, Kec. Citamiang, Kota Sukabumi, Jawa Barat 43142',
-  },
-  {
-    image: SITE_PHOTOS.about[0],
-    text: 'Senin – Jumat: 11:00 – 21:00 WIB',
-  },
-  {
-    image: SITE_PHOTOS.about[1],
-    text: 'Sabtu – Minggu dan tanggal merah: 10:00 – 21:00 WIB',
-  },
-  {
-    image: SITE_PHOTOS.about[2],
-    text: '0815-7215-5275 (WhatsApp)',
-  },
-];
+
 
 const WHY_US = [
   {
@@ -55,53 +39,79 @@ const WHY_US = [
     image: SITE_PHOTOS.why[0],
   },
   {
-    title: 'Nyaman',
-    desc: 'Tempat duduk luas dengan suasana santai dan cozy',
+    title: 'Nyaman & Estetik',
+    desc: 'Tempat duduk luas dengan suasana santai, cocok untuk foto',
     image: SITE_PHOTOS.why[1],
   },
   {
-    title: 'Enak',
-    desc: 'Menu Jepang otentik dengan cita rasa yang disukai lokal',
+    title: 'Rasa Otentik',
+    desc: 'Menu Jepang otentik dengan cita rasa yang disukai lidah lokal',
     image: SITE_PHOTOS.why[2],
   },
 ];
 
+const TESTIMONIALS = [
+  {
+    name: 'Budi Santoso',
+    review: 'Ramennya luar biasa! Kuahnya sangat kental dan gurih. Tempatnya juga sangat nyaman untuk nugas karena WiFi-nya kencang.',
+    rating: '⭐⭐⭐⭐⭐'
+  },
+  {
+    name: 'Siti Aminah',
+    review: 'Suka banget sama suasana di sini. Harga ramah di kantong mahasiswa tapi rasa makanannya sekelas restoran mewah di mall.',
+    rating: '⭐⭐⭐⭐⭐'
+  },
+  {
+    name: 'Reza Rahadian',
+    review: 'Sushi dan Gyoza-nya sangat enak. Pelayanannya cepat dan ramah. Bakal sering balik ke sini buat makan bareng keluarga.',
+    rating: '⭐⭐⭐⭐⭐'
+  }
+];
+
 export default function HomePage({ setPage }) {
   const [activeSlide, setActiveSlide] = useState(0);
-  const [menuItems, setMenuItems] = useState(menuData);
+  const [menuItems, setMenuItems] = useState([]);
   const totalSlides = ATMOSPHERE_SLIDES.length;
 
   useEffect(() => {
     const timer = setInterval(() => {
       setActiveSlide((prev) => (prev + 1) % totalSlides);
-    }, 3000);
+    }, 4000);
 
     return () => clearInterval(timer);
   }, [totalSlides]);
 
   useEffect(() => {
-    setMenuItems(menuData);
+    const fetchBestSellers = async () => {
+      const { data, error } = await supabase
+        .from('menu')
+        .select('*')
+        .eq('bestseller', true)
+        .limit(4); // limit changed to 4 to balance grid
+      if (data) {
+        setMenuItems(data);
+      }
+    };
+    fetchBestSellers();
   }, []);
 
   const prevSlide = () => setActiveSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
   const nextSlide = () => setActiveSlide((prev) => (prev + 1) % totalSlides);
 
-  const bestSellers = menuItems.filter((item) => item.bestseller).slice(0, 3);
+  const bestSellers = menuItems;
 
   return (
     <div>
-      <section style={styles.hero}>
-        <div className="hero-overlay" />
-        <div style={styles.heroPhotoWrap}>
-          <img src={SITE_PHOTOS.hero} alt="Ale's Place Cipoho" style={styles.heroPhoto} />
-        </div>
-        <div style={{ position: 'relative', zIndex: 1 }}>
-          <div style={styles.heroBadge}>Restoran Jepang halal Sukabumi</div>
+      {/* Full-width Hero Section */}
+      <section style={{ ...styles.heroFull, backgroundImage: `url(${SITE_PHOTOS.hero})` }}>
+        <div style={styles.heroOverlay}></div>
+        <div style={styles.heroContent}>
+          <div style={styles.heroBadge}>Restoran Jepang Halal Sukabumi</div>
           <h1 style={styles.heroTitle}>
             Selamat Datang di<br />Ale&apos;s Place Cipoho
           </h1>
           <p style={styles.heroDesc}>
-            Tempat nongkrong, belajar, dan makan enak dengan harga yang bersahabat
+            Tempat nongkrong, belajar, dan makan enak dengan harga yang bersahabat. Nikmati pengalaman kuliner Jepang terbaik di kota.
           </p>
           <div style={styles.heroBtns}>
             <button style={styles.btnYellow} onClick={() => setPage('menu')}>Lihat Menu</button>
@@ -110,9 +120,13 @@ export default function HomePage({ setPage }) {
         </div>
       </section>
 
-      <div className="section">
-        <h2 className="section-title" style={{ marginBottom: 6 }}>Suasana Ale&apos;s Place</h2>
-        <p className="section-sub">Rasakan kenyamanan tempat nongkrong favoritmu</p>
+      <div style={styles.container}>
+
+        {/* Suasana Section */}
+        <div style={styles.sectionHeader}>
+          <h2 style={styles.sectionTitle}>Suasana Ale&apos;s Place</h2>
+          <p style={styles.sectionSub}>Rasakan kenyamanan tempat nongkrong favoritmu</p>
+        </div>
 
         <div style={styles.carousel}>
           {ATMOSPHERE_SLIDES.map((slide, index) => (
@@ -131,8 +145,8 @@ export default function HomePage({ setPage }) {
             </div>
           ))}
 
-          <button style={{ ...styles.carouselBtn, left: 10 }} onClick={prevSlide} aria-label="Slide sebelumnya">‹</button>
-          <button style={{ ...styles.carouselBtn, right: 10 }} onClick={nextSlide} aria-label="Slide berikutnya">›</button>
+          <button style={{ ...styles.carouselBtn, left: 16 }} onClick={prevSlide} aria-label="Slide sebelumnya">‹</button>
+          <button style={{ ...styles.carouselBtn, right: 16 }} onClick={nextSlide} aria-label="Slide berikutnya">›</button>
 
           <div style={styles.dots}>
             {ATMOSPHERE_SLIDES.map((_, index) => (
@@ -150,8 +164,11 @@ export default function HomePage({ setPage }) {
           </div>
         </div>
 
-        <h2 className="section-title">Tentang Ale&apos;s Place Cipoho</h2>
-        <p className="section-sub">Restoran Jepang lokal dengan nuansa hangat dan harga terjangkau</p>
+        {/* Tentang Section */}
+        <div style={styles.sectionHeader}>
+          <h2 style={styles.sectionTitle}>Tentang Ale&apos;s Place Cipoho</h2>
+          <p style={styles.sectionSub}>Restoran Jepang lokal dengan nuansa hangat dan harga terjangkau</p>
+        </div>
 
         <div style={styles.aboutGrid}>
           {[
@@ -161,32 +178,45 @@ export default function HomePage({ setPage }) {
           ].map((item) => (
             <div key={item.title} style={styles.aboutCard}>
               <img src={item.image} alt={item.title} style={styles.aboutImage} />
-              <h4 style={styles.aboutTitle}>{item.title}</h4>
-              <p style={styles.aboutDesc}>{item.desc}</p>
+              <div style={styles.aboutInfo}>
+                <h4 style={styles.aboutTitle}>{item.title}</h4>
+                <p style={styles.aboutDesc}>{item.desc}</p>
+              </div>
             </div>
           ))}
         </div>
 
-        <h2 className="section-title" style={{ marginTop: 24 }}>Kenapa Ale&apos;s Place?</h2>
-        <p className="section-sub">Tiga alasan utama pelanggan setia kami</p>
+        {/* Kenapa Kami Section */}
+        <div style={{ ...styles.sectionHeader, marginTop: 40 }}>
+          <h2 style={styles.sectionTitle}>Kenapa Memilih Ale&apos;s Place?</h2>
+          <p style={styles.sectionSub}>Tiga alasan utama pelanggan setia kami selalu kembali</p>
+        </div>
 
         <div style={styles.whyGrid}>
           {WHY_US.map((item) => (
             <div key={item.title} style={styles.whyItem}>
-              <img src={item.image} alt={item.title} style={styles.whyImage} />
+              <div style={styles.whyImageWrap}>
+                <img src={item.image} alt={item.title} style={styles.whyImage} />
+              </div>
               <h4 style={styles.whyTitle}>{item.title}</h4>
               <p style={styles.whyDesc}>{item.desc}</p>
             </div>
           ))}
         </div>
 
-        <h2 className="section-title" style={{ marginTop: 32 }}>Our Best Seller Menu</h2>
-        <p className="section-sub">Menu favorit pelanggan setia kami</p>
+        {/* Best Seller Section */}
+        <div style={{ ...styles.sectionHeader, marginTop: 40 }}>
+          <h2 style={styles.sectionTitle}>Our Best Seller Menu</h2>
+          <p style={styles.sectionSub}>Menu favorit pelanggan setia kami</p>
+        </div>
 
         <div style={styles.bsGrid}>
           {bestSellers.map((item) => (
             <div key={item.id} style={styles.bsCard}>
-              <img src={item.image || getMenuImage(item)} alt={item.nama} style={styles.bsImage} />
+              <div style={styles.bsImageWrap}>
+                <img src={item.image_url} alt={item.nama} style={styles.bsImage} />
+                <div style={styles.bsBadge}>BEST</div>
+              </div>
               <div style={styles.bsInfo}>
                 <h4 style={styles.bsName}>{item.nama}</h4>
                 <p style={styles.bsPrice}>{formatRupiah(item.harga)}</p>
@@ -197,91 +227,147 @@ export default function HomePage({ setPage }) {
         </div>
 
         <div style={styles.centerAction}>
-          <button style={{ ...styles.btnYellow, background: '#DA251C', color: 'white' }} onClick={() => setPage('menu')}>
+          <button style={styles.btnPrimary} onClick={() => setPage('menu')}>
             Lihat Semua Menu
           </button>
         </div>
 
-        <div style={styles.mapPlaceholder}>
-          <img src={SITE_PHOTOS.map} alt="Lokasi Ale's Place Cipoho" style={styles.mapImage} />
-          <p style={styles.mapTitle}>Lokasi Ale&apos;s Place Cipoho</p>
-          <p style={styles.mapSub}>Jl. Cipoho No.1, Ciamis, Jawa Barat</p>
+        {/* Testimonials Section */}
+        <div style={{ ...styles.sectionHeader, marginTop: 40 }}>
+          <h2 style={styles.sectionTitle}>Apa Kata Mereka?</h2>
+          <p style={styles.sectionSub}>Ulasan dari pelanggan yang sudah mencicipi hidangan kami</p>
         </div>
 
-        <h2 className="section-title">Kontak &amp; Jam Operasional</h2>
-
-        <div style={styles.contactGrid}>
-          {CONTACT_INFO.map((item) => (
-            <div key={item.text} style={styles.contactItem}>
-              <img src={item.image} alt="Info" style={styles.contactImage} />
-              <p style={styles.contactValue}>{item.text}</p>
+        <div style={styles.testimonialGrid}>
+          {TESTIMONIALS.map((t, index) => (
+            <div key={index} style={styles.testimonialCard}>
+              <div style={styles.testiRating}>{t.rating}</div>
+              <p style={styles.testiReview}>"{t.review}"</p>
+              <div style={styles.testiName}>- {t.name}</div>
             </div>
           ))}
         </div>
+
+        {/* Gallery Section */}
+        <div style={{ ...styles.sectionHeader, marginTop: 40 }}>
+          <h2 style={styles.sectionTitle}>Galeri Ale&apos;s Place</h2>
+          <p style={styles.sectionSub}>Ikuti kami di Instagram @alesplace_cipoho</p>
+        </div>
+
+        <div style={styles.galleryGrid}>
+          <img src={SITE_PHOTOS.atmosphere[0]} alt="Gallery" style={styles.galleryImg} />
+          <img src={SITE_PHOTOS.why[2]} alt="Gallery" style={styles.galleryImg} />
+          <img src={SITE_PHOTOS.atmosphere[1]} alt="Gallery" style={styles.galleryImg} />
+          <img src={SITE_PHOTOS.about[0]} alt="Gallery" style={styles.galleryImg} />
+          <img src={SITE_PHOTOS.hero} alt="Gallery" style={styles.galleryImg} />
+        </div>
+
+        {/* Location & Contact */}
+        <div style={{ ...styles.sectionHeader, marginTop: 60 }}>
+          <h2 style={styles.sectionTitle}>Kontak &amp; Lokasi</h2>
+          <p style={styles.sectionSub}>Temukan kami dengan mudah</p>
+        </div>
+
+        <div style={styles.locationContainer}>
+          <div style={styles.mapPlaceholder}>
+            <iframe
+              src="https://www.google.com/maps?q=Jl.+Gamelan+No.2,+Cikondang,+Kec.+Citamiang,+Kota+Sukabumi&output=embed"
+              style={styles.mapIframe}
+              allowFullScreen=""
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Lokasi Ale's Place"
+            ></iframe>
+            <p style={styles.mapTitle}>Lokasi Ale&apos;s Place Cipoho</p>
+            <p style={styles.mapSub}>Perumahan Cipoho Indah, Jl. Gamelan No.2, Cikondang, Kec. Citamiang, Kota Sukabumi, Jawa Barat 43142</p>
+          </div>
+
+          <div style={styles.contactContainer}>
+            <div style={styles.hoursGrid}>
+              <div style={styles.contactItem}>
+                <h4 style={styles.contactTitle}>Senin – Jumat</h4>
+                <p style={styles.contactValue}>11:00 – 21:00 WIB</p>
+              </div>
+              <div style={styles.contactItem}>
+                <h4 style={styles.contactTitle}>Sabtu, Minggu & Tanggal Merah</h4>
+                <p style={styles.contactValue}>10:00 – 21:00 WIB</p>
+              </div>
+            </div>
+
+            <div style={styles.contactItem}>
+              <h4 style={styles.contactTitle}>Kontak (WhatsApp)</h4>
+              <p style={styles.contactValue}>0815-7215-5275</p>
+            </div>
+          </div>
+        </div>
+
       </div>
 
-      <footer>2026. Ale&apos;s Place Cipoho. All rights reserved</footer>
+      <footer style={styles.footer}>2026. Ale&apos;s Place Cipoho. All rights reserved</footer>
     </div>
   );
 }
 
 const styles = {
-  hero: {
-    background: 'linear-gradient(135deg, #DA251C, #8F1D1B)',
-    padding: '56px 24px 40px',
-    textAlign: 'center',
+  heroFull: {
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
     position: 'relative',
-    overflow: 'hidden',
-    minHeight: 540,
+    minHeight: '85vh',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
+    padding: '0 20px',
+  },
+  heroOverlay: {
+    position: 'absolute',
+    inset: 0,
+    background: 'linear-gradient(to bottom, rgba(16,10,9,0.5) 0%, rgba(16,10,9,0.8) 100%)',
+    zIndex: 1,
+  },
+  heroContent: {
+    position: 'relative',
+    zIndex: 2,
+    maxWidth: 800,
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: 18,
-  },
-  heroPhotoWrap: {
-    width: '100%',
-    maxWidth: 920,
-    borderRadius: 28,
-    overflow: 'hidden',
-    boxShadow: '0 24px 60px rgba(0,0,0,0.24)',
-  },
-  heroPhoto: {
-    width: '100%',
-    height: 280,
-    objectFit: 'cover',
-    display: 'block',
+    animation: 'modalSlideIn 0.8s ease-out',
   },
   heroBadge: {
     display: 'inline-block',
-    background: 'rgba(255,255,255,0.18)',
+    background: 'rgba(218,37,28,0.9)',
     color: 'white',
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: 700,
-    letterSpacing: 1.8,
+    letterSpacing: 2,
     textTransform: 'uppercase',
-    padding: '6px 16px',
+    padding: '8px 20px',
     borderRadius: 999,
-    marginBottom: 14,
+    marginBottom: 24,
+    backdropFilter: 'blur(4px)',
   },
   heroTitle: {
     fontFamily: "'Playfair Display', serif",
-    fontSize: 'clamp(30px, 5vw, 48px)',
+    fontSize: 'clamp(36px, 6vw, 64px)',
     fontWeight: 800,
     color: 'white',
-    lineHeight: 1.2,
-    marginBottom: 12,
+    lineHeight: 1.15,
+    marginBottom: 20,
+    textShadow: '0 4px 20px rgba(0,0,0,0.3)',
   },
   heroDesc: {
-    color: 'rgba(255,255,255,0.85)',
-    fontSize: 15,
-    maxWidth: 440,
-    margin: '0 auto 24px',
+    color: 'rgba(255,255,255,0.9)',
+    fontSize: 'clamp(15px, 2vw, 18px)',
+    maxWidth: 580,
+    margin: '0 auto 36px',
     lineHeight: 1.6,
   },
   heroBtns: {
     display: 'flex',
-    gap: 12,
+    gap: 16,
     justifyContent: 'center',
     flexWrap: 'wrap',
   },
@@ -289,31 +375,71 @@ const styles = {
     background: '#FFE400',
     color: '#100A09',
     border: 'none',
-    padding: '12px 24px',
+    padding: '16px 36px',
     borderRadius: 999,
     fontFamily: "'DM Sans', sans-serif",
     fontWeight: 700,
-    fontSize: 14,
+    fontSize: 15,
     cursor: 'pointer',
+    transition: 'transform 0.2s, box-shadow 0.2s',
+    boxShadow: '0 8px 24px rgba(255,228,0,0.3)',
   },
   btnOutline: {
-    background: 'transparent',
+    background: 'rgba(255,255,255,0.1)',
     color: 'white',
-    border: '2px solid rgba(255,255,255,0.6)',
-    padding: '12px 24px',
+    border: '2px solid rgba(255,255,255,0.8)',
+    padding: '16px 36px',
     borderRadius: 999,
     fontFamily: "'DM Sans', sans-serif",
     fontWeight: 700,
-    fontSize: 14,
+    fontSize: 15,
     cursor: 'pointer',
+    backdropFilter: 'blur(4px)',
+    transition: 'background 0.2s',
   },
+  btnPrimary: {
+    background: '#DA251C',
+    color: 'white',
+    border: 'none',
+    padding: '14px 32px',
+    borderRadius: 999,
+    fontFamily: "'DM Sans', sans-serif",
+    fontWeight: 700,
+    fontSize: 15,
+    cursor: 'pointer',
+    boxShadow: '0 8px 24px rgba(218,37,28,0.3)',
+  },
+
+  container: {
+    maxWidth: 1140,
+    margin: '0 auto',
+    padding: '60px 24px',
+  },
+
+  sectionHeader: {
+    textAlign: 'center',
+    marginBottom: 32,
+  },
+  sectionTitle: {
+    fontFamily: "'Playfair Display', serif",
+    fontSize: 32,
+    fontWeight: 700,
+    color: '#100A09',
+    marginBottom: 8,
+  },
+  sectionSub: {
+    fontSize: 15,
+    color: '#666',
+  },
+
   carousel: {
     position: 'relative',
     overflow: 'hidden',
-    borderRadius: 18,
-    marginBottom: 36,
-    minHeight: 240,
+    borderRadius: 24,
+    marginBottom: 60,
+    minHeight: 380,
     background: '#F0E8E2',
+    boxShadow: '0 20px 40px rgba(0,0,0,0.06)',
   },
   carouselSlide: {
     position: 'absolute',
@@ -323,190 +449,304 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     transition: 'opacity 0.6s ease',
-    padding: '16px 56px',
+    padding: '24px 60px',
     textAlign: 'center',
   },
   slideImage: {
     width: '100%',
-    height: 150,
+    height: 220,
     objectFit: 'cover',
-    borderRadius: 18,
-    marginBottom: 10,
+    borderRadius: 16,
+    marginBottom: 20,
     display: 'block',
+    boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
   },
-  slideTitle: { fontWeight: 700, fontSize: 16, color: '#100A09', marginBottom: 4 },
-  slideDesc: { fontSize: 13, color: '#666', lineHeight: 1.5 },
+  slideTitle: { fontWeight: 700, fontSize: 20, color: '#100A09', marginBottom: 8 },
+  slideDesc: { fontSize: 14, color: '#555', lineHeight: 1.6, maxWidth: 400 },
   carouselBtn: {
     position: 'absolute',
     top: '50%',
     transform: 'translateY(-50%)',
-    background: 'rgba(218,37,28,0.85)',
-    color: 'white',
+    background: 'rgba(255,255,255,0.9)',
+    color: '#DA251C',
     border: 'none',
-    width: 36,
-    height: 36,
+    width: 44,
+    height: 44,
     borderRadius: '50%',
-    fontSize: 20,
+    fontSize: 24,
     cursor: 'pointer',
     zIndex: 2,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
   },
   dots: {
     position: 'absolute',
-    bottom: 10,
+    bottom: 20,
     left: '50%',
     transform: 'translateX(-50%)',
     display: 'flex',
-    gap: 6,
+    gap: 8,
   },
   dot: {
-    width: 8,
-    height: 8,
+    width: 10,
+    height: 10,
     borderRadius: '50%',
-    background: 'rgba(255,255,255,0.5)',
+    background: 'rgba(0,0,0,0.2)',
     border: 'none',
     cursor: 'pointer',
+    transition: 'all 0.3s',
   },
   dotActive: {
-    background: 'white',
-    width: 20,
-    borderRadius: 4,
+    background: '#DA251C',
+    width: 24,
+    borderRadius: 5,
   },
+
   aboutGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
-    gap: 14,
-    marginBottom: 32,
+    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+    gap: 24,
+    marginBottom: 24,
   },
   aboutCard: {
-    background: '#FAF6F9',
-    borderRadius: 14,
-    padding: 14,
-    textAlign: 'center',
-    border: '1px solid rgba(218,127,28,0.3)',
+    background: '#fff',
+    borderRadius: 20,
+    overflow: 'hidden',
+    border: '1px solid #eee',
+    boxShadow: '0 10px 30px rgba(0,0,0,0.03)',
+    transition: 'transform 0.3s',
   },
   aboutImage: {
     width: '100%',
-    height: 140,
+    height: 200,
     objectFit: 'cover',
-    borderRadius: 12,
-    marginBottom: 10,
+  },
+  aboutInfo: {
+    padding: 24,
   },
   aboutTitle: {
-    fontSize: 13,
+    fontSize: 18,
     fontWeight: 700,
     color: '#100A09',
-    marginBottom: 4,
-    fontFamily: "'DM Sans', sans-serif",
+    marginBottom: 8,
   },
   aboutDesc: {
-    fontSize: 12,
-    color: '#666',
-    lineHeight: 1.4,
-  },
-  whyGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
-    gap: 16,
-    marginBottom: 16,
-  },
-  whyItem: { textAlign: 'center' },
-  whyImage: {
-    width: '100%',
-    height: 140,
-    objectFit: 'cover',
-    borderRadius: 16,
-    marginBottom: 10,
-  },
-  whyTitle: {
-    fontSize: 12,
-    fontWeight: 700,
-    color: '#100A09',
-    marginBottom: 4,
-    fontFamily: "'DM Sans', sans-serif",
-  },
-  whyDesc: {
-    fontSize: 11,
-    color: '#666',
-    lineHeight: 1.4,
-  },
-  bsGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
-    gap: 12,
-  },
-  bsCard: {
-    background: '#FAF6F9',
-    borderRadius: 12,
-    overflow: 'hidden',
-    border: '1px solid rgba(218,127,28,0.3)',
-  },
-  bsImage: {
-    width: '100%',
-    height: 90,
-    objectFit: 'cover',
-    display: 'block',
-  },
-  bsInfo: { padding: 10 },
-  bsName: {
-    fontSize: 11,
-    fontWeight: 700,
-    color: '#100A09',
-    marginBottom: 3,
-    fontFamily: "'DM Sans', sans-serif",
-  },
-  bsPrice: { fontSize: 11, color: '#DA251C', fontWeight: 700 },
-  bsDesc: { fontSize: 10, color: '#888', marginTop: 2, lineHeight: 1.4 },
-  centerAction: {
-    textAlign: 'center',
-    marginTop: 16,
-    marginBottom: 32,
-  },
-  mapPlaceholder: {
-    background: '#F0E8E2',
-    borderRadius: 12,
-    padding: 12,
-    textAlign: 'center',
-    border: '1px solid #DA7F1C',
-    marginBottom: 28,
-  },
-  mapImage: {
-    width: '100%',
-    height: 170,
-    objectFit: 'cover',
-    borderRadius: 10,
-    marginBottom: 10,
-  },
-  mapTitle: { fontWeight: 700, fontSize: 14, color: '#100A09' },
-  mapSub: { fontSize: 12, color: '#666' },
-  contactGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-    gap: 14,
-    marginBottom: 24,
-  },
-  contactItem: {
-    background: '#fff',
-    borderRadius: 14,
-    padding: 12,
-    display: 'flex',
-    alignItems: 'center',
-    gap: 12,
-    boxShadow: '0 10px 26px rgba(0,0,0,0.04)',
-  },
-  contactImage: {
-    width: 42,
-    height: 42,
-    borderRadius: 14,
-    objectFit: 'cover',
-    flexShrink: 0,
-  },
-  contactValue: {
-    margin: 0,
-    fontSize: 13,
+    fontSize: 14,
     color: '#666',
     lineHeight: 1.5,
   },
+
+  whyGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+    gap: 32,
+    marginBottom: 20,
+  },
+  whyItem: {
+    textAlign: 'center',
+    background: '#FAF6F9',
+    padding: 32,
+    borderRadius: 24,
+    border: '1px solid rgba(218,127,28,0.1)',
+  },
+  whyImageWrap: {
+    width: 120,
+    height: 120,
+    margin: '0 auto 20px',
+    borderRadius: '50%',
+    overflow: 'hidden',
+    border: '4px solid #fff',
+    boxShadow: '0 10px 20px rgba(0,0,0,0.08)',
+  },
+  whyImage: {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+  },
+  whyTitle: {
+    fontSize: 18,
+    fontWeight: 700,
+    color: '#100A09',
+    marginBottom: 8,
+  },
+  whyDesc: {
+    fontSize: 14,
+    color: '#666',
+    lineHeight: 1.5,
+  },
+
+  bsGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+    gap: 20,
+  },
+  bsCard: {
+    background: '#fff',
+    borderRadius: 16,
+    overflow: 'hidden',
+    border: '1px solid #eee',
+    boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  bsImageWrap: {
+    position: 'relative',
+    height: 160,
+  },
+  bsImage: {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+  },
+  bsBadge: {
+    position: 'absolute',
+    top: 12,
+    left: 12,
+    background: '#DA251C',
+    color: 'white',
+    fontSize: 10,
+    fontWeight: 700,
+    padding: '4px 10px',
+    borderRadius: 8,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+  },
+  bsInfo: {
+    padding: 16,
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  bsName: {
+    fontSize: 15,
+    fontWeight: 700,
+    color: '#100A09',
+    marginBottom: 4,
+  },
+  bsPrice: {
+    fontSize: 14,
+    color: '#DA251C',
+    fontWeight: 700,
+    marginBottom: 6,
+  },
+  bsDesc: {
+    fontSize: 12,
+    color: '#666',
+    lineHeight: 1.4,
+    flex: 1,
+  },
+  centerAction: {
+    textAlign: 'center',
+    marginTop: 32,
+    marginBottom: 20,
+  },
+
+  testimonialGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+    gap: 20,
+  },
+  testimonialCard: {
+    background: '#F0E8E2',
+    padding: 32,
+    borderRadius: 20,
+    border: '1px solid rgba(218,127,28,0.2)',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+  },
+  testiRating: {
+    fontSize: 14,
+    letterSpacing: 2,
+    marginBottom: 16,
+  },
+  testiReview: {
+    fontSize: 15,
+    color: '#444',
+    lineHeight: 1.6,
+    fontStyle: 'italic',
+    marginBottom: 20,
+  },
+  testiName: {
+    fontSize: 14,
+    fontWeight: 700,
+    color: '#DA251C',
+  },
+
+  galleryGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+    gap: 16,
+  },
+  galleryImg: {
+    width: '100%',
+    height: 180,
+    objectFit: 'cover',
+    borderRadius: 16,
+  },
+
+  locationContainer: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+    gap: 32,
+    alignItems: 'start',
+  },
+  mapPlaceholder: {
+    background: '#FAF6F9',
+    borderRadius: 24,
+    padding: 16,
+    textAlign: 'center',
+    border: '1px solid #eee',
+  },
+  mapIframe: {
+    width: '100%',
+    height: 260,
+    border: 0,
+    borderRadius: 16,
+    marginBottom: 16,
+  },
+  mapTitle: { fontWeight: 700, fontSize: 16, color: '#100A09', marginBottom: 4 },
+  mapSub: { fontSize: 14, color: '#666' },
+
+  contactContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 16,
+  },
+  hoursGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+    gap: 16,
+  },
+  contactItem: {
+    background: '#fff',
+    borderRadius: 20,
+    padding: 20,
+    boxShadow: '0 4px 16px rgba(0,0,0,0.03)',
+    border: '1px solid #eee',
+  },
+  contactTitle: {
+    fontSize: 12,
+    fontWeight: 700,
+    color: '#DA251C',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    marginBottom: 6,
+  },
+  contactValue: {
+    margin: 0,
+    fontSize: 15,
+    color: '#333',
+    lineHeight: 1.5,
+  },
+
+  footer: {
+    textAlign: 'center',
+    padding: '32px 20px',
+    background: '#100A09',
+    color: 'rgba(255,255,255,0.5)',
+    fontSize: 13,
+  }
 };

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { ICON_PHOTOS } from '../data/photos';
-
-const API_URL = 'http://localhost:3001/api/reservasi';
+import { ICON_PHOTOS, SITE_PHOTOS } from '../data/photos';
+import { supabase } from '../supabaseClient';
 
 const GUEST_OPTIONS = [
   '1–2 orang',
@@ -10,12 +9,6 @@ const GUEST_OPTIONS = [
   'Grup (lebih dari 10)',
 ];
 
-const RESTO_INFO = [
-  { text: 'Perumahan Cipoho Indah, Jl. Gamelan No.2, Cikondang, Kec. Citamiang, Kota Sukabumi, Jawa Barat 43142' },
-  { text: 'Senin – Jumat: 11:00 – 21:00 WIB' },
-  { text: 'Sabtu – Minggu dan tanggal merah: 10:00 – 21:00 WIB' },
-  {  text: '0815-7215-5275 (WhatsApp)' },
-];
 
 const INITIAL_FORM = {
   nama:    '',
@@ -30,7 +23,7 @@ const INITIAL_FORM = {
 export default function ReservasiPage() {
   const [formData,     setFormData]     = useState(INITIAL_FORM);
   const [errors,       setErrors]       = useState({});
-  const [previewMsg,   setPreviewMsg]   = useState('');
+  const [successMsg,   setSuccessMsg]   = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (field, value) => {
@@ -39,8 +32,8 @@ export default function ReservasiPage() {
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: '' }));
     }
-    // Reset preview saat form berubah
-    setPreviewMsg('');
+    // Reset success msg saat form berubah
+    setSuccessMsg('');
   };
 
   const validateForm = () => {
@@ -64,42 +57,27 @@ export default function ReservasiPage() {
     setIsSubmitting(true);
 
     try {
-      // 2. POST ke backend
-      const response = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          nama: formData.nama,
-          email: formData.email,
-          telepon: formData.telepon,
-          tanggal: formData.tanggal,
-          jam: formData.jam,
-          jumlah: formData.jumlah,
-          catatan: formData.catatan,
-        }),
-      });
+      // 2. Simpan ke Supabase
+      const { data, error } = await supabase.from('reservations').insert([{
+        nama: formData.nama,
+        email: formData.email,
+        telepon: formData.telepon,
+        tanggal: formData.tanggal,
+        jam: formData.jam,
+        jumlah: formData.jumlah,
+        catatan: formData.catatan,
+      }]);
 
-      if (!response.ok) {
-        throw new Error('Gagal mengirim reservasi');
+      if (error) {
+        throw error;
       }
 
-      const data = await response.json();
-
-      if (data.success) {
-        // 3. Buka WhatsApp dengan link dari response
-        setPreviewMsg(data.message || 'Reservasi berhasil! Membuka WhatsApp...');
-        setTimeout(() => {
-          if (data.waURL) {
-            window.open(data.waURL, '_blank');
-          }
-          // Reset form
-          setFormData(INITIAL_FORM);
-          setPreviewMsg('');
-        }, 800);
-      }
+      setSuccessMsg('Reservasi berhasil dikirim! Silakan tunggu konfirmasi dari kami melalui WhatsApp/Telepon.');
+      setFormData(INITIAL_FORM);
+      
     } catch (error) {
       console.error('Error:', error);
-      setErrors({ submit: 'Gagal mengirim reservasi. Pastikan backend berjalan di http://localhost:3001' });
+      setErrors({ submit: 'Gagal mengirim reservasi. ' + error.message });
     } finally {
       setIsSubmitting(false);
     }
@@ -113,13 +91,13 @@ export default function ReservasiPage() {
       <div style={styles.hero}>
         <h2 style={styles.heroTitle}>Form Reservasi</h2>
         <p style={styles.heroDesc}>
-          Isi data berikut. Kami akan mengarahkan Anda ke WhatsApp setelah konfirmasi.
+          Isi data berikut untuk memesan tempat. Tim kami akan segera mengkonfirmasi reservasi Anda.
         </p>
       </div>
 
-      <div style={styles.formWrap}>
-
-        <div style={styles.row}>
+      <div style={styles.container}>
+        <div style={styles.formSection}>
+          <div style={styles.row}>
           <div style={styles.formGroup}>
             <label style={styles.label}>Nama Lengkap</label>
             <input
@@ -222,18 +200,15 @@ export default function ReservasiPage() {
           />
         </div>
 
-        {previewMsg && (
-          <div style={styles.waPreview}>
-            <div style={styles.waHeader}>
-              <span>Preview pesan WhatsApp</span>
-            </div>
-            <div style={styles.waBubble}>{previewMsg}</div>
+        {successMsg && (
+          <div style={{ padding: 16, background: '#effaf1', borderRadius: 12, border: '1px solid #cdeed4', color: '#1f7a36', marginBottom: 16, textAlign: 'center', fontWeight: 600 }}>
+            ✅ {successMsg}
           </div>
         )}
 
         {errors.submit && (
-          <div style={{ ...styles.waPreview, background: '#DA251C', marginBottom: 16 }}>
-            <div style={styles.errorMsg}>❌ {errors.submit}</div>
+          <div style={{ padding: 16, background: '#fee', borderRadius: 12, border: '1px solid #fcc', color: '#c33', marginBottom: 16, textAlign: 'center', fontWeight: 600 }}>
+            ❌ {errors.submit}
           </div>
         )}
 
@@ -241,26 +216,54 @@ export default function ReservasiPage() {
           style={{
             ...styles.submitBtn,
             opacity: isSubmitting ? 0.8 : 1,
+            marginBottom: 0
           }}
           onClick={handleSubmit}
           disabled={isSubmitting}
         >
-          {isSubmitting ? 'Membuka WhatsApp...' : 'Konfirmasi Reservasi via WhatsApp'}
+          {isSubmitting ? 'Mengirim...' : 'Kirim Reservasi'}
         </button>
-
-        <div style={styles.infoBox}>
-          <h4 style={styles.infoTitle}> Informasi Lokasi</h4>
-          {RESTO_INFO.map((info, i) => (
-            <div key={i} style={styles.infoRow}>
-              <span style={styles.infoText}>{info.text}</span>
-            </div>
-          ))}
         </div>
 
-        <div style={styles.mapBox}>
-          <img src={ICON_PHOTOS.location} alt="Peta lokasi" style={styles.mapIcon} />
-          <p style={styles.mapTitle}>Lokasi strategis dekat pusat kota.</p>
-          <p style={styles.mapSub}>Datang 10–15 menit sebelum waktu reservasi. Parkir tersedia.</p>
+        <div style={styles.infoSection}>
+          <div style={styles.imageBox}>
+            <img src={SITE_PHOTOS.hero} alt="Ale's Place" style={styles.infoImage} />
+          </div>
+
+          <div style={styles.infoBox}>
+            <h4 style={styles.infoTitle}>Informasi Operasional</h4>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+              <div style={{ background: '#fff', padding: '12px', borderRadius: '12px', border: '1px solid #eee' }}>
+                <div style={{ fontSize: '11px', fontWeight: 700, color: '#DA251C', textTransform: 'uppercase', marginBottom: '4px' }}>Senin – Jumat</div>
+                <div style={{ fontSize: '13px', color: '#333' }}>11:00 – 21:00 WIB</div>
+              </div>
+              <div style={{ background: '#fff', padding: '12px', borderRadius: '12px', border: '1px solid #eee' }}>
+                <div style={{ fontSize: '11px', fontWeight: 700, color: '#DA251C', textTransform: 'uppercase', marginBottom: '4px' }}>Sabtu, Minggu & Libur</div>
+                <div style={{ fontSize: '13px', color: '#333' }}>10:00 – 21:00 WIB</div>
+              </div>
+            </div>
+            
+            <div style={{ background: '#fff', padding: '12px', borderRadius: '12px', border: '1px solid #eee' }}>
+              <div style={{ fontSize: '11px', fontWeight: 700, color: '#DA251C', textTransform: 'uppercase', marginBottom: '4px' }}>Kontak (WhatsApp)</div>
+              <div style={{ fontSize: '14px', color: '#333', fontWeight: 600 }}>0815-7215-5275</div>
+            </div>
+          </div>
+
+          <div style={styles.mapBox}>
+            <iframe 
+              src="https://www.google.com/maps?q=Jl.+Gamelan+No.2,+Cikondang,+Kec.+Citamiang,+Kota+Sukabumi&output=embed"
+              style={styles.mapIframe}
+              allowFullScreen=""
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Lokasi Ale's Place"
+            ></iframe>
+            <div style={{ padding: '16px' }}>
+              <p style={styles.mapTitle}>Lokasi strategis dekat pusat kota.</p>
+              <p style={styles.mapSub}>Datang 10–15 menit sebelum waktu reservasi. Parkir tersedia.</p>
+            </div>
+          </div>
         </div>
 
       </div>
@@ -293,11 +296,43 @@ const styles = {
     lineHeight: 1.5,
   },
 
-  formWrap: {
-    padding: '24px 20px',
-    maxWidth: 680,
-    margin: '0 auto',
+  container: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: 32,
+    maxWidth: 1040,
+    margin: '40px auto',
+    padding: '0 24px',
+    alignItems: 'flex-start',
   },
+  formSection: {
+    flex: '1 1 500px',
+    background: '#fff',
+    padding: 32,
+    borderRadius: 16,
+    boxShadow: '0 10px 40px rgba(0,0,0,0.05)',
+  },
+  infoSection: {
+    flex: '1 1 300px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 20,
+    position: 'sticky',
+    top: 24,
+  },
+  imageBox: {
+    width: '100%',
+    height: 220,
+    borderRadius: 16,
+    overflow: 'hidden',
+    boxShadow: '0 10px 30px rgba(0,0,0,0.05)',
+  },
+  infoImage: {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+  },
+
   row: {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
@@ -388,11 +423,10 @@ const styles = {
   buttonIcon: { width: 18, height: 18, objectFit: 'cover', borderRadius: 999 },
 
   infoBox: {
-    background: '#FAF6F9',
-    borderRadius: 12,
-    padding: 16,
-    border: '1px solid rgba(218,127,28,0.3)',
-    marginBottom: 20,
+    background: '#fff',
+    borderRadius: 16,
+    padding: 24,
+    boxShadow: '0 10px 30px rgba(0,0,0,0.03)',
   },
   infoTitle: {
     fontSize: 14,
@@ -416,17 +450,16 @@ const styles = {
 
   mapBox: {
     background: '#F0E8E2',
-    borderRadius: 12,
-    height: 180,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
+    borderRadius: 16,
     border: '1px solid #DA7F1C',
     textAlign: 'center',
-    padding: '0 24px',
-    marginBottom: 8,
+    overflow: 'hidden',
+  },
+  mapIframe: {
+    width: '100%',
+    height: 200,
+    border: 0,
+    display: 'block',
   },
   mapTitle: {
     fontWeight: 700,
@@ -436,6 +469,6 @@ const styles = {
   mapSub: {
     fontSize: 12,
     color: '#666',
+    marginTop: 4,
   },
-  mapIcon: { width: 38, height: 38, objectFit: 'cover', borderRadius: 12 },
 };

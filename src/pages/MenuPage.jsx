@@ -1,18 +1,35 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import MenuCard from '../components/MenuCard';
-import { menuData } from '../data/menu';
+import { supabase } from '../supabaseClient';
+import { formatRupiah } from '../data/menu';
 
 export default function MenuPage() {
   const [activeCategory, setActiveCategory] = useState('Semua');
   const [searchQuery, setSearchQuery] = useState('');
-  const [menuItems, setMenuItems] = useState(menuData);
-  const [loading, setLoading] = useState(false);
+  const [menuItems, setMenuItems] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [selectedMenu, setSelectedMenu] = useState(null);
 
   useEffect(() => {
-    setMenuItems(menuData);
-    setError('');
-    setLoading(false);
+    const fetchMenu = async () => {
+      try {
+        setLoading(true);
+        const { data, error } = await supabase
+          .from('menu')
+          .select('*')
+          .order('id', { ascending: true });
+
+        if (error) throw error;
+        if (data) setMenuItems(data);
+      } catch (err) {
+        setError('Gagal memuat menu: ' + err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMenu();
   }, []);
 
   const filteredMenu = useMemo(() => {
@@ -94,12 +111,30 @@ export default function MenuPage() {
         ) : (
           <div style={styles.menuGrid}>
             {filteredMenu.map((item) => (
-              <MenuCard key={item.id} item={item} />
+              <MenuCard key={item.id} item={item} onClick={() => setSelectedMenu(item)} />
             ))}
           </div>
         )}
 
       </div>
+
+      {selectedMenu && (
+        <div style={styles.modalOverlay} onClick={() => setSelectedMenu(null)}>
+          <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <button style={styles.modalCloseBtn} onClick={() => setSelectedMenu(null)}>×</button>
+            <div style={styles.modalImageWrap}>
+              <img src={selectedMenu.image_url} alt={selectedMenu.nama} style={styles.modalImage} />
+              {selectedMenu.bestseller && <div style={styles.modalBadge}>Best Seller</div>}
+            </div>
+            <div style={styles.modalInfo}>
+              <div style={styles.modalCategory}>{selectedMenu.kategori}</div>
+              <h3 style={styles.modalTitle}>{selectedMenu.nama}</h3>
+              <p style={styles.modalPrice}>{formatRupiah(selectedMenu.harga)}</p>
+              <p style={styles.modalDesc}>{selectedMenu.deskripsi}</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       <footer>2026. Ale's Place Cipoho. All rights reserved</footer>
     </div>
@@ -125,28 +160,32 @@ function EmptyState({ onReset, query }) {
 
 const styles = {
   header: {
-    background: 'linear-gradient(135deg, #DA251C, #8F1D1B)',
-    padding: '32px 24px',
+    background: '#DA251C',
+    padding: '40px 20px 80px',
     textAlign: 'center',
+    color: 'white',
   },
   headerTitle: {
     fontFamily: "'Playfair Display', serif",
-    fontSize: 28,
-    fontWeight: 700,
+    fontSize: 'clamp(28px, 5vw, 40px)',
+    fontWeight: 800,
     color: 'white',
-    marginBottom: 6,
+    marginBottom: 12,
   },
   headerSub: {
-    color: 'rgba(255,255,255,0.82)',
-    fontSize: 13,
+    color: 'rgba(255,255,255,0.9)',
+    fontSize: 'clamp(14px, 2.5vw, 16px)',
+    maxWidth: 600,
+    margin: '0 auto',
   },
 
   searchWrap: {
     position: 'relative',
-    margin: '-20px auto 16px',
+    margin: '-40px auto 16px',
     maxWidth: 350,
     display: 'flex',
     justifyContent: 'center',
+    zIndex: 10,
   },
   searchInput: {
     width: '100%',
@@ -239,5 +278,99 @@ const styles = {
     fontWeight: 600,
     cursor: 'pointer',
     color: '#100A09',
+  },
+
+  modalOverlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'rgba(0,0,0,0.6)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 9999,
+    padding: 20,
+  },
+  modalContent: {
+    background: '#fff',
+    borderRadius: 20,
+    width: '100%',
+    maxWidth: 400,
+    overflow: 'hidden',
+    position: 'relative',
+    boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
+  },
+  modalCloseBtn: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    background: 'rgba(255,255,255,0.9)',
+    border: 'none',
+    width: 32,
+    height: 32,
+    borderRadius: '50%',
+    fontSize: 20,
+    fontWeight: 'bold',
+    cursor: 'pointer',
+    zIndex: 10,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: '#333',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+  },
+  modalImageWrap: {
+    width: '100%',
+    height: 240,
+    background: '#F0E8E2',
+    position: 'relative',
+  },
+  modalImage: {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+  },
+  modalBadge: {
+    position: 'absolute',
+    top: 16,
+    left: 16,
+    background: '#DA251C',
+    color: 'white',
+    fontSize: 11,
+    fontWeight: 700,
+    padding: '4px 12px',
+    borderRadius: 12,
+    textTransform: 'uppercase',
+    letterSpacing: '0.5px',
+  },
+  modalInfo: {
+    padding: 24,
+  },
+  modalCategory: {
+    fontSize: 12,
+    color: '#888',
+    textTransform: 'uppercase',
+    fontWeight: 700,
+    letterSpacing: '1px',
+    marginBottom: 8,
+  },
+  modalTitle: {
+    margin: '0 0 8px 0',
+    fontSize: 22,
+    color: '#100A09',
+  },
+  modalPrice: {
+    margin: '0 0 16px 0',
+    fontSize: 18,
+    color: '#DA251C',
+    fontWeight: 700,
+  },
+  modalDesc: {
+    margin: 0,
+    color: '#666',
+    fontSize: 14,
+    lineHeight: 1.6,
   },
 };

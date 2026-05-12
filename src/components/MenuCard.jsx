@@ -1,18 +1,16 @@
 import React from 'react';
 import { formatRupiah } from '../data/menu';
-import { getMenuImage } from '../data/photos';
 
-export default function MenuCard({ item }) {
-  const { nama, harga, deskripsi, bestseller } = item;
-  const image = item.image || getMenuImage(item);
+export default function MenuCard({ item, onClick }) {
+  const { nama, harga, deskripsi, bestseller, image_url } = item;
 
   return (
-    <div style={styles.card}>
+    <div style={{ ...styles.card, cursor: onClick ? 'pointer' : 'default' }} onClick={onClick}>
       <div style={styles.imageWrap}>
         {bestseller && (
           <div style={styles.badge}>Best</div>
         )}
-        <img src={image} alt={nama} style={styles.image} loading="lazy" />
+        <img src={image_url} alt={nama} style={styles.image} loading="lazy" />
       </div>
 
       <div style={styles.info}>
