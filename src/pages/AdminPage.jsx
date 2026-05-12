@@ -134,87 +134,30 @@ export default function AdminPage() {
         🔒 Halaman ini disembunyikan. Akses hanya lewat URL: <strong>#/admin</strong>
       </p>
 
-      <section style={styles.card}>
-        <div style={styles.cardHeader}>
-          <div>
-            <h3 style={styles.cardTitle}>Tambah Menu Baru</h3>
-            <p style={styles.cardSub}>Data disimpan ke database backend dan otomatis dipakai di halaman menu.</p>
-          </div>
-        </div>
-
-        {submitError && <div style={styles.errorBox}>{submitError}</div>}
-        {submitSuccess && <div style={styles.successBox}>{submitSuccess}</div>}
-
-        <form onSubmit={handleAddMenu} style={styles.formGrid}>
-          <input name="nama" value={menuForm.nama} onChange={handleMenuFormChange} placeholder="Nama menu" style={styles.input} />
-          <input name="harga" value={menuForm.harga} onChange={handleMenuFormChange} placeholder="Harga" type="number" min="0" style={styles.input} />
-          <input list="category-options" name="kategori" value={menuForm.kategori} onChange={handleMenuFormChange} placeholder="Kategori" style={styles.input} />
-          <input name="emoji" value={menuForm.emoji} onChange={handleMenuFormChange} placeholder="Emoji" style={styles.input} />
-          <textarea name="deskripsi" value={menuForm.deskripsi} onChange={handleMenuFormChange} placeholder="Deskripsi menu" rows={3} style={{ ...styles.input, gridColumn: '1 / -1', resize: 'vertical' }} />
-
-          <label style={styles.checkboxWrap}>
-            <input type="checkbox" name="bestseller" checked={menuForm.bestseller} onChange={handleMenuFormChange} />
-            <span>Jadikan best seller</span>
-          </label>
-
-          <div style={styles.formActions}>
-            <button type="submit" className="btn-primary" style={styles.submitBtn}>+ Simpan Menu</button>
-            <button type="button" onClick={() => setMenuForm(initialMenuForm)} style={styles.resetBtn}>Reset</button>
-          </div>
-        </form>
-
-        <datalist id="category-options">
-          {menuCategories.map((category) => (
-            <option key={category} value={category} />
-          ))}
-        </datalist>
-      </section>
-
-      <section style={{ marginTop: 20, ...styles.card }}>
-        <div style={styles.cardHeader}>
-          <div>
-            <h3 style={styles.cardTitle}>Daftar Menu ({menuItems.length})</h3>
-            <p style={styles.cardSub}>Data menu dari backend. Menu baru yang disimpan akan tampil di sini dan di halaman publik.</p>
-          </div>
-          <button onClick={fetchMenuItems} className="btn-primary" style={{ fontSize: 12, padding: '6px 12px' }}>
-            🔄 Refresh Menu
-          </button>
-        </div>
-
-        {menuError && <div style={styles.errorBox}>{menuError}</div>}
-
-        {loadingMenu ? (
-          <div style={styles.loading}>Memuat menu...</div>
-        ) : (
-          <div style={{ overflowX: 'auto' }}>
-            <table style={styles.table}>
-              <thead>
-                <tr style={{ textAlign: 'left', borderBottom: '2px solid #eee' }}>
-                  <th style={styles.th}>Emoji</th>
-                  <th style={styles.th}>Nama</th>
-                  <th style={styles.th}>Kategori</th>
-                  <th style={styles.th}>Harga</th>
-                  <th style={styles.th}>Status</th>
-                  <th style={styles.th}>Aksi</th>
+      <section style={{ marginTop: 18 }}>
+        <h3 style={{ marginBottom: 10 }}>Daftar Menu ({menuData.length})</h3>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ textAlign: 'left', borderBottom: '2px solid #eee' }}>
+                <th style={{ padding: '8px 6px' }}>Emoji</th>
+                <th style={{ padding: '8px 6px' }}>Nama</th>
+                <th style={{ padding: '8px 6px' }}>Kategori</th>
+                <th style={{ padding: '8px 6px' }}>Harga</th>
+              </tr>
+            </thead>
+            <tbody>
+              {menuData.map((m) => (
+                <tr key={m.id} style={{ borderBottom: '1px solid #fafafa' }}>
+                  <td style={{ padding: '10px 6px', width: 60 }}>{m.emoji}</td>
+                  <td style={{ padding: '10px 6px' }}>{m.nama}</td>
+                  <td style={{ padding: '10px 6px' }}>{m.kategori}</td>
+                  <td style={{ padding: '10px 6px', fontWeight: 700 }}>{formatRupiah(m.harga)}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {menuItems.map((menu) => (
-                  <tr key={menu.id} style={styles.row}>
-                    <td style={styles.td}>{menu.emoji}</td>
-                    <td style={styles.td}>{menu.nama}</td>
-                    <td style={styles.td}>{menu.kategori}</td>
-                    <td style={{ ...styles.td, fontWeight: 700 }}>{formatRupiah(menu.harga)}</td>
-                    <td style={styles.td}>{menu.bestseller ? 'Best seller' : '-'}</td>
-                    <td style={styles.td}>
-                      <button onClick={() => handleDeleteMenu(menu.id)} style={styles.deleteBtn}>Hapus</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+              ))}
+            </tbody>
+          </table>
+        </div>
       </section>
 
       <section style={{ marginTop: 28 }}>
