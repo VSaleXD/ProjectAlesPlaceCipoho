@@ -51,7 +51,7 @@ export default function AdminPage() {
       setMenuItems(data);
       setMenuError('');
     } catch (err) {
-      setMenuError('Gagal memuat menu. Pastikan server berjalan di http://localhost:3001');
+      setMenuError('Gagal memuat menu. Backend offline atau belum setup Supabase.');
       console.error(err);
     } finally {
       setLoadingMenu(false);

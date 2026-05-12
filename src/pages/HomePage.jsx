@@ -93,7 +93,7 @@ export default function HomePage({ setPage }) {
       <section style={styles.hero}>
         <div className="hero-overlay" />
         <div style={{ position: 'relative', zIndex: 1 }}>
-          <div style={styles.heroBadge}>✨ Student &amp; Community Friendly</div>
+          <div style={styles.heroBadge}>Restoran Jepang halal sukabumi </div>
           <h1 style={styles.heroTitle}>
             Selamat Datang di<br />Ale's Place Cipoho
           </h1>
