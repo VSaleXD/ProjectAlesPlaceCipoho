@@ -9,7 +9,6 @@ const initialMenuForm = {
   harga: '',
   kategori: '',
   deskripsi: '',
-  emoji: '🍜',
   bestseller: false,
 };
 
@@ -140,7 +139,6 @@ export default function AdminPage() {
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ textAlign: 'left', borderBottom: '2px solid #eee' }}>
-                <th style={{ padding: '8px 6px' }}>Emoji</th>
                 <th style={{ padding: '8px 6px' }}>Nama</th>
                 <th style={{ padding: '8px 6px' }}>Kategori</th>
                 <th style={{ padding: '8px 6px' }}>Harga</th>
@@ -149,7 +147,6 @@ export default function AdminPage() {
             <tbody>
               {menuData.map((m) => (
                 <tr key={m.id} style={{ borderBottom: '1px solid #fafafa' }}>
-                  <td style={{ padding: '10px 6px', width: 60 }}>{m.emoji}</td>
                   <td style={{ padding: '10px 6px' }}>{m.nama}</td>
                   <td style={{ padding: '10px 6px' }}>{m.kategori}</td>
                   <td style={{ padding: '10px 6px', fontWeight: 700 }}>{formatRupiah(m.harga)}</td>
