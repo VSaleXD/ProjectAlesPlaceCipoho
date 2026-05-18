@@ -1,12 +1,16 @@
-const withParams = (url) => `${url}?auto=format&fit=crop&w=1200&q=80`;
+const publicImage = (fileName) => `/gambarHomepage/${fileName}`;
+const publicImageSuasana = (fileName) => `/gambarHomepage/FotoSuasana/${fileName}`;
+const publicImageAbout = (fileName) => `/gambarHomepage/About/${fileName}`;
+const publicImageWhy = (fileName) => `/gambarHomepage/Why/${fileName}`;
+const withParams = (url) => `${url}?auto=format&fit=crop&w=800&q=80`;
 
 export const SITE_PHOTOS = {
-  hero: withParams('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4'),
+  hero: publicImage('Hero-Banner.jpg'),
   atmosphere: [
-    withParams('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085'),
-    withParams('https://images.unsplash.com/photo-1554118811-1e0d58224f24'),
-    withParams('https://images.unsplash.com/photo-1498654896293-37aacf113fd9'),
-    withParams('https://images.unsplash.com/photo-1528605248644-14dd04022da1'),
+    publicImageSuasana('Foto2.jpeg'),
+    publicImageSuasana('Foto3.jpeg'),
+    publicImageSuasana('Foto4.jpeg'),
+    publicImageSuasana('Foto5.jpeg'),
   ],
   about: [
     withParams('https://images.unsplash.com/photo-1554118811-1e0d58224f24'),
@@ -18,7 +22,6 @@ export const SITE_PHOTOS = {
     withParams('https://images.unsplash.com/photo-1504674900247-0877df9cc836'),
     withParams('https://images.unsplash.com/photo-1506354666786-959d6d497f1a'),
   ],
-  map: withParams('https://images.unsplash.com/photo-1513622470522-26c3c8d76c3b'),
 };
 
 export const ICON_PHOTOS = {
@@ -33,4 +36,4 @@ export const ICON_PHOTOS = {
   lock: withParams('https://images.unsplash.com/photo-1563013544-824ae1b704d3'),
   delete: withParams('https://images.unsplash.com/photo-1547592180-85f173990554'),
 };
-
+

@@ -31,25 +31,6 @@ const ATMOSPHERE_SLIDES = [
 ];
 
 
-
-const WHY_US = [
-  {
-    title: 'Harga Terjangkau',
-    desc: 'Mulai dari Rp18.000 untuk hidangan berkualitas premium',
-    image: SITE_PHOTOS.why[0],
-  },
-  {
-    title: 'Nyaman & Estetik',
-    desc: 'Tempat duduk luas dengan suasana santai, cocok untuk foto',
-    image: SITE_PHOTOS.why[1],
-  },
-  {
-    title: 'Rasa Otentik',
-    desc: 'Menu Jepang otentik dengan cita rasa yang disukai lidah lokal',
-    image: SITE_PHOTOS.why[2],
-  },
-];
-
 const TESTIMONIALS = [
   {
     name: 'Budi Santoso',
@@ -71,6 +52,7 @@ const TESTIMONIALS = [
 export default function HomePage({ setPage }) {
   const [activeSlide, setActiveSlide] = useState(0);
   const [menuItems, setMenuItems] = useState([]);
+  const [selectedGalleryImage, setSelectedGalleryImage] = useState(null);
   const totalSlides = ATMOSPHERE_SLIDES.length;
 
   useEffect(() => {
@@ -87,7 +69,7 @@ export default function HomePage({ setPage }) {
         .from('menu')
         .select('*')
         .eq('bestseller', true)
-        .limit(4); // limit changed to 4 to balance grid
+        .limit(4); 
       if (data) {
         setMenuItems(data);
       }
@@ -113,10 +95,6 @@ export default function HomePage({ setPage }) {
           <p style={styles.heroDesc}>
             Tempat nongkrong, belajar, dan makan enak dengan harga yang bersahabat. Nikmati pengalaman kuliner Jepang terbaik di kota.
           </p>
-          <div style={styles.heroBtns}>
-            <button style={styles.btnYellow} onClick={() => setPage('menu')}>Lihat Menu</button>
-            <button style={styles.btnOutline} onClick={() => setPage('reservasi')}>Reservasi</button>
-          </div>
         </div>
       </section>
 
@@ -140,8 +118,6 @@ export default function HomePage({ setPage }) {
               }}
             >
               <img src={slide.image} alt={slide.title} style={styles.slideImage} />
-              <p style={styles.slideTitle}>{slide.title}</p>
-              <p style={styles.slideDesc}>{slide.desc}</p>
             </div>
           ))}
 
@@ -173,7 +149,7 @@ export default function HomePage({ setPage }) {
         <div style={styles.aboutGrid}>
           {[
             { image: SITE_PHOTOS.about[0], title: 'Suasana Hangat', desc: 'Desain interior yang cozy untuk bersantai' },
-            { image: SITE_PHOTOS.about[1], title: 'Student-Friendly', desc: 'Harga spesial & promo khusus mahasiswa aktif' },
+            { image: SITE_PHOTOS.about[1], title: 'Student-Friendly', desc: 'Harga sangat terjangkau untuk mahasiswa mulai dari Rp18.000' },
             { image: SITE_PHOTOS.about[2], title: 'WiFi Gratis', desc: 'Internet cepat untuk belajar & kerja dari mana saja' },
           ].map((item) => (
             <div key={item.title} style={styles.aboutCard}>
@@ -182,24 +158,6 @@ export default function HomePage({ setPage }) {
                 <h4 style={styles.aboutTitle}>{item.title}</h4>
                 <p style={styles.aboutDesc}>{item.desc}</p>
               </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Kenapa Kami Section */}
-        <div style={{ ...styles.sectionHeader, marginTop: 40 }}>
-          <h2 style={styles.sectionTitle}>Kenapa Memilih Ale&apos;s Place?</h2>
-          <p style={styles.sectionSub}>Tiga alasan utama pelanggan setia kami selalu kembali</p>
-        </div>
-
-        <div style={styles.whyGrid}>
-          {WHY_US.map((item) => (
-            <div key={item.title} style={styles.whyItem}>
-              <div style={styles.whyImageWrap}>
-                <img src={item.image} alt={item.title} style={styles.whyImage} />
-              </div>
-              <h4 style={styles.whyTitle}>{item.title}</h4>
-              <p style={styles.whyDesc}>{item.desc}</p>
             </div>
           ))}
         </div>
@@ -250,17 +208,28 @@ export default function HomePage({ setPage }) {
 
         {/* Gallery Section */}
         <div style={{ ...styles.sectionHeader, marginTop: 40 }}>
-          <h2 style={styles.sectionTitle}>Galeri Ale&apos;s Place</h2>
-          <p style={styles.sectionSub}>Ikuti kami di Instagram @alesplace_cipoho</p>
+          <h2 style={styles.sectionTitle}>Galeri Ale&apos;s Place Cipoho</h2>
+          <p style={styles.sectionSub}>Ikuti kami di Instagram @alesplacecipoho</p>
         </div>
 
         <div style={styles.galleryGrid}>
-          <img src={SITE_PHOTOS.atmosphere[0]} alt="Gallery" style={styles.galleryImg} />
-          <img src={SITE_PHOTOS.why[2]} alt="Gallery" style={styles.galleryImg} />
-          <img src={SITE_PHOTOS.atmosphere[1]} alt="Gallery" style={styles.galleryImg} />
-          <img src={SITE_PHOTOS.about[0]} alt="Gallery" style={styles.galleryImg} />
-          <img src={SITE_PHOTOS.hero} alt="Gallery" style={styles.galleryImg} />
+          {[SITE_PHOTOS.atmosphere[0], SITE_PHOTOS.why[2], SITE_PHOTOS.atmosphere[1], SITE_PHOTOS.about[0], SITE_PHOTOS.hero].map((img, idx) => (
+            <img 
+              key={idx}
+              src={img} 
+              alt="Gallery" 
+              style={{ ...styles.galleryImg, cursor: 'pointer' }}
+              onClick={() => setSelectedGalleryImage(img)}
+            />
+          ))}
         </div>
+
+        {selectedGalleryImage && (
+          <div style={styles.galleryModal} onClick={() => setSelectedGalleryImage(null)}>
+            <button style={styles.galleryCloseBtn} onClick={() => setSelectedGalleryImage(null)}>×</button>
+            <img src={selectedGalleryImage} alt="Enlarged" style={styles.galleryModalImage} onClick={(e) => e.stopPropagation()} />
+          </div>
+        )}
 
         {/* Location & Contact */}
         <div style={{ ...styles.sectionHeader, marginTop: 60 }}>
@@ -299,6 +268,31 @@ export default function HomePage({ setPage }) {
               <p style={styles.contactValue}>0815-7215-5275</p>
             </div>
           </div>
+        </div>
+
+        {/* Social Media Section */}
+        <div style={{ ...styles.sectionHeader, marginTop: 60 }}>
+          <h2 style={styles.sectionTitle}>Ikuti Kami</h2>
+          <p style={styles.sectionSub}>Terhubung dengan kami di media sosial</p>
+        </div>
+
+        <div style={styles.socialGrid}>
+          <a href="https://www.instagram.com/alesplacecipoho" target="_blank" rel="noopener noreferrer" className="social-card">
+            <div style={styles.socialIcon}></div>
+            <p style={styles.socialName}>Instagram</p>
+          </a>
+          <a href="https://www.tiktok.com/@alesplacecipoho" target="_blank" rel="noopener noreferrer" className="social-card">
+            <div style={styles.socialIcon}></div>
+            <p style={styles.socialName}>TikTok</p>
+          </a>
+          <a href="https://wa.me/6281572155275" target="_blank" rel="noopener noreferrer" className="social-card">
+            <div style={styles.socialIcon}></div>
+            <p style={styles.socialName}>WhatsApp</p>
+          </a>
+          <a href="https://www.facebook.com/alesplacecipoho" target="_blank" rel="noopener noreferrer" className="social-card">
+            <div style={styles.socialIcon}></div>
+            <p style={styles.socialName}>Facebook</p>
+          </a>
         </div>
 
       </div>
@@ -437,9 +431,11 @@ const styles = {
     overflow: 'hidden',
     borderRadius: 24,
     marginBottom: 60,
-    minHeight: 380,
+    minHeight: 420,
     background: '#F0E8E2',
     boxShadow: '0 20px 40px rgba(0,0,0,0.06)',
+    margin: '0 -20px 60px -20px',
+    borderRadius: 0,
   },
   carouselSlide: {
     position: 'absolute',
@@ -449,37 +445,38 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     transition: 'opacity 0.6s ease',
-    padding: '24px 60px',
+    padding: '0',
     textAlign: 'center',
   },
   slideImage: {
     width: '100%',
-    height: 220,
+    height: '100%',
     objectFit: 'cover',
-    borderRadius: 16,
-    marginBottom: 20,
+    borderRadius: 0,
+    marginBottom: 0,
     display: 'block',
-    boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+    boxShadow: 'none',
   },
-  slideTitle: { fontWeight: 700, fontSize: 20, color: '#100A09', marginBottom: 8 },
-  slideDesc: { fontSize: 14, color: '#555', lineHeight: 1.6, maxWidth: 400 },
+  slideTitle: { fontWeight: 700, fontSize: 20, color: '#100A09', marginBottom: 8, position: 'absolute', bottom: 60, background: 'rgba(255,255,255,0.95)', padding: '16px 24px', borderRadius: 12, zIndex: 3 },
+  slideDesc: { fontSize: 14, color: '#555', lineHeight: 1.6, maxWidth: 400, position: 'absolute', bottom: 20, background: 'rgba(255,255,255,0.95)', padding: '12px 20px', borderRadius: 8, zIndex: 3 },
   carouselBtn: {
     position: 'absolute',
     top: '50%',
     transform: 'translateY(-50%)',
-    background: 'rgba(255,255,255,0.9)',
+    background: 'rgba(255,255,255,0.85)',
     color: '#DA251C',
     border: 'none',
-    width: 44,
-    height: 44,
+    width: 48,
+    height: 48,
     borderRadius: '50%',
-    fontSize: 24,
+    fontSize: 28,
     cursor: 'pointer',
     zIndex: 2,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+    boxShadow: '0 6px 16px rgba(0,0,0,0.15)',
+    transition: 'all 0.2s ease',
   },
   dots: {
     position: 'absolute',
@@ -687,6 +684,40 @@ const styles = {
     borderRadius: 16,
   },
 
+  galleryModal: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'rgba(0, 0, 0, 0.9)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1000,
+    padding: 20,
+  },
+  galleryModalImage: {
+    maxWidth: '90vw',
+    maxHeight: '90vh',
+    objectFit: 'contain',
+    borderRadius: 8,
+  },
+  galleryCloseBtn: {
+    position: 'absolute',
+    top: 20,
+    right: 30,
+    background: 'rgba(255, 255, 255, 0.2)',
+    border: 'none',
+    color: 'white',
+    fontSize: 40,
+    cursor: 'pointer',
+    padding: '0 10px',
+    lineHeight: 1,
+    borderRadius: 4,
+    transition: 'all 0.2s',
+  },
+
   locationContainer: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
@@ -740,6 +771,25 @@ const styles = {
     fontSize: 15,
     color: '#333',
     lineHeight: 1.5,
+  },
+
+  socialGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+    gap: 16,
+    maxWidth: 600,
+    margin: '0 auto',
+    padding: '0 20px 40px',
+  },
+  socialIcon: {
+    fontSize: 40,
+    lineHeight: 1,
+  },
+  socialName: {
+    margin: 0,
+    fontSize: 13,
+    fontWeight: 700,
+    color: '#DA251C',
   },
 
   footer: {

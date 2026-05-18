@@ -243,7 +243,7 @@ export default function AdminPage() {
             <input
               style={styles.input}
               name="image_url"
-              placeholder="URL Gambar (Opsional)"
+              placeholder="Path lokal, contoh: /gambarHomepage/Logo.jpeg"
               value={menuForm.image_url || ''}
               onChange={handleMenuFormChange}
             />

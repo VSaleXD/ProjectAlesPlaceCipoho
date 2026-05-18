@@ -275,7 +275,7 @@ export default function ReservasiPage() {
 
 const styles = {
   hero: {
-    background: 'linear-gradient(135deg, #DA251C, #8F1D1B)',
+    background: '#F5F1ED',
     padding: '40px 24px',
     textAlign: 'center',
     display: 'flex',
@@ -287,10 +287,10 @@ const styles = {
     fontFamily: "'Playfair Display', serif",
     fontSize: 26,
     fontWeight: 700,
-    color: 'white',
+    color: '#100A09',
   },
   heroDesc: {
-    color: 'rgba(255,255,255,0.82)',
+    color: '#666',
     fontSize: 13,
     maxWidth: 340,
     lineHeight: 1.5,

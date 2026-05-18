@@ -158,23 +158,24 @@ function EmptyState({ onReset, query }) {
   );
 }
 
+// Styles consistent with HomePage and ReservasiPage
 const styles = {
   header: {
-    background: '#DA251C',
+    background: '#F5F1ED',
     padding: '40px 20px 80px',
     textAlign: 'center',
-    color: 'white',
+    color: '#100A09',
   },
   headerTitle: {
     fontFamily: "'Playfair Display', serif",
-    fontSize: 'clamp(28px, 5vw, 40px)',
-    fontWeight: 800,
-    color: 'white',
+    fontSize: 32,
+    fontWeight: 700,
+    color: '#100A09',
     marginBottom: 12,
   },
   headerSub: {
-    color: 'rgba(255,255,255,0.9)',
-    fontSize: 'clamp(14px, 2.5vw, 16px)',
+    color: '#666',
+    fontSize: 15,
     maxWidth: 600,
     margin: '0 auto',
   },
@@ -195,7 +196,7 @@ const styles = {
     border: 'none',
     background: '#FAF6F9',
     fontFamily: "'DM Sans', sans-serif",
-    fontSize: 14,
+    fontSize: 15,
     color: '#100A09',
     outline: 'none',
     boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
@@ -224,11 +225,11 @@ const styles = {
     padding: '8px 16px',
     borderRadius: 20,
     fontFamily: "'DM Sans', sans-serif",
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: 600,
     cursor: 'pointer',
     whiteSpace: 'nowrap',
-    color: '#666',
+    color: '#555',
     transition: 'all 0.2s',
     flexShrink: 0,
   },
@@ -245,14 +246,16 @@ const styles = {
     background: '#FFF4F4',
     border: '1px solid #F4C7C7',
     color: '#B42318',
-    fontSize: 13,
+    fontSize: 14,
+    fontFamily: "'DM Sans', sans-serif",
   },
 
   loadingState: {
     textAlign: 'center',
     padding: '36px 20px',
     color: '#666',
-    fontSize: 14,
+    fontSize: 15,
+    fontFamily: "'DM Sans', sans-serif",
   },
 
   menuGrid: {
@@ -267,6 +270,7 @@ const styles = {
     textAlign: 'center',
     padding: '48px 24px',
     color: '#666',
+    fontFamily: "'DM Sans', sans-serif",
   },
   resetBtn: {
     background: '#FFE400',
@@ -274,7 +278,7 @@ const styles = {
     padding: '8px 20px',
     borderRadius: 20,
     fontFamily: "'DM Sans', sans-serif",
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: 600,
     cursor: 'pointer',
     color: '#100A09',
