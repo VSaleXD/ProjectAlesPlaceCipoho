@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { formatRupiah } from '../data/menu';
 import { supabase } from '../supabaseClient';
-import { SITE_PHOTOS } from '../data/photos';
+import { ICON_PHOTOS, SITE_PHOTOS } from '../data/photos';
 
 const ATMOSPHERE_SLIDES = [
   {
@@ -47,6 +47,29 @@ const TESTIMONIALS = [
     review: 'Sushi dan Gyoza-nya sangat enak. Pelayanannya cepat dan ramah. Bakal sering balik ke sini buat makan bareng keluarga.',
     rating: '⭐⭐⭐⭐⭐'
   }
+];
+
+const SOCIAL_LINKS = [
+  {
+    name: 'Instagram',
+    href: 'https://www.instagram.com/alesplacecipoho',
+    icon: ICON_PHOTOS.instagram,
+  },
+  {
+    name: 'TikTok',
+    href: 'https://www.tiktok.com/@alesplacecipoho',
+    icon: ICON_PHOTOS.tiktok,
+  },
+  {
+    name: 'WhatsApp',
+    href: 'https://wa.me/6281572155275',
+    icon: ICON_PHOTOS.whatsapp,
+  },
+  {
+    name: 'Facebook',
+    href: 'https://www.facebook.com/alesplacecipoho',
+    icon: ICON_PHOTOS.facebook,
+  },
 ];
 
 export default function HomePage({ setPage }) {
@@ -209,7 +232,6 @@ export default function HomePage({ setPage }) {
         {/* Gallery Section */}
         <div style={{ ...styles.sectionHeader, marginTop: 40 }}>
           <h2 style={styles.sectionTitle}>Galeri Ale&apos;s Place Cipoho</h2>
-          <p style={styles.sectionSub}>Ikuti kami di Instagram @alesplacecipoho</p>
         </div>
 
         <div style={styles.galleryGrid}>
@@ -277,22 +299,14 @@ export default function HomePage({ setPage }) {
         </div>
 
         <div style={styles.socialGrid}>
-          <a href="https://www.instagram.com/alesplacecipoho" target="_blank" rel="noopener noreferrer" className="social-card">
-            <div style={styles.socialIcon}></div>
-            <p style={styles.socialName}>Instagram</p>
-          </a>
-          <a href="https://www.tiktok.com/@alesplacecipoho" target="_blank" rel="noopener noreferrer" className="social-card">
-            <div style={styles.socialIcon}></div>
-            <p style={styles.socialName}>TikTok</p>
-          </a>
-          <a href="https://wa.me/6281572155275" target="_blank" rel="noopener noreferrer" className="social-card">
-            <div style={styles.socialIcon}></div>
-            <p style={styles.socialName}>WhatsApp</p>
-          </a>
-          <a href="https://www.facebook.com/alesplacecipoho" target="_blank" rel="noopener noreferrer" className="social-card">
-            <div style={styles.socialIcon}></div>
-            <p style={styles.socialName}>Facebook</p>
-          </a>
+          {SOCIAL_LINKS.map((social) => (
+            <a key={social.name} href={social.href} target="_blank" rel="noopener noreferrer" className="social-card">
+              <div style={styles.socialIcon}>
+                <img src={social.icon} alt={social.name} style={styles.socialIconImage} />
+              </div>
+              <p style={styles.socialName}>{social.name}</p>
+            </a>
+          ))}
         </div>
 
       </div>
@@ -782,8 +796,21 @@ const styles = {
     padding: '0 20px 40px',
   },
   socialIcon: {
-    fontSize: 40,
-    lineHeight: 1,
+    width: 64,
+    height: 64,
+    borderRadius: '50%',
+    overflow: 'hidden',
+    background: '#F7EFE8',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: '0 auto 12px',
+  },
+  socialIconImage: {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+    display: 'block',
   },
   socialName: {
     margin: 0,

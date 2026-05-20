@@ -1,16 +1,14 @@
 const publicImage = (fileName) => `/gambarHomepage/${fileName}`;
-const publicImageSuasana = (fileName) => `/gambarHomepage/FotoSuasana/${fileName}`;
-const publicImageAbout = (fileName) => `/gambarHomepage/About/${fileName}`;
-const publicImageWhy = (fileName) => `/gambarHomepage/Why/${fileName}`;
+const publicImageGallery = (fileName) => `/gambarHomepage/Gallery/${fileName}`;
 const withParams = (url) => `${url}?auto=format&fit=crop&w=800&q=80`;
 
 export const SITE_PHOTOS = {
   hero: publicImage('Hero-Banner.jpg'),
   atmosphere: [
-    publicImageSuasana('Foto2.jpeg'),
-    publicImageSuasana('Foto3.jpeg'),
-    publicImageSuasana('Foto4.jpeg'),
-    publicImageSuasana('Foto5.jpeg'),
+    publicImageGallery('Foto2.jpeg'),
+    publicImageGallery('Foto3.jpeg'),
+    publicImageGallery('Foto4.jpeg'),
+    publicImageGallery('Foto5.jpeg'),
   ],
   about: [
     withParams('https://images.unsplash.com/photo-1554118811-1e0d58224f24'),
@@ -25,6 +23,10 @@ export const SITE_PHOTOS = {
 };
 
 export const ICON_PHOTOS = {
+  instagram: withParams('https://images.unsplash.com/photo-1516321497487-e288fb19713f'),
+  tiktok: withParams('https://images.unsplash.com/photo-1516321318423-f06f85e504b3'),
+  facebook: withParams('https://images.unsplash.com/photo-1516321497487-e288fb19713f'),
+  whatsapp: withParams('https://images.unsplash.com/photo-1556740749-887f6717d7e4'),
   refresh: withParams('https://images.unsplash.com/photo-1516321318423-f06f85e504b3'),
   email: withParams('https://images.unsplash.com/photo-1516321497487-e288fb19713f'),
   phone: withParams('https://images.unsplash.com/photo-1511707171634-5f897ff02aa9'),
