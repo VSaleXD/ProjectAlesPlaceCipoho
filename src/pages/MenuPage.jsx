@@ -10,6 +10,13 @@ export default function MenuPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedMenu, setSelectedMenu] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 16;
+
+  // Reset page to 1 when category or search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeCategory, searchQuery]);
 
   useEffect(() => {
     const fetchMenu = async () => {
@@ -56,6 +63,24 @@ export default function MenuPage() {
     return Array.from(categorySet);
   }, [menuItems]);
 
+  const paginatedMenu = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredMenu.slice(startIndex, endIndex);
+  }, [filteredMenu, currentPage, itemsPerPage]);
+
+  const totalPages = useMemo(() => {
+    return Math.ceil(filteredMenu.length / itemsPerPage);
+  }, [filteredMenu, itemsPerPage]);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    const element = document.getElementById('menu-section');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   const handleReset = () => {
     setSearchQuery('');
     setActiveCategory('Semua');
@@ -70,7 +95,7 @@ export default function MenuPage() {
         </p>
       </div>
 
-      <div style={{ paddingBottom: 40 }}>
+      <div id="menu-section" style={{ paddingBottom: 40 }}>
         {error && (
           <div style={styles.errorBox}>
             {error}
@@ -109,11 +134,68 @@ export default function MenuPage() {
         ) : filteredMenu.length === 0 ? (
           <EmptyState onReset={handleReset} query={searchQuery} />
         ) : (
-          <div style={styles.menuGrid}>
-            {filteredMenu.map((item) => (
-              <MenuCard key={item.id} item={item} onClick={() => setSelectedMenu(item)} />
-            ))}
-          </div>
+          <>
+            <div style={styles.menuGrid}>
+              {paginatedMenu.map((item) => (
+                <MenuCard key={item.id} item={item} onClick={() => setSelectedMenu(item)} />
+              ))}
+            </div>
+
+            {/* Premium Pagination Controls */}
+            {filteredMenu.length > 0 && (
+              <div style={styles.paginationSection}>
+                <div style={styles.paginationInfo}>
+                  Menampilkan <strong>{Math.min((currentPage - 1) * itemsPerPage + 1, filteredMenu.length)}</strong> - <strong>{Math.min(currentPage * itemsPerPage, filteredMenu.length)}</strong> dari <strong>{filteredMenu.length}</strong> menu
+                </div>
+
+                <div style={styles.paginationControlsWrap}>
+                  {totalPages > 1 && (
+                    <div style={styles.paginationPages}>
+                      <button
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        className="pagination-btn"
+                        style={{
+                          ...styles.pageBtn,
+                          ...(currentPage === 1 ? styles.pageBtnDisabled : {}),
+                        }}
+                        aria-label="Halaman sebelumnya"
+                      >
+                        &larr; Prev
+                      </button>
+
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                        <button
+                          key={page}
+                          onClick={() => handlePageChange(page)}
+                          className="pagination-btn"
+                          style={{
+                            ...styles.pageBtn,
+                            ...(currentPage === page ? styles.pageBtnActive : {}),
+                          }}
+                        >
+                          {page}
+                        </button>
+                      ))}
+
+                      <button
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                        className="pagination-btn"
+                        style={{
+                          ...styles.pageBtn,
+                          ...(currentPage === totalPages ? styles.pageBtnDisabled : {}),
+                        }}
+                        aria-label="Halaman selanjutnya"
+                      >
+                        Next &rarr;
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </>
         )}
 
       </div>
@@ -376,5 +458,92 @@ const styles = {
     color: '#666',
     fontSize: 14,
     lineHeight: 1.6,
+  },
+  paginationSection: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: 16,
+    margin: '32px 20px 0',
+    padding: '24px 20px',
+    background: '#FAF6F9',
+    borderRadius: 16,
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.04)',
+    border: '2px solid #F0E8E2',
+  },
+  paginationInfo: {
+    fontFamily: "'DM Sans', sans-serif",
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+  },
+  paginationControlsWrap: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 20,
+    width: '100%',
+  },
+  paginationPages: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 6,
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+  },
+  pageBtn: {
+    background: '#ffffff',
+    border: '1px solid #E0D5CD',
+    borderRadius: 8,
+    minWidth: 40,
+    height: 40,
+    padding: '0 12px',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontFamily: "'DM Sans', sans-serif",
+    fontSize: 14,
+    fontWeight: 600,
+    color: '#443F3D',
+    cursor: 'pointer',
+    outline: 'none',
+  },
+  pageBtnActive: {
+    background: '#DA251C',
+    borderColor: '#DA251C',
+    color: '#ffffff',
+  },
+  pageBtnDisabled: {
+    background: '#EAE5E2',
+    borderColor: '#EAE5E2',
+    color: '#A09792',
+    cursor: 'not-allowed',
+    pointerEvents: 'none',
+    opacity: 0.6,
+  },
+  itemsPerPageWrap: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8,
+  },
+  itemsPerPageLabel: {
+    fontFamily: "'DM Sans', sans-serif",
+    fontSize: 13,
+    fontWeight: 600,
+    color: '#666',
+  },
+  itemsPerPageSelect: {
+    background: '#ffffff',
+    border: '1px solid #E0D5CD',
+    borderRadius: 8,
+    padding: '8px 12px',
+    fontFamily: "'DM Sans', sans-serif",
+    fontSize: 13,
+    fontWeight: 600,
+    color: '#443F3D',
+    cursor: 'pointer',
+    outline: 'none',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
   },
 };

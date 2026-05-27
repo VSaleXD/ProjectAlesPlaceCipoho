@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { formatRupiah } from '../data/menu';
 import { ICON_PHOTOS } from '../data/photos';
 import { supabase } from '../supabaseClient';
+import { sendWhatsAppNotification, getManualWhatsAppLink } from '../utils/whatsapp';
 
 const initialMenuForm = {
   nama: '',
@@ -17,6 +18,10 @@ export default function AdminPage() {
   const [menuItems, setMenuItems] = useState([]);
   const [loadingReservations, setLoadingReservations] = useState(true);
   const [reservationError, setReservationError] = useState('');
+
+  // WhatsApp Notification State
+  const [waModal, setWaModal] = useState(null); // { phone, message, link, nama, status, errorInfo }
+  const [waToast, setWaToast] = useState({ show: false, message: '', type: 'success' });
 
   // Add Menu State
   const [submitError, setSubmitError] = useState('');
@@ -158,6 +163,13 @@ export default function AdminPage() {
   };
 
   // Reservation Handlers
+  const showWaToast = (message, type = 'success') => {
+    setWaToast({ show: true, message, type });
+    setTimeout(() => {
+      setWaToast({ show: false, message: '', type: 'success' });
+    }, 4000);
+  };
+
   const updateReservationStatus = async (id, newStatus) => {
     try {
       const { error } = await supabase
@@ -166,7 +178,41 @@ export default function AdminPage() {
         .eq('id', id);
 
       if (error) throw error;
+      
+      // Update local state immediately
       setReservations((prev) => prev.map((r) => (r.id === id ? { ...r, status: newStatus } : r)));
+
+      // Find the updated reservation
+      const reservation = reservations.find((r) => r.id === id);
+      if (reservation && (newStatus === 'dikonfirmasi' || newStatus === 'dibatalkan')) {
+        const res = await sendWhatsAppNotification(reservation, newStatus);
+        if (res.success) {
+          showWaToast(`Notifikasi WhatsApp otomatis terkirim ke ${reservation.nama}!`, 'success');
+        } else {
+          if (res.reason === 'NO_TOKEN') {
+            setWaModal({
+              phone: res.phone,
+              message: res.message,
+              link: getManualWhatsAppLink(res.phone, res.message),
+              nama: reservation.nama,
+              status: newStatus
+            });
+          } else {
+            console.error('WA API Error:', res.error);
+            showWaToast(`Gagal kirim otomatis: ${res.error || 'Kendala API'}. Mengalihkan ke manual...`, 'error');
+            setTimeout(() => {
+              setWaModal({
+                phone: res.phone,
+                message: res.message,
+                link: getManualWhatsAppLink(res.phone, res.message),
+                nama: reservation.nama,
+                status: newStatus,
+                errorInfo: res.error
+              });
+            }, 1200);
+          }
+        }
+      }
     } catch (err) {
       alert('Gagal mengubah status reservasi: ' + err.message);
     }
@@ -200,9 +246,36 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="section" style={{ maxWidth: 1040 }}>
-      <h2 className="section-title">Admin Dashboard</h2>
-      <p className="section-sub">Kelola menu dan reservasi dengan mudah</p>
+    <div>
+      <div style={styles.header}>
+        <h2 style={styles.headerTitle}>Admin Dashboard</h2>
+        <p style={styles.headerSub}>Kelola menu dan reservasi dengan mudah</p>
+      </div>
+
+      <div className="section" style={{ maxWidth: 1040, paddingTop: 0, paddingBottom: 40, marginTop: -40, position: 'relative', zIndex: 5 }}>
+
+        {/* Toast Notification */}
+        {waToast.show && (
+          <div style={{
+            position: 'fixed',
+            top: 24,
+            right: 24,
+            background: waToast.type === 'success' ? '#1f7a36' : '#DA251C',
+            color: '#fff',
+            padding: '16px 24px',
+            borderRadius: 12,
+            boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
+            zIndex: 10000,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            fontWeight: 600,
+            fontSize: 14,
+            animation: 'slideIn 0.3s ease-out forwards',
+          }}>
+            {waToast.type === 'success' ? '✅' : '⚠️'} {waToast.message}
+          </div>
+        )}
 
       {/* Tambah Menu Section */}
       <section style={styles.card}>
@@ -458,6 +531,84 @@ export default function AdminPage() {
         </div>
       )}
 
+      {/* Modal WhatsApp Manual Fallback */}
+      {waModal && (
+        <div style={styles.modalOverlay}>
+          <div style={{...styles.modalContent, maxWidth: 540}}>
+            <div style={styles.modalHeader}>
+              <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
+                💬 Kirim Notifikasi WhatsApp
+              </h3>
+              <button onClick={() => setWaModal(null)} style={styles.closeBtn}>×</button>
+            </div>
+            
+            <div style={{ marginBottom: 16 }}>
+              {waModal.errorInfo ? (
+                <div style={{...styles.errorBox, marginBottom: 12}}>
+                  <strong>Gagal Kirim Otomatis:</strong> {waModal.errorInfo}
+                </div>
+              ) : (
+                <div style={{ padding: '12px 16px', background: '#effaf1', borderRadius: 10, color: '#1f7a36', fontSize: 13, marginBottom: 12, fontWeight: 500 }}>
+                  ℹ️ Token WhatsApp API (Fonnte) belum diatur di file .env. Anda dapat mengirim notifikasi secara manual via WhatsApp Web dengan satu klik di bawah ini.
+                </div>
+              )}
+              
+              <p style={{ margin: '0 0 10px 0', fontSize: 14, color: '#333' }}>
+                Mengirim notifikasi status <strong>{waModal.status === 'dikonfirmasi' ? 'Dikonfirmasi' : 'Dibatalkan'}</strong> ke pelanggan <strong>{waModal.nama}</strong> ({waModal.phone}):
+              </p>
+              
+              <div style={{
+                background: '#e5ddd5',
+                backgroundImage: 'url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")',
+                padding: '16px',
+                borderRadius: 12,
+                maxHeight: '220px',
+                overflowY: 'auto',
+                border: '1px solid #ddd',
+                marginBottom: 16
+              }}>
+                <div style={{
+                  background: '#fff',
+                  borderRadius: '7.5px',
+                  padding: '8px 10px',
+                  maxWidth: '85%',
+                  fontSize: '13px',
+                  boxShadow: '0 1px 0.5px rgba(0,0,0,0.13)',
+                  whiteSpace: 'pre-wrap',
+                  lineHeight: '1.5',
+                  fontFamily: 'sans-serif',
+                  textAlign: 'left'
+                }}>
+                  {waModal.message}
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+              <button type="button" onClick={() => setWaModal(null)} style={styles.resetBtn}>Batal</button>
+              <a 
+                href={waModal.link} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                onClick={() => setWaModal(null)}
+                style={{
+                  ...styles.submitBtn,
+                  background: '#25D366',
+                  color: 'white',
+                  textDecoration: 'none',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6
+                }}
+              >
+                Kirim via WhatsApp Web
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+
+      </div>
     </div>
   );
 }
@@ -625,5 +776,25 @@ const styles = {
     fontSize: 24,
     cursor: 'pointer',
     color: '#666',
+  },
+  header: {
+    background: '#DA251C',
+    padding: '40px 20px 80px',
+    textAlign: 'center',
+    color: 'white',
+  },
+  headerTitle: {
+    fontFamily: "'Playfair Display', serif",
+    fontSize: 'clamp(28px, 5vw, 40px)',
+    fontWeight: 800,
+    color: 'white',
+    marginBottom: 12,
+  },
+  headerSub: {
+    color: 'rgba(255,255,255,0.9)',
+    fontSize: 'clamp(14px, 2.5vw, 16px)',
+    maxWidth: 600,
+    margin: '0 auto',
+    lineHeight: 1.6,
   },
 };

@@ -78,5 +78,10 @@ const styles = {
     color: '#888',
     marginTop: 4,
     lineHeight: 1.4,
+    display: '-webkit-box',
+    WebkitLineClamp: 2,
+    WebkitBoxOrient: 'vertical',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
   },
 };

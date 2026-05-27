@@ -297,3 +297,39 @@ footer {
     padding: 32px 16px;
   }
 }
+
+/* ── Pagination Styles ── */
+.pagination-btn {
+  transition: all 0.2s ease-in-out !important;
+}
+.pagination-btn:hover:not(:disabled) {
+  background-color: #DA251C !important;
+  border-color: #DA251C !important;
+  color: #ffffff !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(218, 37, 28, 0.2);
+}
+.pagination-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+.pagination-select {
+  transition: all 0.2s ease !important;
+}
+.pagination-select:hover {
+  border-color: #DA251C !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* ── Toast Slide In Animation ── */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+

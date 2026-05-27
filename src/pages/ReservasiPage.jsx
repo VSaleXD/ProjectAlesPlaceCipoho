@@ -11,20 +11,21 @@ const GUEST_OPTIONS = [
 
 
 const INITIAL_FORM = {
-  nama:    '',
-  email:   '',
+  nama: '',
+  email: '',
   telepon: '',
   tanggal: '',
-  jam:     '',
-  jumlah:  '1–2 orang',
+  jam: '',
+  jumlah: '1–2 orang',
   catatan: '',
 };
 
 export default function ReservasiPage() {
-  const [formData,     setFormData]     = useState(INITIAL_FORM);
-  const [errors,       setErrors]       = useState({});
-  const [successMsg,   setSuccessMsg]   = useState('');
+  const [formData, setFormData] = useState(INITIAL_FORM);
+  const [errors, setErrors] = useState({});
+  const [successMsg, setSuccessMsg] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [reservationStatus, setReservationStatus] = useState('');
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -38,11 +39,11 @@ export default function ReservasiPage() {
 
   const validateForm = () => {
     const e = {};
-    if (!formData.nama.trim())    e.nama    = 'Nama lengkap wajib diisi';
-    if (!formData.email.trim())   e.email   = 'Email wajib diisi';
+    if (!formData.nama.trim()) e.nama = 'Nama lengkap wajib diisi';
+    if (!formData.email.trim()) e.email = 'Email wajib diisi';
     if (!formData.telepon.trim()) e.telepon = 'Nomor HP wajib diisi untuk konfirmasi';
-    if (!formData.tanggal)        e.tanggal = 'Pilih tanggal reservasi';
-    if (!formData.jam.trim())     e.jam     = 'Isi jam kedatangan (mis. 19:30)';
+    if (!formData.tanggal) e.tanggal = 'Pilih tanggal reservasi';
+    if (!formData.jam.trim()) e.jam = 'Isi jam kedatangan (mis. 19:30)';
     return e;
   };
 
@@ -73,8 +74,9 @@ export default function ReservasiPage() {
       }
 
       setSuccessMsg('Reservasi berhasil dikirim! Silakan tunggu konfirmasi dari kami melalui WhatsApp/Telepon.');
+      setReservationStatus('menunggu');
       setFormData(INITIAL_FORM);
-      
+
     } catch (error) {
       console.error('Error:', error);
       setErrors({ submit: 'Gagal mengirim reservasi. ' + error.message });
@@ -83,146 +85,164 @@ export default function ReservasiPage() {
     }
   };
 
+  // Helper functions for status styling (same as admin page)
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'dikonfirmasi': return '#1f7a36'; // Hijau
+      case 'dibatalkan': return '#DA251C'; // Merah
+      default: return '#DA7F1C'; // Kuning/Oranye (menunggu)
+    }
+  };
+
+  const getStatusBg = (status) => {
+    switch (status) {
+      case 'dikonfirmasi': return '#effaf1';
+      case 'dibatalkan': return '#FFF4F4';
+      default: return '#FFFBF0';
+    }
+  };
+
   // Tanggal minimum = hari ini
   const today = new Date().toISOString().split('T')[0];
 
   return (
     <div>
-      <div style={styles.hero}>
-        <h2 style={styles.heroTitle}>Form Reservasi</h2>
-        <p style={styles.heroDesc}>
-          Isi data berikut untuk memesan tempat. Tim kami akan segera mengkonfirmasi reservasi Anda.
+      <div style={styles.header}>
+        <h2 style={styles.headerTitle}>Form Reservasi</h2>
+        <p style={styles.headerSub}>
+          Isi data di bawah untuk memesan tempat
         </p>
+
       </div>
 
       <div style={styles.container}>
         <div style={styles.formSection}>
           <div style={styles.row}>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Nama Lengkap</label>
-            <input
-              style={{ ...styles.input, ...(errors.nama ? styles.inputError : {}) }}
-              placeholder="Contoh: Andi Wijaya"
-              value={formData.nama}
-              onChange={(e) => handleChange('nama', e.target.value)}
+            <div style={styles.formGroup}>
+              <label style={styles.label}>Nama Lengkap</label>
+              <input
+                style={{ ...styles.input, ...(errors.nama ? styles.inputError : {}) }}
+                placeholder="Contoh: Andi Wijaya"
+                value={formData.nama}
+                onChange={(e) => handleChange('nama', e.target.value)}
+              />
+              {errors.nama
+                ? <span style={styles.errorMsg}>⚠️ {errors.nama}</span>
+                : <span style={styles.hint}>Wajib diisi</span>
+              }
+            </div>
+
+            <div style={styles.formGroup}>
+              <label style={styles.label}>Email</label>
+              <input
+                style={{ ...styles.input, ...(errors.email ? styles.inputError : {}) }}
+                placeholder="Contoh: andi@email.com"
+                type="email"
+                value={formData.email}
+                onChange={(e) => handleChange('email', e.target.value)}
+              />
+              {errors.email
+                ? <span style={styles.errorMsg}>⚠️ {errors.email}</span>
+                : <span style={styles.hint}>Wajib diisi</span>
+              }
+            </div>
+          </div>
+
+          <div style={styles.row}>
+            <div style={styles.formGroup}>
+              <label style={styles.label}>Nomor HP / WhatsApp</label>
+              <input
+                style={{ ...styles.input, ...(errors.telepon ? styles.inputError : {}) }}
+                placeholder="Contoh: 08xxxxxxxxxx"
+                value={formData.telepon}
+                onChange={(e) => handleChange('telepon', e.target.value)}
+                type="tel"
+              />
+              {errors.telepon
+                ? <span style={styles.errorMsg}>⚠️ {errors.telepon}</span>
+                : <span style={styles.hint}>Wajib diisi untuk konfirmasi</span>
+              }
+            </div>
+
+            <div style={styles.formGroup}>
+              <label style={styles.label}>Tanggal</label>
+              <input
+                style={{ ...styles.input, ...(errors.tanggal ? styles.inputError : {}) }}
+                type="date"
+                min={today}
+                value={formData.tanggal}
+                onChange={(e) => handleChange('tanggal', e.target.value)}
+              />
+              {errors.tanggal
+                ? <span style={styles.errorMsg}>⚠️ {errors.tanggal}</span>
+                : <span style={styles.hint}>Minimal hari ini (H+0)</span>
+              }
+            </div>
+          </div>
+
+          <div style={styles.row}>
+            <div style={styles.formGroup}>
+              <label style={styles.label}>Jam Kedatangan</label>
+              <input
+                style={{ ...styles.input, ...(errors.jam ? styles.inputError : {}) }}
+                placeholder="mis. 19:30"
+                value={formData.jam}
+                onChange={(e) => handleChange('jam', e.target.value)}
+              />
+              {errors.jam
+                ? <span style={styles.errorMsg}>⚠️ {errors.jam}</span>
+                : <span style={styles.hint}>Saran: datang 10 menit sebelum jam</span>
+              }
+            </div>
+
+            <div style={styles.formGroup}>
+              <label style={styles.label}>Jumlah Tamu</label>
+              <select
+                style={styles.input}
+                value={formData.jumlah}
+                onChange={(e) => handleChange('jumlah', e.target.value)}
+              >
+                {GUEST_OPTIONS.map((opt) => (
+                  <option key={opt} value={opt}>{opt}</option>
+                ))}
+              </select>
+              <span style={styles.hint}>Jika lebih dari 10, pilih "Grup"</span>
+            </div>
+          </div>
+
+          <div style={{ ...styles.formGroup, marginBottom: 20 }}>
+            <label style={styles.label}>Catatan Tambahan (Opsional)</label>
+            <textarea
+              style={{ ...styles.input, minHeight: 100, resize: 'vertical' }}
+              placeholder="Tambahkan permintaan khusus atau informasi lainnya..."
+              value={formData.catatan}
+              onChange={(e) => handleChange('catatan', e.target.value)}
             />
-            {errors.nama
-              ? <span style={styles.errorMsg}>⚠️ {errors.nama}</span>
-              : <span style={styles.hint}>Wajib diisi</span>
-            }
           </div>
 
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Email</label>
-            <input
-              style={{ ...styles.input, ...(errors.email ? styles.inputError : {}) }}
-              placeholder="Contoh: andi@email.com"
-              type="email"
-              value={formData.email}
-              onChange={(e) => handleChange('email', e.target.value)}
-            />
-            {errors.email
-              ? <span style={styles.errorMsg}>⚠️ {errors.email}</span>
-              : <span style={styles.hint}>Wajib diisi</span>
-            }
-          </div>
-        </div>
+          {successMsg && (
+            <div style={{ padding: 16, background: '#effaf1', borderRadius: 12, border: '1px solid #cdeed4', color: '#1f7a36', marginBottom: 16, textAlign: 'center', fontWeight: 600 }}>
+              ✅ {successMsg}
+            </div>
+          )}
 
-        <div style={styles.row}>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Nomor HP / WhatsApp</label>
-            <input
-              style={{ ...styles.input, ...(errors.telepon ? styles.inputError : {}) }}
-              placeholder="Contoh: 08xxxxxxxxxx"
-              value={formData.telepon}
-              onChange={(e) => handleChange('telepon', e.target.value)}
-              type="tel"
-            />
-            {errors.telepon
-              ? <span style={styles.errorMsg}>⚠️ {errors.telepon}</span>
-              : <span style={styles.hint}>Wajib diisi untuk konfirmasi</span>
-            }
-          </div>
+          {errors.submit && (
+            <div style={{ padding: 16, background: '#fee', borderRadius: 12, border: '1px solid #fcc', color: '#c33', marginBottom: 16, textAlign: 'center', fontWeight: 600 }}>
+              ❌ {errors.submit}
+            </div>
+          )}
 
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Tanggal</label>
-            <input
-              style={{ ...styles.input, ...(errors.tanggal ? styles.inputError : {}) }}
-              type="date"
-              min={today}
-              value={formData.tanggal}
-              onChange={(e) => handleChange('tanggal', e.target.value)}
-            />
-            {errors.tanggal
-              ? <span style={styles.errorMsg}>⚠️ {errors.tanggal}</span>
-              : <span style={styles.hint}>Minimal hari ini (H+0)</span>
-            }
-          </div>
-        </div>
-
-        <div style={styles.row}>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Jam Kedatangan</label>
-            <input
-              style={{ ...styles.input, ...(errors.jam ? styles.inputError : {}) }}
-              placeholder="mis. 19:30"
-              value={formData.jam}
-              onChange={(e) => handleChange('jam', e.target.value)}
-            />
-            {errors.jam
-              ? <span style={styles.errorMsg}>⚠️ {errors.jam}</span>
-              : <span style={styles.hint}>Saran: datang 10 menit sebelum jam</span>
-            }
-          </div>
-
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Jumlah Tamu</label>
-            <select
-              style={styles.input}
-              value={formData.jumlah}
-              onChange={(e) => handleChange('jumlah', e.target.value)}
-            >
-              {GUEST_OPTIONS.map((opt) => (
-                <option key={opt} value={opt}>{opt}</option>
-              ))}
-            </select>
-            <span style={styles.hint}>Jika lebih dari 10, pilih "Grup"</span>
-          </div>
-        </div>
-
-        <div style={{ ...styles.formGroup, marginBottom: 20 }}>
-          <label style={styles.label}>Catatan Tambahan (Opsional)</label>
-          <textarea
-            style={{ ...styles.input, minHeight: 100, resize: 'vertical' }}
-            placeholder="Tambahkan permintaan khusus atau informasi lainnya..."
-            value={formData.catatan}
-            onChange={(e) => handleChange('catatan', e.target.value)}
-          />
-        </div>
-
-        {successMsg && (
-          <div style={{ padding: 16, background: '#effaf1', borderRadius: 12, border: '1px solid #cdeed4', color: '#1f7a36', marginBottom: 16, textAlign: 'center', fontWeight: 600 }}>
-            ✅ {successMsg}
-          </div>
-        )}
-
-        {errors.submit && (
-          <div style={{ padding: 16, background: '#fee', borderRadius: 12, border: '1px solid #fcc', color: '#c33', marginBottom: 16, textAlign: 'center', fontWeight: 600 }}>
-            ❌ {errors.submit}
-          </div>
-        )}
-
-        <button
-          style={{
-            ...styles.submitBtn,
-            opacity: isSubmitting ? 0.8 : 1,
-            marginBottom: 0
-          }}
-          onClick={handleSubmit}
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? 'Mengirim...' : 'Kirim Reservasi'}
-        </button>
+          <button
+            style={{
+              ...styles.submitBtn,
+              opacity: isSubmitting ? 0.8 : 1,
+              marginBottom: 0
+            }}
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Mengirim...' : 'Kirim Reservasi'}
+          </button>
         </div>
 
         <div style={styles.infoSection}>
@@ -232,7 +252,7 @@ export default function ReservasiPage() {
 
           <div style={styles.infoBox}>
             <h4 style={styles.infoTitle}>Informasi Operasional</h4>
-            
+
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
               <div style={{ background: '#fff', padding: '12px', borderRadius: '12px', border: '1px solid #eee' }}>
                 <div style={{ fontSize: '11px', fontWeight: 700, color: '#DA251C', textTransform: 'uppercase', marginBottom: '4px' }}>Senin – Jumat</div>
@@ -243,7 +263,7 @@ export default function ReservasiPage() {
                 <div style={{ fontSize: '13px', color: '#333' }}>10:00 – 21:00 WIB</div>
               </div>
             </div>
-            
+
             <div style={{ background: '#fff', padding: '12px', borderRadius: '12px', border: '1px solid #eee' }}>
               <div style={{ fontSize: '11px', fontWeight: 700, color: '#DA251C', textTransform: 'uppercase', marginBottom: '4px' }}>Kontak (WhatsApp)</div>
               <div style={{ fontSize: '14px', color: '#333', fontWeight: 600 }}>0815-7215-5275</div>
@@ -251,7 +271,7 @@ export default function ReservasiPage() {
           </div>
 
           <div style={styles.mapBox}>
-            <iframe 
+            <iframe
               src="https://www.google.com/maps?q=Jl.+Gamelan+No.2,+Cikondang,+Kec.+Citamiang,+Kota+Sukabumi&output=embed"
               style={styles.mapIframe}
               allowFullScreen=""
@@ -261,7 +281,7 @@ export default function ReservasiPage() {
             ></iframe>
             <div style={{ padding: '16px' }}>
               <p style={styles.mapTitle}>Lokasi strategis dekat pusat kota.</p>
-              <p style={styles.mapSub}>Datang 10–15 menit sebelum waktu reservasi. Parkir tersedia.</p>
+              <p style={styles.mapSub}>Perumahan Cipoho Indah, Jl. Gamelan No.2, Cikondang, Kec. Citamiang, Kota Sukabumi, Jawa Barat 43142</p>
             </div>
           </div>
         </div>
@@ -275,22 +295,19 @@ export default function ReservasiPage() {
 
 const styles = {
   hero: {
-    background: '#F5F1ED',
+    background: 'linear-gradient(135deg, #DA251C, #8F1D1B)',
     padding: '40px 24px',
     textAlign: 'center',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: 10,
+    color: 'white',
   },
-  heroTitle: {
+  headerTitle: {
     fontFamily: "'Playfair Display', serif",
     fontSize: 26,
     fontWeight: 700,
-    color: '#100A09',
+    color: 'white',
   },
   heroDesc: {
-    color: '#666',
+    color: 'rgba(255,255,255,0.82)',
     fontSize: 13,
     maxWidth: 340,
     lineHeight: 1.5,
@@ -301,9 +318,11 @@ const styles = {
     flexWrap: 'wrap',
     gap: 32,
     maxWidth: 1040,
-    margin: '40px auto',
+    margin: '-40px auto 40px',
     padding: '0 24px',
     alignItems: 'flex-start',
+    position: 'relative',
+    zIndex: 5,
   },
   formSection: {
     flex: '1 1 500px',
