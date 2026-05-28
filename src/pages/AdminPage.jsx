@@ -27,6 +27,9 @@ export default function AdminPage() {
   const [submitError, setSubmitError] = useState('');
   const [submitSuccess, setSubmitSuccess] = useState('');
   const [menuForm, setMenuForm] = useState(initialMenuForm);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState('');
+  const [uploadPreview, setUploadPreview] = useState(null);
 
   // Edit Menu State
   const [editingMenu, setEditingMenu] = useState(null);
@@ -313,13 +316,45 @@ export default function AdminPage() {
               value={menuForm.kategori}
               onChange={handleMenuFormChange}
             />
-            <input
-              style={styles.input}
-              name="image_url"
-              placeholder="Path lokal, contoh: /gambarHomepage/Logo.jpeg"
-              value={menuForm.image_url || ''}
-              onChange={handleMenuFormChange}
-            />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <input
+                style={styles.input}
+                name="image_file"
+                type="file"
+                accept="image/*"
+                onChange={async (e) => {
+                  setUploadError('');
+                  const file = e.target.files && e.target.files[0];
+                  if (!file) return;
+                  // preview
+                  setUploadPreview(URL.createObjectURL(file));
+                  try {
+                    setUploading(true);
+                    const filePath = `gambar-menu/${Date.now()}_${file.name}`;
+                    const { data: uploadData, error: uploadErr } = await supabase.storage
+                      .from('projek-rpl')
+                      .upload(filePath, file, { upsert: true });
+                    if (uploadErr) throw uploadErr;
+                    const { data: publicData } = supabase.storage
+                      .from('projek-rpl')
+                      .getPublicUrl(filePath);
+                    const publicUrl = publicData?.publicUrl || publicData?.publicURL || null;
+                    if (!publicUrl) throw new Error('Gagal mendapatkan public URL');
+                    setMenuForm((prev) => ({ ...prev, image_url: publicUrl }));
+                  } catch (err) {
+                    console.error('Upload error', err);
+                    setUploadError(err.message || 'Gagal mengunggah gambar');
+                  } finally {
+                    setUploading(false);
+                  }
+                }}
+              />
+              {uploadPreview && (
+                <img src={uploadPreview} alt="Preview" style={{ width: 96, height: 96, objectFit: 'cover', borderRadius: 8, border: '1px solid #eee' }} />
+              )}
+              {uploading && <div style={{ color: '#666', fontSize: 13 }}>Mengunggah gambar...</div>}
+              {uploadError && <div style={styles.errorBox}>{uploadError}</div>}
+            </div>
           </div>
           <textarea
             style={{ ...styles.input, minHeight: 80, resize: 'vertical' }}

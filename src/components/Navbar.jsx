@@ -17,7 +17,7 @@ export default function Navbar({ page, setPage }) {
         aria-label="Ke halaman beranda"
         onKeyDown={(e) => e.key === 'Enter' && setPage('home')}
       >
-        <img src="/logo.jpg" alt="Logo Ale's Place Cipoho" />
+        <img src="logo.jpg" alt="Logo Ale's Place Cipoho" />
         <div className="brand-name">Ale's Place Cipoho</div>
       </div>
 

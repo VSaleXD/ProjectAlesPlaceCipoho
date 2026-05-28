@@ -125,7 +125,7 @@ export default function HomePage({ setPage }) {
 
         {/* Suasana Section */}
         <div style={styles.sectionHeader}>
-          <h2 style={styles.sectionTitle}>Suasana Ale&apos;s Place</h2>
+          <h2 style={styles.sectionTitle}>Suasana Ale&apos;s Place Cipoho</h2>
           <p style={styles.sectionSub}>Rasakan kenyamanan tempat nongkrong favoritmu</p>
         </div>
 
