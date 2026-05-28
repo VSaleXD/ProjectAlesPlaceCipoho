@@ -1,8 +1,4 @@
 /**
- * UTILS - Ale's Place Cipoho
- */
-
-/**
  * formatRupiah — Konversi integer ke format mata uang Rupiah Indonesia
  * @param {number} angka - Nilai harga dalam integer
  * @returns {string} Format: "Rp47.000"

@@ -11,9 +11,9 @@ export const SITE_PHOTOS = {
     publicImageGallery('Foto5.jpeg'),
   ],
   about: [
-    publicImageGallery('FotoSuasana.jpg'),
-    publicImageGallery('FotoHarga.jpg'),
-    publicImageGallery('FotoGift.jpg'),
+    publicImageGallery('suasanaHangat.jpeg'),
+    publicImageGallery('anakSekolah.png'),
+    publicImageGallery('wifiGratis.jpeg'),
   ],
   why: [
     publicImageGallery('Foto5.jpeg'),
