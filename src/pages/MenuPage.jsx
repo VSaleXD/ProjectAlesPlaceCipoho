@@ -243,7 +243,7 @@ function EmptyState({ onReset, query }) {
 // Styles consistent with HomePage and ReservasiPage
 const styles = {
   header: {
-    background: '#F5F1ED',
+    background: '#F5EBDD',
     padding: '40px 20px 80px',
     textAlign: 'center',
     color: '#100A09',

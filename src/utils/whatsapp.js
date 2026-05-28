@@ -76,13 +76,26 @@ export const sendWhatsAppNotification = async (reservation, type) => {
   const token = import.meta.env.VITE_FONNTE_TOKEN;
   const phone = formatPhoneNumber(reservation.telepon);
   const message = getReservationMessage(reservation, type);
+  return sendWhatsAppMessage(phone, message, token);
+};
+
+/**
+ * Mengirim pesan WhatsApp ke nomor tertentu via Fonnte API Gateway
+ * @param {string} phone - Nomor tujuan
+ * @param {string} message - Isi pesan
+ * @param {string} [tokenOverride] - Token opsional jika sudah tersedia
+ * @returns {Promise<{success: boolean, reason?: string, error?: string, message?: string, phone?: string}>}
+ */
+export const sendWhatsAppMessage = async (phone, message, tokenOverride) => {
+  const token = tokenOverride || import.meta.env.VITE_FONNTE_TOKEN;
+  const targetPhone = formatPhoneNumber(phone);
   
   if (!token || token.trim() === '') {
     return {
       success: false,
       reason: 'NO_TOKEN',
       message,
-      phone
+      phone: targetPhone
     };
   }
   
@@ -93,7 +106,7 @@ export const sendWhatsAppNotification = async (reservation, type) => {
         'Authorization': token
       },
       body: new URLSearchParams({
-        target: phone,
+        target: targetPhone,
         message: message,
         countryCode: '62',
       })
@@ -109,7 +122,7 @@ export const sendWhatsAppNotification = async (reservation, type) => {
         reason: 'API_ERROR',
         error: data.reason || 'Tolak kirim dari API Fonnte',
         message,
-        phone
+        phone: targetPhone
       };
     }
   } catch (err) {
@@ -118,7 +131,7 @@ export const sendWhatsAppNotification = async (reservation, type) => {
       reason: 'NETWORK_ERROR',
       error: err.message,
       message,
-      phone
+      phone: targetPhone
     };
   }
 };

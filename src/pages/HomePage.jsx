@@ -33,18 +33,18 @@ const ATMOSPHERE_SLIDES = [
 
 const TESTIMONIALS = [
   {
-    name: 'Budi Santoso',
-    review: 'Ramennya luar biasa! Kuahnya sangat kental dan gurih. Tempatnya juga sangat nyaman untuk nugas karena WiFi-nya kencang.',
+    name: 'Sonia Febriana',
+    review: 'Resto Ales Cipoho menawarkan pengalaman makan ala Jepang yang nyaman dan menyenangkan. Suasananya tenang dan bersih, makanannya enak dengan rasa yang pas dan disajikan menarik. Pelayanannya ramah dan sigap, bikin makan jadi makin nyaman. Cocok untuk makan santai bareng keluarga atau teman.',
     rating: '⭐⭐⭐⭐⭐'
   },
   {
-    name: 'Siti Aminah',
-    review: 'Suka banget sama suasana di sini. Harga ramah di kantong mahasiswa tapi rasa makanannya sekelas restoran mewah di mall.',
+    name: 'Nafisa Rifka Shafia',
+    review: 'Best experience makan disini, udah jd confort food dari duluuu sampe skrg makin best pelayanannya🥰✨✨',
     rating: '⭐⭐⭐⭐⭐'
   },
   {
-    name: 'Reza Rahadian',
-    review: 'Sushi dan Gyoza-nya sangat enak. Pelayanannya cepat dan ramah. Bakal sering balik ke sini buat makan bareng keluarga.',
+    name: 'Nastitisari Dewi',
+    review: 'Tempat yang nyaman buat WFC. Makanan dan minuman nya juga affordable. Ramah dikantong dan rasa enak...',
     rating: '⭐⭐⭐⭐⭐'
   }
 ];

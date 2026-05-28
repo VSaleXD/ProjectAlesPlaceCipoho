@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ICON_PHOTOS, SITE_PHOTOS } from '../data/photos';
 import { supabase } from '../supabaseClient';
+import { getManualWhatsAppLink } from '../utils/whatsapp';
 
 const GUEST_OPTIONS = [
   '1–2 orang',
@@ -9,10 +10,8 @@ const GUEST_OPTIONS = [
   'Grup (lebih dari 10)',
 ];
 
-
 const INITIAL_FORM = {
   nama: '',
-  email: '',
   telepon: '',
   tanggal: '',
   jam: '',
@@ -40,7 +39,6 @@ export default function ReservasiPage() {
   const validateForm = () => {
     const e = {};
     if (!formData.nama.trim()) e.nama = 'Nama lengkap wajib diisi';
-    if (!formData.email.trim()) e.email = 'Email wajib diisi';
     if (!formData.telepon.trim()) e.telepon = 'Nomor HP wajib diisi untuk konfirmasi';
     if (!formData.tanggal) e.tanggal = 'Pilih tanggal reservasi';
     if (!formData.jam.trim()) e.jam = 'Isi jam kedatangan (mis. 19:30)';
@@ -61,7 +59,6 @@ export default function ReservasiPage() {
       // 2. Simpan ke Supabase
       const { data, error } = await supabase.from('reservations').insert([{
         nama: formData.nama,
-        email: formData.email,
         telepon: formData.telepon,
         tanggal: formData.tanggal,
         jam: formData.jam,
@@ -75,7 +72,26 @@ export default function ReservasiPage() {
 
       setSuccessMsg('Reservasi berhasil dikirim! Silakan tunggu konfirmasi dari kami melalui WhatsApp/Telepon.');
       setReservationStatus('menunggu');
+      // Simpan salinan data yang dikirim agar bisa dipakai untuk notifikasi
+      const submitted = { ...formData };
       setFormData(INITIAL_FORM);
+
+      // Kirim notifikasi ke WhatsApp admin (buka WhatsApp Web di tab baru)
+      try {
+        const adminPhone = '0815-1469-3030';
+        const adminMessage = `Reservasi baru dari *${submitted.nama || '-'}*\n` +
+          `Telepon: ${submitted.telepon || '-'}\n` +
+          `Tanggal: ${submitted.tanggal || '-'}\n` +
+          `Jam: ${submitted.jam || '-'}\n` +
+          `Jumlah: ${submitted.jumlah || '-'}\n` +
+          `Catatan: ${submitted.catatan || '-'}`;
+
+        const link = getManualWhatsAppLink(adminPhone, adminMessage);
+        // Buka WhatsApp Web/ app untuk mengirim pesan ke admin
+        window.open(link, '_blank');
+      } catch (err) {
+        console.warn('Gagal membuka WhatsApp admin:', err);
+      }
 
     } catch (error) {
       console.error('Error:', error);
@@ -107,9 +123,9 @@ export default function ReservasiPage() {
 
   return (
     <div>
-      <div style={styles.header}>
+      <div style={styles.hero}>
         <h2 style={styles.headerTitle}>Form Reservasi</h2>
-        <p style={styles.headerSub}>
+        <p style={styles.heroDesc}>
           Isi data di bawah untuk memesan tempat
         </p>
 
@@ -128,21 +144,6 @@ export default function ReservasiPage() {
               />
               {errors.nama
                 ? <span style={styles.errorMsg}>⚠️ {errors.nama}</span>
-                : <span style={styles.hint}>Wajib diisi</span>
-              }
-            </div>
-
-            <div style={styles.formGroup}>
-              <label style={styles.label}>Email</label>
-              <input
-                style={{ ...styles.input, ...(errors.email ? styles.inputError : {}) }}
-                placeholder="Contoh: andi@email.com"
-                type="email"
-                value={formData.email}
-                onChange={(e) => handleChange('email', e.target.value)}
-              />
-              {errors.email
-                ? <span style={styles.errorMsg}>⚠️ {errors.email}</span>
                 : <span style={styles.hint}>Wajib diisi</span>
               }
             </div>
@@ -246,9 +247,6 @@ export default function ReservasiPage() {
         </div>
 
         <div style={styles.infoSection}>
-          <div style={styles.imageBox}>
-            <img src={SITE_PHOTOS.hero} alt="Ale's Place" style={styles.infoImage} />
-          </div>
 
           <div style={styles.infoBox}>
             <h4 style={styles.infoTitle}>Informasi Operasional</h4>
@@ -295,19 +293,19 @@ export default function ReservasiPage() {
 
 const styles = {
   hero: {
-    background: 'linear-gradient(135deg, #DA251C, #8F1D1B)',
+    background: '#F5EBDD',
     padding: '40px 24px',
     textAlign: 'center',
-    color: 'white',
+    color: '#100A09',
   },
   headerTitle: {
     fontFamily: "'Playfair Display', serif",
     fontSize: 26,
     fontWeight: 700,
-    color: 'white',
+    color: '#100A09',
   },
   heroDesc: {
-    color: 'rgba(255,255,255,0.82)',
+    color: '#666666',
     fontSize: 13,
     maxWidth: 340,
     lineHeight: 1.5,
