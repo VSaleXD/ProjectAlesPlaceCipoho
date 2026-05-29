@@ -1,14 +1,14 @@
-import HeroBanner from '../../public/gambarHomepage/Hero-Banner.jpg';
-import Logo from '../../public/gambarHomepage/Logo.jpeg';
-import Foto1 from '../../public/gambarHomepage/Gallery/Foto1.jpeg';
-import Foto2 from '../../public/gambarHomepage/Gallery/Foto2.jpeg';
-import Foto3 from '../../public/gambarHomepage/Gallery/Foto3.jpeg';
-import Foto4 from '../../public/gambarHomepage/Gallery/Foto4.jpeg';
-import Foto5 from '../../public/gambarHomepage/Gallery/Foto5.jpeg';
-import Foto6 from '../../public/gambarHomepage/Gallery/foto6.jpg';
-import SuasanaHangat from '../../public/gambarHomepage/Gallery/suasanaHangat.jpeg';
-import AnakSekolah from '../../public/gambarHomepage/Gallery/anakSekolah.png';
-import WifiGratis from '../../public/gambarHomepage/Gallery/wifiGratis.jpeg';
+const HeroBanner = '/gambarHomepage/Hero-Banner.jpg';
+const Logo = '/gambarHomepage/Logo.jpeg';
+const Foto1 = '/gambarHomepage/Gallery/Foto1.jpeg';
+const Foto2 = '/gambarHomepage/Gallery/Foto2.jpeg';
+const Foto3 = '/gambarHomepage/Gallery/Foto3.jpeg';
+const Foto4 = '/gambarHomepage/Gallery/Foto4.jpeg';
+const Foto5 = '/gambarHomepage/Gallery/Foto5.jpeg';
+const Foto6 = '/gambarHomepage/Gallery/foto6.jpg';
+const SuasanaHangat = '/gambarHomepage/Gallery/suasanaHangat.jpeg';
+const AnakSekolah = '/gambarHomepage/Gallery/anakSekolah.png';
+const WifiGratis = '/gambarHomepage/Gallery/wifiGratis.jpeg';
 
 export const SITE_PHOTOS = {
   hero: HeroBanner,

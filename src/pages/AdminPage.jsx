@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { formatRupiah } from '../data/menu';
 import { ICON_PHOTOS } from '../data/photos';
 import { supabase } from '../supabaseClient';
@@ -30,6 +30,7 @@ export default function AdminPage() {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState('');
   const [uploadPreview, setUploadPreview] = useState(null);
+  const previewObjectUrlRef = useRef(null);
 
   // Edit Menu State
   const [editingMenu, setEditingMenu] = useState(null);
@@ -39,6 +40,14 @@ export default function AdminPage() {
   useEffect(() => {
     fetchReservations();
     fetchMenuItems();
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (previewObjectUrlRef.current) {
+        URL.revokeObjectURL(previewObjectUrlRef.current);
+      }
+    };
   }, []);
 
   const fetchReservations = async () => {
@@ -327,7 +336,12 @@ export default function AdminPage() {
                   const file = e.target.files && e.target.files[0];
                   if (!file) return;
                   // preview
-                  setUploadPreview(URL.createObjectURL(file));
+                  if (previewObjectUrlRef.current) {
+                    URL.revokeObjectURL(previewObjectUrlRef.current);
+                  }
+                  const previewUrl = URL.createObjectURL(file);
+                  previewObjectUrlRef.current = previewUrl;
+                  setUploadPreview(previewUrl);
                   try {
                     setUploading(true);
                     const filePath = `gambar-menu/${Date.now()}_${file.name}`;
@@ -650,7 +664,7 @@ export default function AdminPage() {
 
 const styles = {
   card: {
-    padding: 24,
+    padding: 20,
     background: '#fff',
     border: '1px solid #eee',
     borderRadius: 16,
@@ -662,6 +676,7 @@ const styles = {
     justifyContent: 'space-between',
     gap: 12,
     alignItems: 'start',
+    flexWrap: 'wrap',
     marginBottom: 20,
   },
   cardTitle: {
@@ -675,7 +690,7 @@ const styles = {
   },
   formGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
     gap: 12,
   },
   input: {
@@ -700,6 +715,7 @@ const styles = {
     display: 'flex',
     gap: 10,
     alignItems: 'center',
+    flexWrap: 'wrap',
     marginTop: 10,
   },
   submitBtn: {
@@ -790,13 +806,17 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 1000,
+    padding: 12,
+    overflowY: 'auto',
   },
   modalContent: {
     background: '#fff',
-    padding: 24,
+    padding: 20,
     borderRadius: 16,
     width: '100%',
     maxWidth: 500,
+    maxHeight: 'calc(100vh - 24px)',
+    overflowY: 'auto',
     boxShadow: '0 10px 40px rgba(0,0,0,0.2)',
   },
   modalHeader: {
@@ -814,7 +834,7 @@ const styles = {
   },
   header: {
     background: '#F5EBDD',
-    padding: '40px 20px 80px',
+    padding: '32px 16px 72px',
     textAlign: 'center',
     color: '#100A09',
   },

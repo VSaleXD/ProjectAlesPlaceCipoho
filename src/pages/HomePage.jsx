@@ -322,12 +322,12 @@ const styles = {
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
     position: 'relative',
-    minHeight: '85vh',
+    minHeight: 'clamp(520px, 85vh, 820px)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     textAlign: 'center',
-    padding: '0 20px',
+    padding: '0 16px',
   },
   heroOverlay: {
     position: 'absolute',
@@ -421,7 +421,7 @@ const styles = {
   container: {
     maxWidth: 1140,
     margin: '0 auto',
-    padding: '60px 24px',
+    padding: '56px 20px',
   },
 
   sectionHeader: {
@@ -430,7 +430,7 @@ const styles = {
   },
   sectionTitle: {
     fontFamily: "'Playfair Display', serif",
-    fontSize: 32,
+    fontSize: 'clamp(24px, 5vw, 32px)',
     fontWeight: 700,
     color: '#100A09',
     marginBottom: 8,
@@ -443,13 +443,12 @@ const styles = {
   carousel: {
     position: 'relative',
     overflow: 'hidden',
-    borderRadius: 24,
-    marginBottom: 60,
-    minHeight: 420,
+    borderRadius: 20,
+    marginBottom: 48,
+    minHeight: 'clamp(280px, 60vw, 420px)',
     background: '#F0E8E2',
     boxShadow: '0 20px 40px rgba(0,0,0,0.06)',
-    margin: '0 -20px 60px -20px',
-    borderRadius: 0,
+    margin: '0 0 48px 0',
   },
   carouselSlide: {
     position: 'absolute',
@@ -517,7 +516,7 @@ const styles = {
 
   aboutGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
     gap: 24,
     marginBottom: 24,
   },
@@ -551,7 +550,7 @@ const styles = {
 
   whyGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
     gap: 32,
     marginBottom: 20,
   },
@@ -590,7 +589,7 @@ const styles = {
 
   bsGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
     gap: 20,
   },
   bsCard: {
@@ -656,7 +655,7 @@ const styles = {
 
   testimonialGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
     gap: 20,
   },
   testimonialCard: {
@@ -688,7 +687,7 @@ const styles = {
 
   galleryGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
     gap: 16,
   },
   galleryImg: {
@@ -734,7 +733,7 @@ const styles = {
 
   locationContainer: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
     gap: 32,
     alignItems: 'start',
   },
@@ -762,7 +761,7 @@ const styles = {
   },
   hoursGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
     gap: 16,
   },
   contactItem: {
@@ -789,7 +788,7 @@ const styles = {
 
   socialGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))',
     gap: 16,
     maxWidth: 600,
     margin: '0 auto',

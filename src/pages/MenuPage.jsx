@@ -74,7 +74,10 @@ export default function MenuPage() {
   }, [filteredMenu, itemsPerPage]);
 
   const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
+    if (totalPages === 0) return;
+
+    const nextPage = Math.min(Math.max(pageNumber, 1), totalPages);
+    setCurrentPage(nextPage);
     const element = document.getElementById('menu-section');
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -244,13 +247,13 @@ function EmptyState({ onReset, query }) {
 const styles = {
   header: {
     background: '#F5EBDD',
-    padding: '40px 20px 80px',
+    padding: '32px 16px 72px',
     textAlign: 'center',
     color: '#100A09',
   },
   headerTitle: {
     fontFamily: "'Playfair Display', serif",
-    fontSize: 32,
+    fontSize: 'clamp(24px, 5vw, 32px)',
     fontWeight: 700,
     color: '#100A09',
     marginBottom: 12,
@@ -264,8 +267,8 @@ const styles = {
 
   searchWrap: {
     position: 'relative',
-    margin: '-40px auto 16px',
-    maxWidth: 350,
+    margin: '-36px auto 16px',
+    maxWidth: 420,
     display: 'flex',
     justifyContent: 'center',
     zIndex: 10,
@@ -296,7 +299,7 @@ const styles = {
   catScroll: {
     display: 'flex',
     gap: 8,
-    padding: '0 20px 16px',
+    padding: '0 16px 16px',
     justifyContent: 'center',
     flexWrap: 'wrap',
     scrollbarWidth: 'none',
@@ -342,9 +345,9 @@ const styles = {
 
   menuGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(4, 1fr)',
-    gap: 14,
-    padding: '0 20px',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+    gap: 12,
+    padding: '0 16px',
     marginBottom: 32,
   },
 
@@ -464,8 +467,8 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     gap: 16,
-    margin: '32px 20px 0',
-    padding: '24px 20px',
+    margin: '28px 16px 0',
+    padding: '20px 16px',
     background: '#FAF6F9',
     borderRadius: 16,
     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.04)',
@@ -482,7 +485,7 @@ const styles = {
     flexWrap: 'wrap',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 20,
+    gap: 12,
     width: '100%',
   },
   paginationPages: {
@@ -496,14 +499,14 @@ const styles = {
     background: '#ffffff',
     border: '1px solid #E0D5CD',
     borderRadius: 8,
-    minWidth: 40,
-    height: 40,
-    padding: '0 12px',
+    minWidth: 36,
+    height: 38,
+    padding: '0 10px',
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
     fontFamily: "'DM Sans', sans-serif",
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: 600,
     color: '#443F3D',
     cursor: 'pointer',

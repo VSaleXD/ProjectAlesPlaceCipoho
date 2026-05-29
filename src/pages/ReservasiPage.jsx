@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { ICON_PHOTOS, SITE_PHOTOS } from '../data/photos';
 import { supabase } from '../supabaseClient';
 import { getManualWhatsAppLink } from '../utils/whatsapp';
 
@@ -24,7 +23,6 @@ export default function ReservasiPage() {
   const [errors, setErrors] = useState({});
   const [successMsg, setSuccessMsg] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [reservationStatus, setReservationStatus] = useState('');
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -57,7 +55,7 @@ export default function ReservasiPage() {
 
     try {
       // 2. Simpan ke Supabase
-      const { data, error } = await supabase.from('reservations').insert([{
+      const { error } = await supabase.from('reservations').insert([{
         nama: formData.nama,
         telepon: formData.telepon,
         tanggal: formData.tanggal,
@@ -71,7 +69,6 @@ export default function ReservasiPage() {
       }
 
       setSuccessMsg('Reservasi berhasil dikirim! Silakan tunggu konfirmasi dari kami melalui WhatsApp/Telepon.');
-      setReservationStatus('menunggu');
       // Simpan salinan data yang dikirim agar bisa dipakai untuk notifikasi
       const submitted = { ...formData };
       setFormData(INITIAL_FORM);
@@ -98,23 +95,6 @@ export default function ReservasiPage() {
       setErrors({ submit: 'Gagal mengirim reservasi. ' + error.message });
     } finally {
       setIsSubmitting(false);
-    }
-  };
-
-  // Helper functions for status styling (same as admin page)
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'dikonfirmasi': return '#1f7a36'; // Hijau
-      case 'dibatalkan': return '#DA251C'; // Merah
-      default: return '#DA7F1C'; // Kuning/Oranye (menunggu)
-    }
-  };
-
-  const getStatusBg = (status) => {
-    switch (status) {
-      case 'dikonfirmasi': return '#effaf1';
-      case 'dibatalkan': return '#FFF4F4';
-      default: return '#FFFBF0';
     }
   };
 
@@ -294,30 +274,32 @@ export default function ReservasiPage() {
 const styles = {
   hero: {
     background: '#F5EBDD',
-    padding: '40px 24px',
+    padding: '32px 16px 72px',
     textAlign: 'center',
     color: '#100A09',
   },
   headerTitle: {
     fontFamily: "'Playfair Display', serif",
-    fontSize: 26,
+    fontSize: 'clamp(24px, 5vw, 30px)',
     fontWeight: 700,
     color: '#100A09',
   },
   heroDesc: {
     color: '#666666',
-    fontSize: 13,
-    maxWidth: 340,
+    fontSize: 14,
+    maxWidth: 420,
+    margin: '0 auto',
+    textAlign: 'center',
     lineHeight: 1.5,
   },
 
   container: {
     display: 'flex',
     flexWrap: 'wrap',
-    gap: 32,
+    gap: 24,
     maxWidth: 1040,
-    margin: '-40px auto 40px',
-    padding: '0 24px',
+    margin: '-32px auto 32px',
+    padding: '0 16px',
     alignItems: 'flex-start',
     position: 'relative',
     zIndex: 5,
@@ -325,7 +307,7 @@ const styles = {
   formSection: {
     flex: '1 1 500px',
     background: '#fff',
-    padding: 32,
+    padding: 24,
     borderRadius: 16,
     boxShadow: '0 10px 40px rgba(0,0,0,0.05)',
   },
@@ -334,8 +316,7 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     gap: 20,
-    position: 'sticky',
-    top: 24,
+    position: 'static',
   },
   imageBox: {
     width: '100%',
@@ -352,7 +333,7 @@ const styles = {
 
   row: {
     display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
     gap: 14,
     marginBottom: 14,
   },
@@ -442,7 +423,7 @@ const styles = {
   infoBox: {
     background: '#fff',
     borderRadius: 16,
-    padding: 24,
+    padding: 20,
     boxShadow: '0 10px 30px rgba(0,0,0,0.03)',
   },
   infoTitle: {
@@ -474,7 +455,7 @@ const styles = {
   },
   mapIframe: {
     width: '100%',
-    height: 200,
+    height: 220,
     border: 0,
     display: 'block',
   },
