@@ -1,126 +1,71 @@
-# 🍜 Ale's Place Cipoho — Frontend React
+# 🍜 Ale's Place Cipoho — Frontend (React + Vite)
 
-Website frontend restoran Jepang lokal **Ale's Place Cipoho**, dibangun dengan React + Vite.
-Mengikuti arsitektur **Modular Monolith** sesuai dokumen LKP.
-
----
-
-## 📁 Struktur Folder
-
-```
-ales-place/
-├── index.html              # Entry HTML (Vite)
-├── package.json
-├── vite.config.js
-└── src/
-    ├── main.jsx            # ReactDOM entry point
-    ├── App.jsx             # Root component + routing state
-    ├── data/
-    │   └── menu.js         # Data menu (array of objects) + helper functions
-    ├── components/
-    │   ├── Navbar.jsx      # Navigasi sticky (reusable)
-    │   └── MenuCard.jsx    # Kartu item menu (reusable)
-    ├── pages/
-    │   ├── HomePage.jsx    # Beranda: hero, carousel, about, bestseller, kontak
-    │   ├── MenuPage.jsx    # Katalog: search, filter kategori, grid menu
-    │   └── ReservasiPage.jsx # Form reservasi → redirect WhatsApp
-    └── styles/
-        └── index.css       # Global styles + CSS variables (design tokens)
-```
+Frontend untuk restoran lokal **Ale's Place Cipoho**, dibangun dengan React + Vite.
+README ini diperbarui agar sesuai struktur dan file yang ada di repositori saat ini.
 
 ---
 
-## 🚀 Cara Menjalankan
+## 🚀 Cepat Mulai
+
+Pastikan Node.js (v16+) terpasang.
 
 ```bash
-# 1. Install dependencies
+# Install dependensi
 npm install
 
-# 2. Jalankan development server
+# Jalankan server development (Vite)
 npm run dev
 
-# 3. Build untuk production
+# Build untuk production
 npm run build
+
+# Lihat build hasil (preview)
+npm run preview
 ```
 
 ---
 
-## ✨ Fitur Utama
+## 🔧 Variabel Lingkungan
 
-### 🏠 Halaman Beranda
-- Hero banner dengan CTA "Lihat Menu" & "Reservasi"
-- **Atmosphere Carousel** — auto-play 3 detik, navigasi manual
-- Highlights "Tentang Ale's Place" (3 kartu)
-- Section "Kenapa Ale's Place?" dengan ikon bulat kuning
-- Preview 3 Best Seller menu
-- Peta lokasi placeholder
-- Kontak & Jam Operasional
+Project ini menggunakan Supabase. 
 
-### 🍜 Halaman Menu
-- **Search bar real-time** — filter berdasarkan nama, kategori, deskripsi
-- **Carousel Best Seller** horizontal (klik untuk filter kategori)
-- **Filter kategori** pill buttons dengan scroll horizontal
-- Grid 2 kolom menu dengan badge ⭐ untuk Best Seller
-- Format harga Rupiah transparan (Rp47.000)
-- Empty state + tombol reset filter
+Contoh file `.env` (opsional):
 
-### 📅 Halaman Reservasi
-- Form: Nama, No HP, Tanggal, Jam, Jumlah Tamu, Catatan
-- **Validasi client-side** per field
-- **Preview pesan WhatsApp** sebelum redirect
-- `handleSubmit` → redirect ke `wa.me` dengan pesan:
-  > *"Halo Ale's Place Cipoho, saya [Nama] ingin reservasi untuk [Jumlah] pada [Tanggal] pukul [Jam]."*
-- Info lokasi & jam operasional
-
----
-
-## 🎨 Design System
-
-| Token | Nilai |
-|-------|-------|
-| `--red` | `#C0392B` |
-| `--cream` | `#F5EDD8` |
-| `--yellow` | `#F5D97A` |
-| `--dark` | `#2C1810` |
-| Font Display | Playfair Display (700/800) |
-| Font Body | DM Sans (300–600) |
-
----
-
-## 📋 Data Menu (`src/data/menu.js`)
-
-Setiap item menu memiliki properti:
-```js
-{
-  id:          1,
-  nama:        'Tori Paitan Chashu Ramen',
-  harga:       47000,        // Integer Rupiah
-  kategori:    'Ramen',
-  deskripsi:   '...',
-  emoji:       '🍜',
-  bestseller:  true,
-  image:       'https://...',  // URL Unsplash placeholder
-}
 ```
-
-Helper exports:
-- `formatRupiah(angka)` — format ke "Rp47.000"
-- `getBestSellers()` — filter item bestseller
-- `getMenuByKategori(kat)` — filter by kategori
-- `CATEGORIES` — array nama kategori
-
----
-### Tambah Menu Baru
-Edit `src/data/menu.js`, tambah object baru ke array `menuData`.
-
-### Ganti Warna Utama
-Edit CSS variables di `src/styles/index.css`:
-```css
-:root {
-  --red: #C0392B;  /* Ganti warna utama */
-}
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
 ```
 
 ---
 
-*2026. Ale's Place Cipoho. All rights reserved*
+## 📁 Struktur Penting (ringkasan)
+
+- `index.html` — entry Vite
+- `package.json` — skrip: `dev`, `build`, `preview`
+- `src/main.jsx` — entry React
+- `src/App.jsx` — routing dan layout utama
+- `src/supabaseClient.js` — koneksi Supabase (URL & anon key)
+- `src/utils/whatsapp.js` — helper untuk membuat URL WhatsApp (digunakan halaman reservasi)
+- `src/components/` — komponen reusable (`Navbar.jsx`, `MenuCard.jsx`, ...)
+- `src/pages/` — halaman aplikasi (`HomePage.jsx`, `MenuPage.jsx`, `ReservasiPage.jsx`, `AdminLoginPage.jsx`, `AdminPage.jsx`)
+- `src/data/` — data lokal seperti `menu.js` dan `photos.js`
+- `src/styles/index.css` — style global dan CSS variables
+- `assets/lampiran/` — gambar & file statis
+
+---
+
+## ✨ Fitur Utama (singkat)
+
+- Beranda: hero, carousel foto, preview best-seller, kontak
+- Halaman Menu: search, filter kategori, grid menu, format harga
+- Reservasi: form client-side, preview pesan WhatsApp, redirect ke `wa.me`
+- Halaman Admin: login sederhana dan halaman admin (tergantung Supabase)
+
+---
+
+## Menambah / Mengubah Konten
+
+- Foto & lampiran simpan di supabase.
+- Ubah warna dan token di `src/styles/index.css`.
+
+2026 • Ale's Place Cipoho
