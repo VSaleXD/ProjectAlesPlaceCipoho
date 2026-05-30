@@ -230,6 +230,53 @@ h1, h2, h3, h4 {
   background: rgba(255, 255, 255, 0.15);
 }
 
+/* ── Reservasi Page Mobile Tweaks ── */
+@media (max-width: 768px) {
+  .reservasi-page .reservasi-hero {
+    padding: 24px 16px 56px;
+  }
+
+  .reservasi-page .reservasi-container {
+    flex-direction: column;
+    gap: 16px;
+    margin: -24px auto 24px;
+    padding: 0 12px;
+  }
+
+  .reservasi-page .reservasi-formSection,
+  .reservasi-page .reservasi-infoSection {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+
+  .reservasi-page .reservasi-formSection {
+    padding: 18px;
+    border-radius: 14px;
+  }
+
+  .reservasi-page .reservasi-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .reservasi-page .reservasi-infoBox {
+    padding: 16px;
+  }
+
+  .reservasi-page .reservasi-operationalGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .reservasi-page .reservasi-mapBox iframe {
+    height: 180px;
+  }
+
+  .reservasi-page .reservasi-submitBtn {
+    min-height: 52px;
+    font-size: 15px;
+  }
+}
+
 /* ── Cards ── */
 .card {
   background: var(--warm-white);

@@ -73,7 +73,7 @@ export default function ReservasiPage() {
       const submitted = { ...formData };
       setFormData(INITIAL_FORM);
 
-      // Kirim notifikasi ke WhatsApp admin (buka WhatsApp Web di tab baru)
+      // redirect ke WhatsApp ales (buka WhatsApp Web di tab baru)
       try {
         const adminPhone = '0815-1469-3030';
         const adminMessage = `Reservasi baru dari *${submitted.nama || '-'}*\n` +
@@ -102,8 +102,8 @@ export default function ReservasiPage() {
   const today = new Date().toISOString().split('T')[0];
 
   return (
-    <div>
-      <div style={styles.hero}>
+    <div className="reservasi-page">
+      <div style={styles.hero} className="reservasi-hero">
         <h2 style={styles.headerTitle}>Form Reservasi</h2>
         <p style={styles.heroDesc}>
           Isi data di bawah untuk memesan tempat
@@ -111,9 +111,9 @@ export default function ReservasiPage() {
 
       </div>
 
-      <div style={styles.container}>
-        <div style={styles.formSection}>
-          <div style={styles.row}>
+      <div style={styles.container} className="reservasi-container">
+        <div style={styles.formSection} className="reservasi-formSection">
+          <div style={styles.row} className="reservasi-row">
             <div style={styles.formGroup}>
               <label style={styles.label}>Nama Lengkap</label>
               <input
@@ -129,7 +129,7 @@ export default function ReservasiPage() {
             </div>
           </div>
 
-          <div style={styles.row}>
+          <div style={styles.row} className="reservasi-row">
             <div style={styles.formGroup}>
               <label style={styles.label}>Nomor HP / WhatsApp</label>
               <input
@@ -161,7 +161,7 @@ export default function ReservasiPage() {
             </div>
           </div>
 
-          <div style={styles.row}>
+          <div style={styles.row} className="reservasi-row">
             <div style={styles.formGroup}>
               <label style={styles.label}>Jam Kedatangan</label>
               <input
@@ -191,7 +191,7 @@ export default function ReservasiPage() {
             </div>
           </div>
 
-          <div style={{ ...styles.formGroup, marginBottom: 20 }}>
+          <div style={{ ...styles.formGroup, marginBottom: 20 }} className="reservasi-notes">
             <label style={styles.label}>Catatan Tambahan (Opsional)</label>
             <textarea
               style={{ ...styles.input, minHeight: 100, resize: 'vertical' }}
@@ -221,17 +221,18 @@ export default function ReservasiPage() {
             }}
             onClick={handleSubmit}
             disabled={isSubmitting}
+            className="reservasi-submitBtn"
           >
             {isSubmitting ? 'Mengirim...' : 'Kirim Reservasi'}
           </button>
         </div>
 
-        <div style={styles.infoSection}>
+        <div style={styles.infoSection} className="reservasi-infoSection">
 
-          <div style={styles.infoBox}>
+          <div style={styles.infoBox} className="reservasi-infoBox">
             <h4 style={styles.infoTitle}>Informasi Operasional</h4>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }} className="reservasi-operationalGrid">
               <div style={{ background: '#fff', padding: '12px', borderRadius: '12px', border: '1px solid #eee' }}>
                 <div style={{ fontSize: '11px', fontWeight: 700, color: '#DA251C', textTransform: 'uppercase', marginBottom: '4px' }}>Senin – Jumat</div>
                 <div style={{ fontSize: '13px', color: '#333' }}>11:00 – 21:00 WIB</div>
@@ -248,7 +249,7 @@ export default function ReservasiPage() {
             </div>
           </div>
 
-          <div style={styles.mapBox}>
+          <div style={styles.mapBox} className="reservasi-mapBox">
             <iframe
               src="https://www.google.com/maps?q=Jl.+Gamelan+No.2,+Cikondang,+Kec.+Citamiang,+Kota+Sukabumi&output=embed"
               style={styles.mapIframe}
