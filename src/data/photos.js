@@ -1,17 +1,22 @@
-const HeroBanner = '/gambarHomepage/Hero-Banner.jpg';
-const Logo = '/gambarHomepage/Logo.jpeg';
-const Foto1 = '/gambarHomepage/Gallery/Foto1.jpeg';
-const Foto2 = '/gambarHomepage/Gallery/Foto2.jpeg';
-const Foto3 = '/gambarHomepage/Gallery/Foto3.jpeg';
-const Foto4 = '/gambarHomepage/Gallery/Foto4.jpeg';
-const Foto5 = '/gambarHomepage/Gallery/Foto5.jpeg';
-const Foto6 = '/gambarHomepage/Gallery/foto6.jpg';
-const SuasanaHangat = '/gambarHomepage/Gallery/suasanaHangat.jpeg';
-const AnakSekolah = '/gambarHomepage/Gallery/anakSekolah.png';
-const WifiGratis = '/gambarHomepage/Gallery/wifiGratis.jpeg';
+const SUPABASE_STORAGE = 'https://iwtqlnktjfsehgubgnuc.supabase.co/storage/v1/object/public/projek-rpl';
+
+const HeroBanner = `${SUPABASE_STORAGE}/gambar-homepage/Hero-Banner.jpg`;
+const socialMedia = `${SUPABASE_STORAGE}/gambar-homepage/SocialMediaLogo.jpeg`;
+const Foto1 = `${SUPABASE_STORAGE}/gambar-homepage/Gallery/Foto1.jpeg`;
+const Foto2 = `${SUPABASE_STORAGE}/gambar-homepage/Gallery/Foto2.jpeg`;
+const Foto3 = `${SUPABASE_STORAGE}/gambar-homepage/Gallery/Foto3.jpeg`;
+const Foto4 = `${SUPABASE_STORAGE}/gambar-homepage/Gallery/Foto4.jpeg`;
+const Foto5 = `${SUPABASE_STORAGE}/gambar-homepage/Gallery/Foto5.jpeg`;
+const Foto6 = `${SUPABASE_STORAGE}/gambar-homepage/Gallery/foto6.jpg`;
+const SuasanaHangat = `${SUPABASE_STORAGE}/gambar-homepage/Gallery/suasanaHangat.jpeg`;
+const AnakSekolah = `${SUPABASE_STORAGE}/gambar-homepage/Gallery/anakSekolah.png`;
+const WifiGratis = `${SUPABASE_STORAGE}/gambar-homepage/Gallery/wifiGratis.jpeg`;
+const logo = `${SUPABASE_STORAGE}/logo.jpg`;
 
 export const SITE_PHOTOS = {
   hero: HeroBanner,
+  logo: logo,
+  
   atmosphere: [
     Foto2,
     Foto3,
@@ -31,9 +36,9 @@ export const SITE_PHOTOS = {
 };
 
 export const ICON_PHOTOS = {
-  instagram: Logo,
-  tiktok: Logo,
-  facebook: Logo,
-  whatsapp: Logo,
+  instagram: socialMedia,
+  tiktok: socialMedia,
+  facebook: socialMedia,
+  whatsapp: socialMedia,
 };
 

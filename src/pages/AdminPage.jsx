@@ -37,6 +37,13 @@ export default function AdminPage() {
   const [editError, setEditError] = useState('');
   const [editSuccess, setEditSuccess] = useState('');
 
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      alert(error.message || 'Gagal logout.');
+    }
+  };
+
   useEffect(() => {
     fetchReservations();
     fetchMenuItems();
@@ -260,6 +267,7 @@ export default function AdminPage() {
   return (
     <div>
       <div style={styles.header}>
+        <button type="button" onClick={handleLogout} style={styles.logoutBtn}>Logout</button>
         <h2 style={styles.headerTitle}>Admin Dashboard</h2>
         <p style={styles.headerSub}>Kelola menu dan reservasi dengan mudah</p>
       </div>
@@ -837,6 +845,20 @@ const styles = {
     padding: '32px 16px 72px',
     textAlign: 'center',
     color: '#100A09',
+    position: 'relative',
+  },
+  logoutBtn: {
+    position: 'absolute',
+    top: 18,
+    right: 18,
+    border: '1px solid rgba(16, 10, 9, 0.12)',
+    background: '#fff',
+    color: '#100A09',
+    padding: '10px 16px',
+    borderRadius: 999,
+    fontWeight: 700,
+    cursor: 'pointer',
+    boxShadow: '0 8px 20px rgba(0, 0, 0, 0.08)',
   },
   headerTitle: {
     fontFamily: "'Playfair Display', serif",

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { SITE_PHOTOS } from '../data/photos';
 
 const NAV_ITEMS = [
   ['home', 'Beranda'],
@@ -24,7 +25,7 @@ export default function Navbar({ page, setPage }) {
         aria-label="Ke halaman beranda"
         onKeyDown={(e) => e.key === 'Enter' && handleNavigate('home')}
       >
-        <img src="logo.jpg" alt="Logo Ale's Place Cipoho" />
+        <img src={SITE_PHOTOS.logo} alt="Logo Ale's Place Cipoho" />
         <div className="brand-name">Ale's Place Cipoho</div>
       </div>
 
