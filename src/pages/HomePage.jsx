@@ -116,7 +116,7 @@ export default function HomePage({ setPage }) {
             Selamat Datang di<br />Ale&apos;s Place Cipoho
           </h1>
           <p style={styles.heroDesc}>
-            Tempat nongkrong, belajar, dan makan enak dengan harga yang bersahabat. Nikmati pengalaman kuliner Jepang terbaik di kota SUkabumi.
+            Tempat nongkrong, belajar, dan makan enak dengan harga yang bersahabat. Nikmati pengalaman kuliner Jepang terbaik di kota Sukabumi.
           </p>
         </div>
       </section>
