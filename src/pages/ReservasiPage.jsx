@@ -26,11 +26,9 @@ export default function ReservasiPage() {
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    // Hapus error field yang baru diisi
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: '' }));
     }
-    // Reset success msg saat form berubah
     setSuccessMsg('');
   };
 

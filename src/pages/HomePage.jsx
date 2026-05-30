@@ -26,7 +26,7 @@ const ATMOSPHERE_SLIDES = [
     title: 'Promo Mahasiswa',
     desc: 'Student Specials — promo mingguan khusus mahasiswa aktif',
     bg: '#EAD9C2',
-    image: SITE_PHOTOS.atmosphere[3],
+    image: SITE_PHOTOS.atmosphere[6],
   },
 ];
 
@@ -235,7 +235,7 @@ export default function HomePage({ setPage }) {
         </div>
 
         <div style={styles.galleryGrid}>
-          {[SITE_PHOTOS.atmosphere[0], SITE_PHOTOS.why[2], SITE_PHOTOS.atmosphere[1], SITE_PHOTOS.about[0], SITE_PHOTOS.hero].map((img, idx) => (
+          {[SITE_PHOTOS.atmosphere[0], SITE_PHOTOS.atmosphere[1], SITE_PHOTOS.atmosphere[2], SITE_PHOTOS.atmosphere[3], SITE_PHOTOS.atmosphere[4], SITE_PHOTOS.atmosphere[5]].map((img, idx) => (
             <img 
               key={idx}
               src={img} 
