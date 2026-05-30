@@ -111,12 +111,12 @@ export default function HomePage({ setPage }) {
       <section style={{ ...styles.heroFull, backgroundImage: `url(${SITE_PHOTOS.hero})` }}>
         <div style={styles.heroOverlay}></div>
         <div style={styles.heroContent}>
-          <div style={styles.heroBadge}>Restoran Jepang Halal Sukabumi</div>
+          <div style={styles.heroBadge}>Restoran Jepang Terbaik di Sukabumi</div>
           <h1 style={styles.heroTitle}>
             Selamat Datang di<br />Ale&apos;s Place Cipoho
           </h1>
           <p style={styles.heroDesc}>
-            Tempat nongkrong, belajar, dan makan enak dengan harga yang bersahabat. Nikmati pengalaman kuliner Jepang terbaik di kota.
+            Tempat nongkrong, belajar, dan makan enak dengan harga yang bersahabat. Nikmati pengalaman kuliner Jepang terbaik di kota SUkabumi.
           </p>
         </div>
       </section>

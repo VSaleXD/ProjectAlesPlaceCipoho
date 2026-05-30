@@ -73,7 +73,7 @@ export default function ReservasiPage() {
 
       // redirect ke WhatsApp ales (buka WhatsApp Web di tab baru)
       try {
-        const adminPhone = '0815-1469-3030';
+        const adminPhone = '0815-7215-5275';
         const adminMessage = `Reservasi baru dari *${submitted.nama || '-'}*\n` +
           `Telepon: ${submitted.telepon || '-'}\n` +
           `Tanggal: ${submitted.tanggal || '-'}\n` +
