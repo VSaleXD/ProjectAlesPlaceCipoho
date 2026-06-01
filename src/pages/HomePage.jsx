@@ -52,55 +52,40 @@ const TESTIMONIALS = [
 
 const SOCIAL_LINKS = [
   {
+    key: 'instagram',
     name: 'Instagram',
-    href: 'https://www.instagram.com/alesplacecipoho',
     icon: ICON_PHOTOS.instagram,
   },
   {
+    key: 'tiktok',
     name: 'TikTok',
-    href: 'https://www.tiktok.com/@alesplacecipoho',
     icon: ICON_PHOTOS.tiktok,
   },
   {
+    key: 'whatsapp',
     name: 'WhatsApp',
-    href: 'https://wa.me/6281572155275',
     icon: ICON_PHOTOS.whatsapp,
   },
   {
+    key: 'facebook',
     name: 'Facebook',
-    href: 'https://www.facebook.com/alesplacecipoho',
     icon: ICON_PHOTOS.facebook,
   },
 ];
+
+const buildSocialLinks = (socialLinks = {}) => {
+  return SOCIAL_LINKS.map((link) => ({
+    ...link,
+    href: socialLinks[link.key] || '#',
+  })).filter((link) => link.href && link.href !== '#');
+};
 
 export default function HomePage({ setPage }) {
   const config = useOutletConfig();
   const [activeSlide, setActiveSlide] = useState(0);
   const [menuItems, setMenuItems] = useState([]);
   const [selectedGalleryImage, setSelectedGalleryImage] = useState(null);
-
-  const dynamicSocialLinks = [
-    {
-      name: 'Instagram',
-      href: config.socialLinks?.instagram || '#',
-      icon: ICON_PHOTOS.instagram,
-    },
-    {
-      name: 'TikTok',
-      href: config.socialLinks?.tiktok || '#',
-      icon: ICON_PHOTOS.tiktok,
-    },
-    {
-      name: 'WhatsApp',
-      href: config.socialLinks?.whatsapp || '#',
-      icon: ICON_PHOTOS.whatsapp,
-    },
-    {
-      name: 'Facebook',
-      href: config.socialLinks?.facebook || '#',
-      icon: ICON_PHOTOS.facebook,
-    },
-  ];
+  const dynamicSocialLinks = buildSocialLinks(config.socialLinks);
 
   const totalSlides = ATMOSPHERE_SLIDES.length;
 
@@ -330,7 +315,7 @@ export default function HomePage({ setPage }) {
                   return (
                     <a key={social.name} href={social.href} target="_blank" rel="noopener noreferrer" className="social-card">
                       <div style={styles.socialIcon}>
-                        <img src={`/${social.name}.png`} alt={social.name} style={styles.socialIconImage} />
+                        <img src={social.icon} alt={social.name} style={styles.socialIconImage} />
                       </div>
                       <p style={styles.socialName}>{social.name}</p>
                     </a>

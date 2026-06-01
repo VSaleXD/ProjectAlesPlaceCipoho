@@ -1,11 +1,5 @@
 import React from 'react';
 
-/**
- * JapaneseCloudBg — Ornamen awan Akatsuki (Naruto-style kumo)
- * Solid cloud shape dengan swirl/spiral putih di dalamnya.
- * Warna mengikuti tema web (dark red / #8F1D1B).
- */
-
 const CLOUDS = [
   { top: '5%',  left: '-1%',  scale: 0.6,  opacity: 0.08, delay: '0s',  duration: '28s', flip: false },
   { top: '2%',  right: '2%',  scale: 0.45, opacity: 0.06, delay: '4s',  duration: '32s', flip: true },
@@ -19,10 +13,6 @@ const CLOUDS = [
   { top: '93%', right: '4%',  scale: 0.42, opacity: 0.05, delay: '9s',  duration: '33s', flip: true },
 ];
 
-/**
- * SVG Akatsuki Cloud — bentuk solid dengan swirl putih di dalam.
- * Traced dari bentuk ikonik awan Akatsuki (Naruto).
- */
 function AkatsukiCloud({ flip = false }) {
   return (
     <svg

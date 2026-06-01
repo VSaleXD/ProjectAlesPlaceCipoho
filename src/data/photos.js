@@ -1,7 +1,10 @@
 const SUPABASE_STORAGE = 'https://iwtqlnktjfsehgubgnuc.supabase.co/storage/v1/object/public/projek-rpl';
 
 const HeroBanner = `${SUPABASE_STORAGE}/gambar-homepage/Hero-Banner.jpg`;
-const socialMedia = `${SUPABASE_STORAGE}/gambar-homepage/SocialMediaLogo.jpeg`;
+const instagram = `${SUPABASE_STORAGE}/gambar-homepage/Instagram.png`;
+const tiktok = `${SUPABASE_STORAGE}/gambar-homepage/TikTok.png`;
+const facebook = `${SUPABASE_STORAGE}/gambar-homepage/Facebook.png`;
+const whatsapp = `${SUPABASE_STORAGE}/gambar-homepage/WhatsApp.png`;
 const Foto1 = `${SUPABASE_STORAGE}/gambar-homepage/Gallery/Foto1.jpeg`;
 const Foto2 = `${SUPABASE_STORAGE}/gambar-homepage/Gallery/Foto2.jpeg`;
 const Foto3 = `${SUPABASE_STORAGE}/gambar-homepage/Gallery/Foto3.jpeg`;
@@ -35,9 +38,9 @@ export const SITE_PHOTOS = {
 };
 
 export const ICON_PHOTOS = {
-  instagram: socialMedia,
-  tiktok: socialMedia,
-  facebook: socialMedia,
-  whatsapp: socialMedia,
+  instagram: instagram,
+  tiktok: tiktok,
+  facebook: facebook,
+  whatsapp: whatsapp,
 };
 

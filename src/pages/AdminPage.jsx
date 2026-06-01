@@ -3,7 +3,7 @@ import { formatRupiah } from '../data/menu';
 import { ICON_PHOTOS } from '../data/photos';
 import { supabase } from '../supabaseClient';
 import { sendWhatsAppNotification, getManualWhatsAppLink } from '../utils/whatsapp';
-import { getOutletConfig, saveOutletConfig, useOutletConfig } from '../utils/outletConfig';
+import { saveOutletConfig, useOutletConfig } from '../utils/outletConfig';
 
 const initialMenuForm = {
   nama: '',
@@ -360,9 +360,9 @@ export default function AdminPage() {
   };
 
   // Save Config Settings
-  const handleSaveSettings = (e) => {
+  const handleSaveSettings = async (e) => {
     e.preventDefault();
-    saveOutletConfig({
+    const { syncedToSupabase } = await saveOutletConfig({
       operationalHours: {
         weekdays: operationalWeekdays,
         weekends: operationalWeekends,
@@ -375,7 +375,11 @@ export default function AdminPage() {
         facebook: facebookLink,
       }
     });
-    setSettingsSuccess('Pengaturan restoran berhasil disimpan!');
+    setSettingsSuccess(
+      syncedToSupabase
+        ? 'Pengaturan restoran berhasil disimpan ke Supabase!'
+        : 'Pengaturan restoran disimpan di cache lokal, sinkronisasi Supabase belum tersedia.'
+    );
     setTimeout(() => setSettingsSuccess(''), 3000);
   };
 
