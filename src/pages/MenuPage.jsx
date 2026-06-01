@@ -11,7 +11,33 @@ export default function MenuPage() {
   const [error, setError] = useState('');
   const [selectedMenu, setSelectedMenu] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 16;
+
+  const [windowWidth, setWindowWidth] = useState(() => typeof window !== 'undefined' ? window.innerWidth : 1200);
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const itemsPerPage = useMemo(() => {
+    // Grid container padding is 16px on left and right, so grid width is at most windowWidth - 32.
+    // Uncapped container width to maximize grid.
+    const gridContainerWidth = windowWidth - 32;
+    let cardWidth = 220;
+    const gap = 16;
+
+    if (windowWidth <= 450) {
+      cardWidth = (gridContainerWidth - 12) / 2;
+    }
+
+    // Calculate how many columns of flex items fit
+    let cols = Math.floor((gridContainerWidth + gap) / (cardWidth + gap));
+    if (cols < 1) cols = 1;
+
+    // Max rows is 4
+    return cols * 4;
+  }, [windowWidth]);
 
   // Reset page to 1 when category or search changes
   useEffect(() => {
@@ -42,8 +68,15 @@ export default function MenuPage() {
   const filteredMenu = useMemo(() => {
     const query = searchQuery.toLowerCase().trim();
     return menuItems.filter((item) => {
-      const matchCategory =
-        activeCategory === 'Semua' || item.kategori === activeCategory;
+      let matchCategory = false;
+      if (activeCategory === 'Semua') {
+        matchCategory = true;
+      } else if (activeCategory === 'Best Seller') {
+        matchCategory = item.bestseller === true;
+      } else {
+        matchCategory = item.kategori === activeCategory;
+      }
+      
       const matchSearch =
         !query ||
         item.nama.toLowerCase().includes(query) ||
@@ -54,9 +87,9 @@ export default function MenuPage() {
   }, [activeCategory, menuItems, searchQuery]);
 
   const categories = useMemo(() => {
-    const categorySet = new Set(['Semua']);
+    const categorySet = new Set(['Semua', 'Best Seller']);
     menuItems.forEach((item) => {
-      if (item.kategori) {
+      if (item.kategori && item.kategori.toLowerCase() !== 'best seller') {
         categorySet.add(item.kategori);
       }
     });
@@ -91,8 +124,34 @@ export default function MenuPage() {
 
   return (
     <div>
+      <style>{`
+        .menu-grid-responsive {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 16px;
+          padding: 0 16px;
+          margin-bottom: 32px;
+          max-width: 100%;
+        }
+        
+        .menu-grid-item {
+          width: 220px;
+          flex-shrink: 0;
+        }
+
+        @media (max-width: 450px) {
+          .menu-grid-responsive {
+            gap: 12px;
+          }
+          .menu-grid-item {
+            width: calc(50% - 6px);
+          }
+        }
+      `}</style>
+
       <div style={styles.header}>
-        <h2 style={styles.headerTitle}>Menu Kami</h2>
+        <h2 style={styles.headerTitle}>Katalog Menu</h2>
         <p style={styles.headerSub}>
           Temukan hidangan favorit Anda
         </p>
@@ -138,9 +197,11 @@ export default function MenuPage() {
           <EmptyState onReset={handleReset} query={searchQuery} />
         ) : (
           <>
-            <div style={styles.menuGrid}>
+            <div className="menu-grid-responsive">
               {paginatedMenu.map((item) => (
-                <MenuCard key={item.id} item={item} onClick={() => setSelectedMenu(item)} />
+                <div key={item.id} className="menu-grid-item">
+                  <MenuCard item={item} onClick={() => setSelectedMenu(item)} />
+                </div>
               ))}
             </div>
 
@@ -250,32 +311,33 @@ const styles = {
     padding: '32px 16px 72px',
     textAlign: 'center',
     color: '#100A09',
+    position: 'relative',
   },
   headerTitle: {
     fontFamily: "'Playfair Display', serif",
-    fontSize: 'clamp(24px, 5vw, 32px)',
-    fontWeight: 700,
+    fontSize: 'clamp(28px, 5vw, 40px)',
+    fontWeight: 800,
     color: '#100A09',
     marginBottom: 12,
   },
   headerSub: {
-    color: '#666',
-    fontSize: 15,
+    color: '#666666',
+    fontSize: 'clamp(14px, 2.5vw, 16px)',
     maxWidth: 600,
     margin: '0 auto',
+    lineHeight: 1.6,
   },
 
   searchWrap: {
     position: 'relative',
     margin: '-36px auto 16px',
-    maxWidth: 420,
-    display: 'flex',
-    justifyContent: 'center',
+    maxWidth: 350,
+    width: 'calc(100% - 32px)',
     zIndex: 10,
   },
   searchInput: {
     width: '100%',
-    maxWidth: 350,
+    boxSizing: 'border-box',
     padding: '14px 44px 14px 16px',
     borderRadius: 12,
     border: 'none',
@@ -319,9 +381,9 @@ const styles = {
     flexShrink: 0,
   },
   catBtnActive: {
-    background: '#FFE400',
-    borderColor: '#DA7F1C',
-    color: '#100A09',
+    background: '#DA251C',
+    borderColor: '#8F1D1B',
+    color: '#ffffff',
   },
 
   errorBox: {

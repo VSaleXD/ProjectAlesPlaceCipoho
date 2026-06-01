@@ -1,35 +1,137 @@
 import React, { useState } from 'react';
 import { supabase } from '../supabaseClient';
 import { getManualWhatsAppLink } from '../utils/whatsapp';
+import { useOutletConfig } from '../utils/outletConfig';
 
-const GUEST_OPTIONS = [
-  '1–2 orang',
-  '3–5 orang',
-  '6–10 orang',
-  'Grup (lebih dari 10)',
-];
+// TABLE_INVENTORY no longer hardcoded
 
 const INITIAL_FORM = {
   nama: '',
   telepon: '',
   tanggal: '',
   jam: '',
-  jumlah: '1–2 orang',
+  jumlah: '',
+  meja_id: '',
   catatan: '',
 };
 
 export default function ReservasiPage() {
+  const config = useOutletConfig();
   const [formData, setFormData] = useState(INITIAL_FORM);
   const [errors, setErrors] = useState({});
   const [successMsg, setSuccessMsg] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [availableTables, setAvailableTables] = useState([]);
+  const [checkingTables, setCheckingTables] = useState(false);
+  const [tableInventory, setTableInventory] = useState([]);
+
+  React.useEffect(() => {
+    async function fetchInventory() {
+      const { data, error } = await supabase.from('meja').select('*');
+      if (data) setTableInventory(data);
+    }
+    fetchInventory();
+  }, []);
+
+  React.useEffect(() => {
+    async function checkAvailability() {
+      if (!formData.tanggal || !formData.jam || !formData.jumlah) {
+        setAvailableTables([]);
+        return;
+      }
+
+      setCheckingTables(true);
+      try {
+        const { data, error } = await supabase
+          .from('reservations')
+          .select('meja_id, status')
+          .eq('tanggal', formData.tanggal)
+          .eq('jam', formData.jam);
+
+        if (error) throw error;
+
+        // Hitung meja yang sudah dipesan (asumsi status !== Ditolak / Dibatalkan jika ada)
+        const bookedCounts = {};
+        if (data) {
+          data.forEach(res => {
+            if (res.meja_id && res.status !== 'Ditolak' && res.status !== 'Dibatalkan') {
+              bookedCounts[res.meja_id] = (bookedCounts[res.meja_id] || 0) + 1;
+            }
+          });
+        }
+
+        const guests = parseInt(formData.jumlah, 10);
+
+        // Filter meja yang sisa unit > 0 dan kapasitas memadai
+        const available = tableInventory.map(table => {
+          const booked = bookedCounts[table.id] || 0;
+          return {
+            ...table,
+            sisa_unit: table.jumlah_unit - booked
+          };
+        }).filter(table => table.sisa_unit > 0 && table.kapasitas_maksimal >= guests);
+
+        setAvailableTables(available);
+
+        // Auto-reset meja_id jika meja yang dipilih sebelumnya sudah tidak tersedia
+        if (formData.meja_id) {
+          const isStillAvailable = available.some(t => t.id === parseInt(formData.meja_id, 10));
+          if (!isStillAvailable) {
+            setFormData(prev => ({ ...prev, meja_id: '' }));
+          }
+        }
+      } catch (err) {
+        console.error('Error checking tables:', err);
+      } finally {
+        setCheckingTables(false);
+      }
+    }
+
+    // Debounce sedikit agar tidak terlalu sering memanggil API saat mengetik jam/jumlah
+    const timeoutId = setTimeout(() => {
+      checkAvailability();
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [formData.tanggal, formData.jam, formData.jumlah, tableInventory]);
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: '' }));
-    }
     setSuccessMsg('');
+
+    // Real-time validation
+    const newErrors = { ...errors };
+
+    if (field === 'jumlah') {
+      if (value !== '' && parseInt(value, 10) < 1) {
+        newErrors.jumlah = 'Minimal tamu adalah 1 orang';
+      } else {
+        delete newErrors.jumlah;
+      }
+    } else if (field === 'jam') {
+      if (value.trim()) {
+        const jamArr = value.split(':');
+        if (jamArr.length === 2) {
+          const h = parseInt(jamArr[0], 10);
+          const m = parseInt(jamArr[1], 10);
+          if (h > 21 || (h === 21 && m > 0)) {
+            newErrors.jam = 'Reservasi maksimal pukul 21:00';
+          } else {
+            delete newErrors.jam;
+          }
+        } else {
+          delete newErrors.jam;
+        }
+      } else {
+        delete newErrors.jam;
+      }
+    } else {
+      if (newErrors[field]) {
+        delete newErrors[field];
+      }
+    }
+
+    setErrors(newErrors);
   };
 
   const validateForm = () => {
@@ -37,7 +139,25 @@ export default function ReservasiPage() {
     if (!formData.nama.trim()) e.nama = 'Nama lengkap wajib diisi';
     if (!formData.telepon.trim()) e.telepon = 'Nomor HP wajib diisi untuk konfirmasi';
     if (!formData.tanggal) e.tanggal = 'Pilih tanggal reservasi';
-    if (!formData.jam.trim()) e.jam = 'Isi jam kedatangan (mis. 19:30)';
+
+    if (!formData.jam.trim()) {
+      e.jam = 'Isi jam kedatangan (mis. 19:30)';
+    } else {
+      const jamArr = formData.jam.split(':');
+      if (jamArr.length === 2) {
+        const h = parseInt(jamArr[0], 10);
+        const m = parseInt(jamArr[1], 10);
+        if (h > 21 || (h === 21 && m > 0)) {
+          e.jam = 'Reservasi maksimal pukul 21:00';
+        }
+      }
+    }
+
+    if (!formData.jumlah || parseInt(formData.jumlah, 10) < 1) {
+      e.jumlah = 'Minimal tamu adalah 1 orang';
+    }
+
+    if (!formData.meja_id) e.meja_id = 'Pilih kategori meja yang tersedia';
     return e;
   };
 
@@ -58,7 +178,8 @@ export default function ReservasiPage() {
         telepon: formData.telepon,
         tanggal: formData.tanggal,
         jam: formData.jam,
-        jumlah: formData.jumlah,
+        jumlah: formData.jumlah.toString(),
+        meja_id: parseInt(formData.meja_id, 10),
         catatan: formData.catatan,
       }]);
 
@@ -73,12 +194,16 @@ export default function ReservasiPage() {
 
       // redirect ke WhatsApp ales (buka WhatsApp Web di tab baru)
       try {
-        const adminPhone = '0815-7215-5275';
+        const adminPhone = config.phone || '0815-7215-5275';
+        const selectedTable = tableInventory.find(t => t.id === parseInt(submitted.meja_id, 10));
+        const tableInfo = selectedTable ? `${selectedTable.kategori} (Max ${selectedTable.kapasitas_maksimal} org)` : '-';
+
         const adminMessage = `Reservasi baru dari *${submitted.nama || '-'}*\n` +
           `Telepon: ${submitted.telepon || '-'}\n` +
           `Tanggal: ${submitted.tanggal || '-'}\n` +
           `Jam: ${submitted.jam || '-'}\n` +
-          `Jumlah: ${submitted.jumlah || '-'}\n` +
+          `Jumlah: ${submitted.jumlah || '-'} orang\n` +
+          `Kategori Meja: ${tableInfo}\n` +
           `Catatan: ${submitted.catatan || '-'}`;
 
         const link = getManualWhatsAppLink(adminPhone, adminMessage);
@@ -176,16 +301,49 @@ export default function ReservasiPage() {
 
             <div style={styles.formGroup}>
               <label style={styles.label}>Jumlah Tamu</label>
-              <select
-                style={styles.input}
+              <input
+                style={{ ...styles.input, ...(errors.jumlah ? styles.inputError : {}) }}
+                type="number"
+                min="1"
+                placeholder="Contoh: 2"
                 value={formData.jumlah}
                 onChange={(e) => handleChange('jumlah', e.target.value)}
+              />
+              {errors.jumlah
+                ? <span style={styles.errorMsg}>⚠️ {errors.jumlah}</span>
+                : <span style={styles.hint}>Masukkan angka (mis. 2)</span>
+              }
+            </div>
+          </div>
+
+          <div style={styles.row} className="reservasi-row">
+            <div style={styles.formGroup}>
+              <label style={styles.label}>Pilih Kategori Meja</label>
+              <select
+                style={{ ...styles.input, ...(errors.meja_id ? styles.inputError : {}) }}
+                value={formData.meja_id}
+                onChange={(e) => handleChange('meja_id', e.target.value)}
+                disabled={!formData.tanggal || !formData.jam || !formData.jumlah || checkingTables}
               >
-                {GUEST_OPTIONS.map((opt) => (
-                  <option key={opt} value={opt}>{opt}</option>
+                <option value="">
+                  {(!formData.tanggal || !formData.jam || !formData.jumlah)
+                    ? "Isi Tanggal, Jam & Tamu dahulu"
+                    : checkingTables
+                      ? "Mengecek ketersediaan..."
+                      : availableTables.length === 0
+                        ? "Meja penuh/tidak cukup"
+                        : "Pilih meja tersedia"}
+                </option>
+                {availableTables.map((table) => (
+                  <option key={table.id} value={table.id}>
+                    {table.kategori} (Max: {table.kapasitas_maksimal} org) - Sisa: {table.sisa_unit}
+                  </option>
                 ))}
               </select>
-              <span style={styles.hint}>Jika lebih dari 10, pilih "Grup"</span>
+              {errors.meja_id
+                ? <span style={styles.errorMsg}>⚠️ {errors.meja_id}</span>
+                : <span style={styles.hint}>Sistem memfilter otomatis yang tersedia</span>
+              }
             </div>
           </div>
 
@@ -233,17 +391,17 @@ export default function ReservasiPage() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }} className="reservasi-operationalGrid">
               <div style={{ background: '#fff', padding: '12px', borderRadius: '12px', border: '1px solid #eee' }}>
                 <div style={{ fontSize: '11px', fontWeight: 700, color: '#DA251C', textTransform: 'uppercase', marginBottom: '4px' }}>Senin – Jumat</div>
-                <div style={{ fontSize: '13px', color: '#333' }}>11:00 – 21:00 WIB</div>
+                <div style={{ fontSize: '13px', color: '#333' }}>{config.operationalHours?.weekdays || '11:00 – 21:00 WIB'}</div>
               </div>
               <div style={{ background: '#fff', padding: '12px', borderRadius: '12px', border: '1px solid #eee' }}>
                 <div style={{ fontSize: '11px', fontWeight: 700, color: '#DA251C', textTransform: 'uppercase', marginBottom: '4px' }}>Sabtu, Minggu & Libur</div>
-                <div style={{ fontSize: '13px', color: '#333' }}>10:00 – 21:00 WIB</div>
+                <div style={{ fontSize: '13px', color: '#333' }}>{config.operationalHours?.weekends || '10:00 – 21:00 WIB'}</div>
               </div>
             </div>
 
             <div style={{ background: '#fff', padding: '12px', borderRadius: '12px', border: '1px solid #eee' }}>
               <div style={{ fontSize: '11px', fontWeight: 700, color: '#DA251C', textTransform: 'uppercase', marginBottom: '4px' }}>Kontak (WhatsApp)</div>
-              <div style={{ fontSize: '14px', color: '#333', fontWeight: 600 }}>0815-7215-5275</div>
+              <div style={{ fontSize: '14px', color: '#333', fontWeight: 600 }}>{config.phone || '0815-7215-5275'}</div>
             </div>
           </div>
 
@@ -257,7 +415,7 @@ export default function ReservasiPage() {
               title="Lokasi Ale's Place"
             ></iframe>
             <div style={{ padding: '16px' }}>
-              <p style={styles.mapTitle}>Lokasi strategis dekat pusat kota.</p>
+              <p style={styles.mapTitle}>Lokasi Ale's Place Cipoho</p>
               <p style={styles.mapSub}>Perumahan Cipoho Indah, Jl. Gamelan No.2, Cikondang, Kec. Citamiang, Kota Sukabumi, Jawa Barat 43142</p>
             </div>
           </div>
@@ -276,20 +434,22 @@ const styles = {
     padding: '32px 16px 72px',
     textAlign: 'center',
     color: '#100A09',
+    position: 'relative',
   },
   headerTitle: {
     fontFamily: "'Playfair Display', serif",
-    fontSize: 'clamp(24px, 5vw, 30px)',
-    fontWeight: 700,
+    fontSize: 'clamp(28px, 5vw, 40px)',
+    fontWeight: 800,
     color: '#100A09',
+    marginBottom: 12,
   },
   heroDesc: {
     color: '#666666',
-    fontSize: 14,
-    maxWidth: 420,
+    fontSize: 'clamp(14px, 2.5vw, 16px)',
+    maxWidth: 600,
     margin: '0 auto',
     textAlign: 'center',
-    lineHeight: 1.5,
+    lineHeight: 1.6,
   },
 
   container: {
@@ -306,9 +466,10 @@ const styles = {
   formSection: {
     flex: '1 1 500px',
     background: '#fff',
-    padding: 24,
     borderRadius: 16,
-    boxShadow: '0 10px 40px rgba(0,0,0,0.05)',
+    padding: 24,
+    boxShadow: '0 8px 30px rgba(0,0,0,0.04)',
+    border: '1px solid #f0f0f0',
   },
   infoSection: {
     flex: '1 1 300px',
@@ -422,8 +583,9 @@ const styles = {
   infoBox: {
     background: '#fff',
     borderRadius: 16,
-    padding: 20,
-    boxShadow: '0 10px 30px rgba(0,0,0,0.03)',
+    padding: 24,
+    boxShadow: '0 8px 30px rgba(0,0,0,0.04)',
+    border: '1px solid #f0f0f0',
   },
   infoTitle: {
     fontSize: 14,

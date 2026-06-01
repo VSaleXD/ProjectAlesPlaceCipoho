@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { HashRouter, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from './supabaseClient';
-import Navbar        from './components/Navbar';
-import HomePage      from './pages/HomePage';
-import MenuPage      from './pages/MenuPage';
+import Navbar from './components/Navbar';
+import JapaneseCloudBg from './components/JapaneseCloudBg';
+import HomePage from './pages/HomePage';
+import MenuPage from './pages/MenuPage';
 import ReservasiPage from './pages/ReservasiPage';
-import AdminPage     from './pages/AdminPage';
+import AdminPage from './pages/AdminPage';
 import AdminLoginPage from './pages/AdminLoginPage';
 import './styles/index.css';
 
@@ -60,10 +61,11 @@ function AppRoutes() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F5EDD8' }}>
+    <div style={{ minHeight: '100vh', background: '#F5EDD8', position: 'relative' }}>
+      <JapaneseCloudBg />
       <Navbar page={currentPage} setPage={setPage} />
 
-      <main>
+      <main style={{ position: 'relative', zIndex: 1 }}>
         <Routes>
           <Route path="/" element={<HomePage setPage={setPage} />} />
           <Route path="/home" element={<HomePage setPage={setPage} />} />

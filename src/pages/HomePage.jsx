@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { formatRupiah } from '../data/menu';
 import { supabase } from '../supabaseClient';
 import { ICON_PHOTOS, SITE_PHOTOS } from '../data/photos';
+import { useOutletConfig } from '../utils/outletConfig';
 
 const ATMOSPHERE_SLIDES = [
   {
@@ -73,9 +74,34 @@ const SOCIAL_LINKS = [
 ];
 
 export default function HomePage({ setPage }) {
+  const config = useOutletConfig();
   const [activeSlide, setActiveSlide] = useState(0);
   const [menuItems, setMenuItems] = useState([]);
   const [selectedGalleryImage, setSelectedGalleryImage] = useState(null);
+
+  const dynamicSocialLinks = [
+    {
+      name: 'Instagram',
+      href: config.socialLinks?.instagram || '#',
+      icon: ICON_PHOTOS.instagram,
+    },
+    {
+      name: 'TikTok',
+      href: config.socialLinks?.tiktok || '#',
+      icon: ICON_PHOTOS.tiktok,
+    },
+    {
+      name: 'WhatsApp',
+      href: config.socialLinks?.whatsapp || '#',
+      icon: ICON_PHOTOS.whatsapp,
+    },
+    {
+      name: 'Facebook',
+      href: config.socialLinks?.facebook || '#',
+      icon: ICON_PHOTOS.facebook,
+    },
+  ];
+
   const totalSlides = ATMOSPHERE_SLIDES.length;
 
   useEffect(() => {
@@ -92,7 +118,8 @@ export default function HomePage({ setPage }) {
         .from('menu')
         .select('*')
         .eq('bestseller', true)
-        .limit(4); 
+        .order('harga', { ascending: true })
+        .limit(4);
       if (data) {
         setMenuItems(data);
       }
@@ -236,10 +263,10 @@ export default function HomePage({ setPage }) {
 
         <div style={styles.galleryGrid}>
           {[SITE_PHOTOS.atmosphere[0], SITE_PHOTOS.atmosphere[1], SITE_PHOTOS.atmosphere[2], SITE_PHOTOS.atmosphere[3], SITE_PHOTOS.atmosphere[4], SITE_PHOTOS.atmosphere[5]].map((img, idx) => (
-            <img 
+            <img
               key={idx}
-              src={img} 
-              alt="Gallery" 
+              src={img}
+              alt="Gallery"
               style={{ ...styles.galleryImg, cursor: 'pointer' }}
               onClick={() => setSelectedGalleryImage(img)}
             />
@@ -255,7 +282,7 @@ export default function HomePage({ setPage }) {
 
         {/* Location & Contact */}
         <div style={{ ...styles.sectionHeader, marginTop: 60 }}>
-          <h2 style={styles.sectionTitle}>Kontak &amp; Lokasi</h2>
+          <h2 style={styles.sectionTitle}>Informasi Lainnya</h2>
           <p style={styles.sectionSub}>Temukan kami dengan mudah</p>
         </div>
 
@@ -274,39 +301,44 @@ export default function HomePage({ setPage }) {
           </div>
 
           <div style={styles.contactContainer}>
-            <div style={styles.hoursGrid}>
-              <div style={styles.contactItem}>
-                <h4 style={styles.contactTitle}>Senin – Jumat</h4>
-                <p style={styles.contactValue}>11:00 – 21:00 WIB</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div style={styles.hoursGrid}>
+                <div style={styles.contactItem}>
+                  <h4 style={styles.contactTitle}>Senin – Jumat</h4>
+                  <p style={styles.contactValue}>{config.operationalHours?.weekdays || '11:00 – 21:00 WIB'}</p>
+                </div>
+                <div style={styles.contactItem}>
+                  <h4 style={styles.contactTitle}>Sabtu, Minggu & Tanggal Merah</h4>
+                  <p style={styles.contactValue}>{config.operationalHours?.weekends || '10:00 – 21:00 WIB'}</p>
+                </div>
               </div>
+
               <div style={styles.contactItem}>
-                <h4 style={styles.contactTitle}>Sabtu, Minggu & Tanggal Merah</h4>
-                <p style={styles.contactValue}>10:00 – 21:00 WIB</p>
+                <h4 style={styles.contactTitle}>Kontak (WhatsApp)</h4>
+                <p style={styles.contactValue}>{config.phone || '0815-7215-5275'}</p>
               </div>
             </div>
 
-            <div style={styles.contactItem}>
-              <h4 style={styles.contactTitle}>Kontak (WhatsApp)</h4>
-              <p style={styles.contactValue}>0815-7215-5275</p>
+            {/* Social Media Section (Moved Inside Contact Container) */}
+            <div style={{ marginTop: 'auto', paddingTop: 16 }}>
+              <div style={{ marginBottom: 16, textAlign: 'center' }}>
+                <h2 style={{ ...styles.sectionTitle, fontSize: 22, marginBottom: 4 }}>Ikuti Kami</h2>
+                <p style={{ ...styles.sectionSub, fontSize: 14, margin: 0, marginLeft: 0 }}>Terhubung dengan kami di media sosial</p>
+              </div>
+              <div style={styles.socialGrid}>
+                {dynamicSocialLinks.map((social) => {
+                  return (
+                    <a key={social.name} href={social.href} target="_blank" rel="noopener noreferrer" className="social-card">
+                      <div style={styles.socialIcon}>
+                        <img src={`/${social.name}.png`} alt={social.name} style={styles.socialIconImage} />
+                      </div>
+                      <p style={styles.socialName}>{social.name}</p>
+                    </a>
+                  );
+                })}
+              </div>
             </div>
           </div>
-        </div>
-
-        {/* Social Media Section */}
-        <div style={{ ...styles.sectionHeader, marginTop: 60 }}>
-          <h2 style={styles.sectionTitle}>Ikuti Kami</h2>
-          <p style={styles.sectionSub}>Terhubung dengan kami di media sosial</p>
-        </div>
-
-        <div style={styles.socialGrid}>
-          {SOCIAL_LINKS.map((social) => (
-            <a key={social.name} href={social.href} target="_blank" rel="noopener noreferrer" className="social-card">
-              <div style={styles.socialIcon}>
-                <img src={social.icon} alt={social.name} style={styles.socialIconImage} />
-              </div>
-              <p style={styles.socialName}>{social.name}</p>
-            </a>
-          ))}
         </div>
 
       </div>
@@ -646,6 +678,10 @@ const styles = {
     color: '#666',
     lineHeight: 1.4,
     flex: 1,
+    display: '-webkit-box',
+    WebkitLineClamp: 2,
+    WebkitBoxOrient: 'vertical',
+    overflow: 'hidden',
   },
   centerAction: {
     textAlign: 'center',
@@ -735,7 +771,7 @@ const styles = {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
     gap: 32,
-    alignItems: 'start',
+    alignItems: 'stretch',
   },
   mapPlaceholder: {
     background: '#FAF6F9',
